@@ -1,5 +1,20 @@
 {
   "version": "7",
   "dialect": "mysql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1774975066517,
+      "tag": "0000_damp_dexter_bennett",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774975374091,
+      "tag": "0001_warm_microbe",
+      "breakpoints": true
+    }
+  ]
 }

@@ -174,4 +174,129 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+
+  /* Card styling */
+  .card {
+    @apply bg-card text-card-foreground rounded-lg border shadow-sm;
+  }
+
+  .card-header {
+    @apply px-6 py-4 border-b;
+  }
+
+  .card-body {
+    @apply px-6 py-4;
+  }
+
+  .card-footer {
+    @apply px-6 py-4 border-t;
+  }
+
+  /* Badge styling */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+  }
+
+  .badge-error {
+    @apply bg-destructive/10 text-destructive;
+  }
+
+  /* Input styling */
+  .input-base {
+    @apply w-full px-3 py-2 bg-input text-foreground border border-input rounded-lg placeholder-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t border-border;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-muted rounded;
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary to-accent;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-secondary to-primary;
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Flex utilities */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* Grid utilities */
+  .grid-auto-fit {
+    @apply grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* Spacing utilities */
+  .space-y-tight {
+    @apply space-y-1;
+  }
+
+  .space-y-normal {
+    @apply space-y-4;
+  }
+
+  .space-y-loose {
+    @apply space-y-8;
+  }
+
+  /* Animation utilities */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.3s ease-in-out;
+  }
 }
