@@ -651,7 +651,7 @@ export const appRouter = router({
         associationName: z.string().optional(),
         seatCity: z.string().optional(),
         folio: z.string().optional(),
-        email: z.string().email().optional(),
+        email: z.string().email("Email invalide").optional().or(z.literal('')),
         website: z.string().optional(),
         phone: z.string().optional(),
         logo: z.string().nullable().optional(),

@@ -321,6 +321,13 @@ function DashboardLayoutContent({
               >
                 <PanelLeft className="h-4 w-4 text-sidebar-foreground/70" />
               </button>
+              {settings?.logo && !isCollapsed && (
+                <img
+                  src={settings.logo}
+                  alt="Logo"
+                  className="h-8 w-8 rounded-lg object-cover flex-shrink-0"
+                />
+              )}
               {!isCollapsed && (
                 <span className="font-semibold tracking-tight truncate text-sm text-sidebar-foreground">
                   {settings?.associationName || "Bâtisseurs Engagés"}
