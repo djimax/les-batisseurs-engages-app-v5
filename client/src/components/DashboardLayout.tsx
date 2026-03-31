@@ -51,6 +51,7 @@ import {
       Bell,
       Database,
       Download,
+      HardDrive,
     } from "lucide-react";
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -148,6 +149,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Globe, label: "Paramètres", path: "/global-settings", adminOnly: true },
       { icon: Shield, label: "Rôles", path: "/admin/roles", adminOnly: true },
       { icon: Eye, label: "Journaux", path: "/admin/audit-logs", adminOnly: true },
+      { icon: Database, label: "Migrations BD", path: "/admin/migrations", adminOnly: true },
       { icon: Activity, label: "Activité", path: "/activity" },
       { icon: History, label: "Historique", path: "/audit-history" },
     ],

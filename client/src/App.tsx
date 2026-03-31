@@ -38,6 +38,7 @@ const Projects = lazy(() => import("@/pages/Projects"));
 const NotificationCenter = lazy(() => import("./pages/NotificationCenter"));
 const ExportCenter = lazy(() => import("./pages/ExportCenter"));
 const DemoDataManager = lazy(() => import("@/pages/DemoDataManager"));
+const AdminMigrations = lazy(() => import("@/pages/AdminMigrations"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -94,6 +95,7 @@ function Router() {
                 <Route path="/notifications" component={NotificationCenter} />
                 <Route path="/export-center" component={ExportCenter} />
                 <Route path="/demo-data" component={DemoDataManager} />
+                <Route path="/admin/migrations" component={AdminMigrations} />
                 <Route component={NotFound} />
               </Switch>
             </Suspense>

@@ -17,6 +17,7 @@ import { associationSettingsRouter } from "./routers/association-settings";
 import { exportsRouter } from "./routers/exports";
 import { demoDataRouter } from "./routers/demo-data";
 import { localAuthRouter } from "./routers/local-auth";
+
 import { z } from "zod";
 import { 
   getAllCategories, getCategoryById, createCategory, seedDefaultCategories,
@@ -486,6 +487,70 @@ export const appRouter = router({
 
   // ============ ADMIN - ROLES & PERMISSIONS ============
   admin: router({
+    // Database migrations
+    runMigrations: protectedProcedure.mutation(async ({ ctx }) => {
+      // Check if user is admin
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Only admins can run migrations");
+      }
+
+      try {
+        const db = await getDb();
+        if (!db) {
+          throw new Error("Database connection not available");
+        }
+
+        // Read SQL file
+        const fs = await import('fs');
+        const path = await import('path');
+        const sqlFile = path.join(process.cwd(), "drizzle", "migrations_clean.sql");
+        if (!fs.existsSync(sqlFile)) {
+          throw new Error("Migration SQL file not found");
+        }
+
+        const sql = fs.readFileSync(sqlFile, "utf8");
+        const statements = sql
+          .split(";")
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0 && !s.startsWith("--"));
+
+        console.log(`📋 Running ${statements.length} SQL statements...`);
+
+        let successCount = 0;
+        let errorCount = 0;
+        const errors: string[] = [];
+
+        for (const statement of statements) {
+          try {
+            await db.execute(statement);
+            successCount++;
+          } catch (error: any) {
+            if (error.code === "ER_TABLE_EXISTS_ERROR") {
+              successCount++;
+            } else {
+              errorCount++;
+              errors.push(`${error.message}`);
+            }
+          }
+        }
+
+        console.log(
+          `✅ Migrations completed: ${successCount} successful, ${errorCount} failed`
+        );
+
+        return {
+          success: true,
+          message: `Migrations completed: ${successCount} successful, ${errorCount} failed`,
+          successCount,
+          errorCount,
+          errors: errors.slice(0, 5),
+        };
+      } catch (error: any) {
+        console.error("❌ Migration error:", error);
+        throw new Error(`Migration failed: ${error.message}`);
+      }
+    }),
+
     // Roles management
     getRoles: protectedProcedure.query(async () => {
       const db = await getDb();
