@@ -146,7 +146,8 @@ const menuGroups: MenuGroup[] = [
     label: "Administration",
     icon: Cog,
     items: [
-      { icon: Globe, label: "Paramètres", path: "/global-settings", adminOnly: true },
+      { icon: Building2, label: "Paramètres Association", path: "/association-settings", adminOnly: true },
+      { icon: Globe, label: "Paramètres Globaux", path: "/global-settings", adminOnly: true },
       { icon: Shield, label: "Rôles", path: "/admin/roles", adminOnly: true },
       { icon: Eye, label: "Journaux", path: "/admin/audit-logs", adminOnly: true },
       { icon: Database, label: "Migrations BD", path: "/admin/migrations", adminOnly: true },
