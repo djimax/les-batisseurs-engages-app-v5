@@ -1,198 +1,298 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { trpc } from "@/lib/trpc";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle, Eye, EyeOff, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { Loader2, AlertCircle } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function Register() {
   const [, setLocation] = useLocation();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState<{
+    score: number;
+    errors: string[];
+  }>({ score: 0, errors: [] });
 
   const registerMutation = trpc.localAuth.register.useMutation();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const checkPasswordStrength = (pwd: string) => {
+    const errors: string[] = [];
+
+    if (pwd.length < 8) {
+      errors.push("Au moins 8 caractères");
+    }
+    if (!/[A-Z]/.test(pwd)) {
+      errors.push("Une lettre majuscule");
+    }
+    if (!/[a-z]/.test(pwd)) {
+      errors.push("Une lettre minuscule");
+    }
+    if (!/[0-9]/.test(pwd)) {
+      errors.push("Un chiffre");
+    }
+    if (!/[!@#$%^&*]/.test(pwd)) {
+      errors.push("Un caractère spécial");
+    }
+
+    const score = 5 - errors.length;
+    setPasswordStrength({ score: Math.max(0, score), errors });
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pwd = e.target.value;
+    setPassword(pwd);
+    checkPasswordStrength(pwd);
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors([]);
+    setError(null);
     setIsLoading(true);
 
-    // Validation
-    const newErrors: string[] = [];
-
-    if (!formData.email) {
-      newErrors.push("L'email est requis");
-    }
-
-    if (!formData.password) {
-      newErrors.push("Le mot de passe est requis");
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.push("Les mots de passe ne correspondent pas");
-    }
-
-    if (newErrors.length > 0) {
-      setErrors(newErrors);
-      setIsLoading(false);
-      return;
-    }
-
     try {
+      // Validate inputs
+      if (!name || !email || !password || !confirmPassword) {
+        setError("Veuillez remplir tous les champs");
+        setIsLoading(false);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError("Les mots de passe ne correspondent pas");
+        setIsLoading(false);
+        return;
+      }
+
+      if (passwordStrength.errors.length > 0) {
+        setError(`Le mot de passe doit contenir : ${passwordStrength.errors.join(", ")}`);
+        setIsLoading(false);
+        return;
+      }
+
       const result = await registerMutation.mutateAsync({
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        name,
+        email,
+        password,
       });
 
-      // Store session token in localStorage
-      localStorage.setItem("sessionToken", result.sessionToken);
+      if (result.success) {
+        // Store session token in localStorage
+        localStorage.setItem("sessionToken", result.sessionToken);
+        localStorage.setItem("userId", result.userId.toString());
 
-      toast.success("Inscription réussie!");
-      setLocation("/dashboard");
-    } catch (error: any) {
-      const errorMessage = error.message || "Erreur lors de l'inscription";
-      setErrors([errorMessage]);
+        toast.success("Enregistrement réussi! Bienvenue!");
+        setLocation("/");
+      }
+    } catch (err: any) {
+      const errorMessage = err?.message || "Erreur lors de l'enregistrement";
+      setError(errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 px-4">
-      <Card className="w-full max-w-md">
-        <div className="p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">Les Bâtisseurs Engagés</h1>
-            <p className="text-muted-foreground">Créer un compte</p>
-          </div>
+  const getPasswordStrengthColor = () => {
+    if (passwordStrength.score <= 1) return "bg-red-500";
+    if (passwordStrength.score <= 2) return "bg-orange-500";
+    if (passwordStrength.score <= 3) return "bg-yellow-500";
+    if (passwordStrength.score <= 4) return "bg-blue-500";
+    return "bg-green-500";
+  };
 
-          {errors.length > 0 && (
-            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <div className="flex gap-3">
-                <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  {errors.map((error, index) => (
-                    <p key={index} className="text-sm text-destructive">
-                      {error}
-                    </p>
-                  ))}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo/Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Les Bâtisseurs Engagés</h1>
+          <p className="text-slate-400">Créer un compte</p>
+        </div>
+
+        {/* Register Card */}
+        <Card className="border-slate-700 bg-slate-800">
+          <CardHeader>
+            <CardTitle className="text-white">Enregistrement</CardTitle>
+            <CardDescription className="text-slate-400">
+              Créez un nouveau compte pour accéder à l'application
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <form onSubmit={handleRegister} className="space-y-4">
+              {/* Error Alert */}
+              {error && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-900">{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Name Input */}
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-slate-200">
+                  Nom complet
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Jean Dupont"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
+                />
+              </div>
+
+              {/* Email Input */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-slate-200">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="votre@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
+                />
+              </div>
+
+              {/* Password Input */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-slate-200">
+                  Mot de passe
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    disabled={isLoading}
+                    className="bg-slate-700 border-slate-600 text-white placeholder-slate-500 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {/* Password Strength Indicator */}
+                {password && (
+                  <div className="space-y-2">
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full ${
+                            i < passwordStrength.score ? getPasswordStrengthColor() : "bg-slate-600"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    {passwordStrength.errors.length > 0 && (
+                      <div className="text-xs text-slate-400">
+                        <p className="font-medium mb-1">Le mot de passe doit contenir :</p>
+                        <ul className="space-y-1">
+                          {passwordStrength.errors.map((error, i) => (
+                            <li key={i} className="flex items-center gap-1">
+                              <span className="text-orange-400">•</span> {error}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {passwordStrength.errors.length === 0 && password && (
+                      <div className="flex items-center gap-1 text-xs text-green-400">
+                        <CheckCircle className="w-4 h-4" />
+                        Mot de passe fort
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm Password Input */}
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-slate-200">
+                  Confirmer le mot de passe
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="bg-slate-700 border-slate-600 text-white placeholder-slate-500 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
-            </div>
-          )}
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Prénom</label>
-                <Input
-                  type="text"
-                  name="firstName"
-                  placeholder="Jean"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading || passwordStrength.errors.length > 0}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Enregistrement en cours...
+                  </>
+                ) : (
+                  "S'enregistrer"
+                )}
+              </Button>
+
+              {/* Login Link */}
+              <div className="text-center pt-4 border-t border-slate-700">
+                <p className="text-slate-400">
+                  Vous avez déjà un compte ?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setLocation("/login")}
+                    className="text-green-400 hover:text-green-300 font-medium"
+                  >
+                    Se connecter
+                  </button>
+                </p>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Nom</label>
-                <Input
-                  type="text"
-                  name="lastName"
-                  placeholder="Dupont"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
+            </form>
+          </CardContent>
+        </Card>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
-              <Input
-                type="email"
-                name="email"
-                placeholder="votre@email.com"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Mot de passe</label>
-              <Input
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Confirmer le mot de passe</label>
-              <Input
-                type="password"
-                name="confirmPassword"
-                placeholder="••••••••"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLoading ? "Inscription..." : "Créer un compte"}
-            </Button>
-          </form>
-
-          <div className="mt-6 pt-6 border-t border-border text-center">
-            <p className="text-sm text-muted-foreground mb-4">
-              Vous avez déjà un compte?
-            </p>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setLocation("/login")}
-            >
-              Se connecter
-            </Button>
-          </div>
+        {/* Footer */}
+        <div className="mt-8 text-center text-slate-500 text-sm">
+          <p>© 2024 Les Bâtisseurs Engagés. Tous droits réservés.</p>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

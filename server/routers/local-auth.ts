@@ -1,292 +1,312 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
+import { TRPCError } from "@trpc/server";
 import {
   createLocalUser,
   getLocalUserByEmail,
-  getLocalUserById,
+  getLocalUserByUserId,
+  updateLocalUserPassword,
+  updateLastLoginTime,
   createUserSession,
   getUserSessionByToken,
   deleteUserSession,
-  updateLocalUserPassword,
+  getDb,
 } from "../db";
 import {
   hashPassword,
   verifyPassword,
-  generateToken,
   validateEmail,
   validatePassword,
+  generateToken,
 } from "../auth-local";
-
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-});
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
-
-const changePasswordSchema = z.object({
-  sessionToken: z.string(),
-  currentPassword: z.string(),
-  newPassword: z.string(),
-});
+import { users } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export const localAuthRouter = router({
   /**
    * Register a new user with email and password
    */
-  register: publicProcedure.input(registerSchema).mutation(async ({ input }) => {
-    // Validate email
-    if (!validateEmail(input.email)) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Email invalide",
-      });
-    }
+  register: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email("Email invalide"),
+        password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+        name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        // Validate email format
+        if (!validateEmail(input.email)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Format d'email invalide",
+          });
+        }
 
-    // Validate password strength
-    const passwordValidation = validatePassword(input.password);
-    if (!passwordValidation.isValid) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: passwordValidation.errors.join(", "),
-      });
-    }
+        // Validate password strength
+        const passwordValidation = validatePassword(input.password);
+        if (!passwordValidation.isValid) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: passwordValidation.errors.join(", "),
+          });
+        }
 
-    // Check if user already exists
-    const existingUser = await getLocalUserByEmail(input.email);
-    if (existingUser) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: "Un utilisateur avec cet email existe déjà",
-      });
-    }
+        // Check if user already exists
+        const existingUser = await getLocalUserByEmail(input.email);
+        if (existingUser) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Un utilisateur avec cet email existe déjà",
+          });
+        }
 
-    try {
-      // Hash password
-      const passwordHash = await hashPassword(input.password);
+        // Hash password
+        const passwordHash = await hashPassword(input.password);
 
-      // Create user
-      await createLocalUser({
-        email: input.email,
-        passwordHash,
-        firstName: input.firstName,
-        lastName: input.lastName,
-        role: "user",
-        isActive: true,
-      });
+        // Create local user
+        const localUser = await createLocalUser(input.email, passwordHash);
 
-      // Get the created user
-      const createdUser = await getLocalUserByEmail(input.email);
-      if (!createdUser) {
+        // Update the user's name
+        const db = await getDb();
+        if (db) {
+          await db
+            .update(users)
+            .set({ name: input.name })
+            .where(eq(users.id, localUser.userId));
+        }
+
+        // Create session token
+        const sessionToken = generateToken();
+        await createUserSession(localUser.userId, sessionToken);
+
+        return {
+          success: true,
+          userId: localUser.userId,
+          email: localUser.email,
+          sessionToken,
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        console.error("[LocalAuth] Registration error:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Erreur lors de la création de l'utilisateur",
+          message: "Erreur lors de l'enregistrement",
         });
       }
-
-      // Create session
-      const sessionToken = generateToken();
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-
-      await createUserSession({
-        userId: createdUser.id,
-        sessionToken,
-        expiresAt,
-      });
-
-      return {
-        success: true,
-        userId: createdUser.id,
-        sessionToken,
-        user: {
-          id: createdUser.id,
-          email: input.email,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          role: "user",
-        },
-      };
-    } catch (error) {
-      console.error("[Auth] Registration error:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Erreur lors de l'enregistrement",
-      });
-    }
-  }),
+    }),
 
   /**
    * Login with email and password
    */
-  login: publicProcedure.input(loginSchema).mutation(async ({ input }) => {
-    try {
-      // Find user by email
-      const user = await getLocalUserByEmail(input.email);
-      if (!user) {
+  login: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email("Email invalide"),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        // Get user by email
+        const localUser = await getLocalUserByEmail(input.email);
+        if (!localUser) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Email ou mot de passe incorrect",
+          });
+        }
+
+        // Verify password
+        const isPasswordValid = await verifyPassword(input.password, localUser.passwordHash);
+        if (!isPasswordValid) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Email ou mot de passe incorrect",
+          });
+        }
+
+        // Update last login time
+        await updateLastLoginTime(localUser.userId);
+
+        // Create session token
+        const sessionToken = generateToken();
+        await createUserSession(localUser.userId, sessionToken);
+
+        // Get user info
+        const db = await getDb();
+        let userName = "Utilisateur";
+        if (db) {
+          const userRecord = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, localUser.userId))
+            .limit(1);
+          if (userRecord[0]) {
+            userName = userRecord[0].name || "Utilisateur";
+          }
+        }
+
+        return {
+          success: true,
+          userId: localUser.userId,
+          email: localUser.email,
+          name: userName,
+          sessionToken,
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        console.error("[LocalAuth] Login error:", error);
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Email ou mot de passe incorrect",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la connexion",
         });
       }
-
-      // Check if user is active
-      if (!user.isActive) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Ce compte est désactivé",
-        });
-      }
-
-      // Verify password
-      const passwordMatch = await verifyPassword(input.password, user.passwordHash);
-      if (!passwordMatch) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Email ou mot de passe incorrect",
-        });
-      }
-
-      // Create session
-      const sessionToken = generateToken();
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-
-      await createUserSession({
-        userId: user.id,
-        sessionToken,
-        expiresAt,
-      });
-
-      return {
-        success: true,
-        userId: user.id,
-        sessionToken,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-        },
-      };
-    } catch (error) {
-      if (error instanceof TRPCError) throw error;
-      console.error("[Auth] Login error:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Erreur lors de la connexion",
-      });
-    }
-  }),
+    }),
 
   /**
    * Verify session token
    */
-  verifySession: publicProcedure.input(z.object({ sessionToken: z.string() })).query(async ({ input }) => {
-    try {
-      const session = await getUserSessionByToken(input.sessionToken);
-      if (!session) {
+  verifySession: publicProcedure
+    .input(z.object({ sessionToken: z.string() }))
+    .query(async ({ input }) => {
+      try {
+        const session = await getUserSessionByToken(input.sessionToken);
+        if (!session) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Session invalide ou expirée",
+          });
+        }
+
+        // Get user info
+        const db = await getDb();
+        if (!db) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Base de données non disponible",
+          });
+        }
+
+        const userRecord = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, session.userId))
+          .limit(1);
+
+        if (!userRecord[0]) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Utilisateur non trouvé",
+          });
+        }
+
+        return {
+          userId: session.userId,
+          email: userRecord[0].email,
+          name: userRecord[0].name,
+          role: userRecord[0].role,
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        console.error("[LocalAuth] Session verification error:", error);
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Session invalide",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la vérification de la session",
         });
       }
-
-      // Check if session is expired
-      if (new Date() > session.expiresAt) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Session expirée",
-        });
-      }
-
-      return {
-        valid: true,
-        userId: session.userId,
-      };
-    } catch (error) {
-      if (error instanceof TRPCError) throw error;
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Session invalide",
-      });
-    }
-  }),
+    }),
 
   /**
-   * Logout (delete session)
+   * Logout
    */
-  logout: publicProcedure.input(z.object({ sessionToken: z.string() })).mutation(async ({ input }) => {
-    try {
-      await deleteUserSession(input.sessionToken);
-      return { success: true };
-    } catch (error) {
-      console.error("[Auth] Logout error:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Erreur lors de la déconnexion",
-      });
-    }
-  }),
+  logout: publicProcedure
+    .input(z.object({ sessionToken: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await deleteUserSession(input.sessionToken);
+        return { success: true };
+      } catch (error) {
+        console.error("[LocalAuth] Logout error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la déconnexion",
+        });
+      }
+    }),
 
   /**
    * Change password
    */
-  changePassword: publicProcedure.input(changePasswordSchema).mutation(async ({ input }) => {
-    try {
-      // Verify session
-      const session = await getUserSessionByToken(input.sessionToken);
-      if (!session) {
+  changePassword: publicProcedure
+    .input(
+      z.object({
+        sessionToken: z.string(),
+        currentPassword: z.string(),
+        newPassword: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        // Verify session
+        const session = await getUserSessionByToken(input.sessionToken);
+        if (!session) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Session invalide",
+          });
+        }
+
+        // Get local user
+        const localUser = await getLocalUserByUserId(session.userId);
+        if (!localUser) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Utilisateur non trouvé",
+          });
+        }
+
+        // Verify current password
+        const isPasswordValid = await verifyPassword(input.currentPassword, localUser.passwordHash);
+        if (!isPasswordValid) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Mot de passe actuel incorrect",
+          });
+        }
+
+        // Validate new password
+        const passwordValidation = validatePassword(input.newPassword);
+        if (!passwordValidation.isValid) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: passwordValidation.errors.join(", "),
+          });
+        }
+
+        // Hash new password
+        const newPasswordHash = await hashPassword(input.newPassword);
+
+        // Update password
+        await updateLocalUserPassword(session.userId, newPasswordHash);
+
+        return { success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        console.error("[LocalAuth] Change password error:", error);
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Session invalide",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors du changement de mot de passe",
         });
       }
-
-      // Get user by session userId
-      const user = await getLocalUserById(session.userId);
-      if (!user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Utilisateur non trouvé",
-        });
-      }
-
-      // Verify current password
-      const passwordMatch = await verifyPassword(input.currentPassword, user.passwordHash);
-      if (!passwordMatch) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Mot de passe actuel incorrect",
-        });
-      }
-
-      // Validate new password
-      const passwordValidation = validatePassword(input.newPassword);
-      if (!passwordValidation.isValid) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: passwordValidation.errors.join(", "),
-        });
-      }
-
-      // Hash and update password
-      const newPasswordHash = await hashPassword(input.newPassword);
-      await updateLocalUserPassword(user.id, newPasswordHash);
-
-      return { success: true };
-    } catch (error) {
-      if (error instanceof TRPCError) throw error;
-      console.error("[Auth] Change password error:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Erreur lors du changement de mot de passe",
-      });
-    }
-  }),
+    }),
 });

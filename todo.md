@@ -1,92 +1,126 @@
-# Les Bâtisseurs Engagés - Application v3 - TODO
+# Project TODO - Refonte Les Bâtisseurs Engagés
 
-## Phase 1 - Schéma de Base de Données
-- [x] Configurer le schéma Drizzle complet (utilisateurs, membres, projets, finances, documents, CRM)
-- [x] Générer et appliquer les migrations SQL
-- [x] Créer les helpers de base de données
+## Phase 1 - Audit
+- [x] Analyser la structure du projet existant
+- [x] Identifier les problèmes UI/UX
+- [x] Identifier les problèmes de performance
+- [x] Identifier les bugs et incohérences
 
-## Phase 2 - Authentification Locale
-- [x] Implémenter l'authentification par email/mot de passe
-- [x] Créer les tables users_local et user_sessions
-- [x] Implémenter les routers tRPC (register, login, logout, getCurrentUser)
-- [x] Créer les pages Login et Register
-- [x] Ajouter les tests vitest pour l'authentification
+## Phase 2 - Migration Backend
+- [x] Migrer le schéma de base de données (drizzle/schema.ts)
+- [x] Migrer les helpers de base de données (server/db.ts)
+- [x] Migrer les routers tRPC (server/routers.ts)
+- [x] Migrer les routers auxiliaires (auth, email, crm, admin-settings, users)
+- [x] Migrer les fichiers utilitaires (audit.ts, shared/*)
 
-## Phase 3 - Système de Design et Layout
-- [x] Configurer la palette de couleurs OKLCH
-- [x] Créer le DashboardLayout avec sidebar
-- [x] Implémenter la navigation principale
-- [ ] Ajouter les loading skeletons
-- [ ] Tester la responsivité mobile
+## Phase 3 - Système de Design
+- [x] Refonte complète du index.css avec palette OKLCH cohérente
+- [x] Supprimer les styles dark mode inutilisés
+- [x] Nettoyer les classes CSS redondantes
+- [x] Ajouter la police Google Fonts (Inter)
+- [x] Harmoniser les espacements et rayons de bordure
 
-## Phase 4 - Tableau de Bord
-- [x] Créer la page Home avec statistiques dynamiques
-- [x] Ajouter les graphiques (membres, finances, projets)
-- [x] Implémenter les cartes KPI
-- [x] Ajouter les raccourcis rapides
+## Phase 4 - Navigation et Layout
+- [x] Refonte du DashboardLayout avec sidebar améliorée
+- [x] Implémenter le lazy loading via Suspense dans App.tsx
+- [x] Ajouter des squelettes de chargement pour le layout
+- [x] Améliorer la responsivité mobile du layout
+- [x] Corriger la navigation et les échappatoires
 
-## Phase 5 - Gestion des Membres
-- [ ] Implémenter le router tRPC pour les membres
-- [ ] Créer la page Members avec liste et filtres
-- [ ] Ajouter la recherche avec debounce
-- [ ] Implémenter les mises à jour optimistes
-- [ ] Ajouter les formulaires d'ajout/édition
+## Phase 5 - Pages Principales
+- [x] Refonte de Home.tsx (dashboard avec stats dynamiques)
+- [ ] Refonte de Documents.tsx (filtres, pagination, loading states)
+- [ ] Refonte de Members.tsx (recherche debounce, optimistic updates)
+- [ ] Refonte de Finance.tsx (connecter au backend, graphiques)
 
-## Phase 6 - Gestion des Projets
-- [ ] Implémenter le router tRPC pour les projets et tâches
-- [ ] Créer la page Projects avec liste
-- [ ] Ajouter la page ProjectDetail avec tâches
-- [ ] Implémenter le tableau kanban des tâches
-- [ ] Ajouter les formulaires de création/édition
+## Phase 6 - Pages Secondaires
+- [ ] Refonte Events.tsx
+- [ ] Refonte Campaigns.tsx
+- [ ] Refonte Adhesions.tsx
+- [ ] Refonte Archives.tsx
+- [ ] Refonte CRM pages (Dashboard, Contacts, Activities, Reports)
+- [ ] Refonte Announcements.tsx
+- [ ] Refonte EmailComposer.tsx
+- [ ] Refonte GlobalSettings.tsx (corriger bug hook)
+- [ ] Refonte Users.tsx (corriger incohérence rôles)
+- [ ] Refonte Settings.tsx
+- [ ] Refonte AdminRoles.tsx et AdminAuditLogs.tsx
+- [ ] Refonte NotFound.tsx et ErrorBoundary
 
-## Phase 7 - Module Financier
-- [ ] Implémenter les routers tRPC (budgets, factures, comptabilité)
-- [ ] Créer la page Finance avec vue d'ensemble
-- [ ] Ajouter la gestion des budgets
-- [ ] Ajouter la gestion des factures
-- [ ] Implémenter les exports comptables
+## Phase 7 - Qualité
+- [x] Écrire les tests vitest pour les routers
+- [x] Vérifier tous les boutons et liens
+- [x] Valider la responsivité mobile
+- [x] Vérifier les états de chargement et erreurs
 
-## Phase 8 - Gestion des Documents
-- [ ] Implémenter le router tRPC pour les documents
-- [ ] Créer la page Documents avec liste
-- [ ] Ajouter l'upload de fichiers vers S3
-- [ ] Implémenter les filtres et pagination
-- [ ] Ajouter les permissions d'accès
+## Phase 8 - Documentation
+- [x] Créer le rapport d'améliorations détaillé
 
-## Phase 9 - CRM
-- [ ] Implémenter le router tRPC pour les contacts et activités
-- [ ] Créer la page CRM Dashboard
-- [ ] Ajouter la gestion des contacts
-- [ ] Ajouter la gestion des activités
-- [ ] Implémenter les rapports
 
-## Phase 10 - Paramètres d'Association
-- [ ] Implémenter le router tRPC pour les paramètres
-- [ ] Créer la page Settings
-- [ ] Ajouter l'upload du logo
-- [ ] Implémenter la personnalisation des couleurs
-- [ ] Ajouter les paramètres de contact
+## Phase 9 - Plateforme Multi-Associations et Hors Ligne
 
-## Phase 11 - Mode Hors Ligne
-- [ ] Créer le Service Worker
-- [ ] Implémenter la synchronisation des données
-- [ ] Ajouter l'indicateur de statut en ligne/hors ligne
-- [ ] Tester la synchronisation lors du retour en ligne
+### Paramètres d'Association
+- [x] Créer la table association_settings
+- [x] Créer la table offline_sync_queue
+- [x] Ajouter les routers tRPC pour les paramètres
+- [x] Créer la page Settings améliorée avec upload de logo
+- [x] Ajouter la personnalisation du nom et des couleurs
 
-## Phase 12 - Système de Notifications
-- [ ] Implémenter le router tRPC pour les notifications
-- [ ] Créer le composant NotificationBell
-- [ ] Ajouter le centre de notifications
-- [ ] Implémenter les préférences de notifications
+### Mode Hors Ligne
+- [x] Créer le Service Worker
+- [x] Implémenter la synchronisation des données
+- [x] Ajouter un indicateur de statut en ligne/hors ligne
+- [x] Tester la synchronisation lors du retour en ligne
 
-## Phase 13 - Tests et Optimisations
-- [ ] Écrire les tests vitest pour tous les routers
-- [ ] Tester la responsivité mobile
-- [ ] Valider les états de chargement et erreurs
-- [ ] Optimiser les performances
-- [ ] Vérifier la sécurité et les permissions
+### Branding Dynamique
+- [x] Mettre à jour le header avec le logo dynamique
+- [x] Mettre à jour le dashboard avec le nom de l'association
+- [x] Ajouter les couleurs personnalisées au thème
+- [x] Tester sur plusieurs associations
 
-## Phase 14 - Livraison
-- [ ] Créer un checkpoint final
-- [ ] Préparer la documentation
-- [ ] Tester l'application complète
+
+## Phase 10 - Authentification par Email/Mot de Passe
+
+### Tables de Base de Données
+- [x] Créer la table users_local pour l'authentification locale
+- [x] Créer la table user_sessions pour gérer les sessions
+- [x] Ajouter les migrations SQL
+
+### Backend (tRPC)
+- [x] Implémenter la procédure register (enregistrement)
+- [x] Implémenter la procédure login (connexion)
+- [x] Implémenter la procédure logout (déconnexion)
+- [x] Implémenter la procédure getCurrentUser (utilisateur courant)
+- [x] Ajouter la validation des emails et des mots de passe
+- [x] Ajouter le hachage des mots de passe avec bcrypt
+
+### Frontend
+- [x] Créer la page Login
+- [x] Créer la page Register
+- [x] Créer le hook useLocalAuth pour gérer l'authentification locale
+- [x] Mettre à jour App.tsx pour gérer les routes publiques/privées
+- [x] Ajouter la redirection après login
+
+### Tests
+- [x] Écrire les tests pour l'enregistrement
+- [x] Écrire les tests pour la connexion
+- [x] Écrire les tests pour la déconnexion
+
+
+## Phase 11 - Intégration de l'Authentification dans le Dashboard
+
+### DashboardLayout
+- [x] Afficher le nom de l'utilisateur dans le header
+- [x] Créer un composant UserMenu avec options de profil
+- [x] Ajouter un bouton de déconnexion
+- [x] Afficher l'avatar ou les initiales de l'utilisateur
+
+### Composants
+- [x] Créer le composant UserMenu avec dropdown
+- [x] Ajouter les icônes pour les options du menu
+- [x] Ajouter la confirmation de déconnexion
+
+### Tests
+- [x] Tester l'affichage du nom de l'utilisateur
+- [x] Tester la déconnexion
+- [x] Tester la redirection après déconnexion

@@ -1,31 +1,23 @@
 import * as crypto from "crypto";
-import { createHmac } from "crypto";
+import * as bcrypt from "bcrypt";
 
 /**
- * Hash a password using bcrypt-like approach (simplified for demo)
- * In production, use bcryptjs or similar
+ * Hash a password using bcrypt
  */
 export async function hashPassword(password: string): Promise<string> {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha256").toString("hex");
-  return `${salt}:${hash}`;
+  const saltRounds = 10;
+  return bcrypt.hash(password, saltRounds);
 }
 
 /**
- * Verify a password against a hash
+ * Compare a password with its hash
  */
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  try {
-    const [salt, storedHash] = hash.split(":");
-    const computedHash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha256").toString("hex");
-    return computedHash === storedHash;
-  } catch (error) {
-    return false;
-  }
+  return bcrypt.compare(password, hash);
 }
 
 /**
- * Generate a random token
+ * Generate a secure random token
  */
 export function generateToken(): string {
   return crypto.randomBytes(32).toString("hex");
@@ -35,9 +27,8 @@ export function generateToken(): string {
  * Validate email format
  */
 export function validateEmail(email: string): boolean {
-  if (email.length > 320) return false;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  return emailRegex.test(email) && email.length <= 320;
 }
 
 /**
@@ -51,11 +42,11 @@ export function validatePassword(password: string): { isValid: boolean; errors: 
   }
 
   if (!/[A-Z]/.test(password)) {
-    errors.push("Le mot de passe doit contenir au moins une majuscule");
+    errors.push("Le mot de passe doit contenir au moins une lettre majuscule");
   }
 
   if (!/[a-z]/.test(password)) {
-    errors.push("Le mot de passe doit contenir au moins une minuscule");
+    errors.push("Le mot de passe doit contenir au moins une lettre minuscule");
   }
 
   if (!/[0-9]/.test(password)) {
@@ -73,45 +64,62 @@ export function validatePassword(password: string): { isValid: boolean; errors: 
 }
 
 /**
- * Create a session token using HMAC
+ * Create a session token (JWT-like format)
  */
-export function createSessionToken(userId: number, secret: string): string {
-  const timestamp = Date.now();
-  const data = `${userId}:${timestamp}`;
-  const signature = createHmac("sha256", secret).update(data).digest("hex");
-  return `${data}:${signature}`;
+export function createSessionToken(userId: number, email: string): string {
+  const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64");
+  const payload = Buffer.from(
+    JSON.stringify({
+      userId,
+      email,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
+    })
+  ).toString("base64");
+
+  const signature = crypto
+    .createHmac("sha256", process.env.JWT_SECRET || "default-secret")
+    .update(`${header}.${payload}`)
+    .digest("base64");
+
+  return `${header}.${payload}.${signature}`;
 }
 
 /**
  * Verify a session token
  */
-export function verifySessionToken(token: string, secret: string): { valid: boolean; userId?: number } {
+export function verifySessionToken(token: string): { userId: number; email: string } | null {
   try {
-    const parts = token.split(":");
-    if (parts.length !== 3) return { valid: false };
+    const [header, payload, signature] = token.split(".");
 
-    const userId = parseInt(parts[0], 10);
-    const timestamp = parseInt(parts[1], 10);
-    const signature = parts[2];
+    if (!header || !payload || !signature) {
+      return null;
+    }
 
-    const data = `${userId}:${timestamp}`;
-    const expectedSignature = createHmac("sha256", secret).update(data).digest("hex");
+    // Verify signature
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.JWT_SECRET || "default-secret")
+      .update(`${header}.${payload}`)
+      .digest("base64");
 
     if (signature !== expectedSignature) {
-      return { valid: false };
+      return null;
     }
 
-    // Check if token is not too old (24 hours)
-    const now = Date.now();
-    const tokenAge = now - timestamp;
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+    // Decode payload
+    const decoded = JSON.parse(Buffer.from(payload, "base64").toString());
 
-    if (tokenAge > maxAge) {
-      return { valid: false };
+    // Check expiration
+    if (decoded.exp < Math.floor(Date.now() / 1000)) {
+      return null;
     }
 
-    return { valid: true, userId };
+    return {
+      userId: decoded.userId,
+      email: decoded.email,
+    };
   } catch (error) {
-    return { valid: false };
+    console.error("[Auth] Error verifying token:", error);
+    return null;
   }
 }
