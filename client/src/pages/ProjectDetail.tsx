@@ -29,7 +29,7 @@ import { toast } from "sonner";
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
-  const [, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   const projectId = id ? parseInt(id) : 0;
 
   const [activeTab, setActiveTab] = useState("info");
@@ -183,7 +183,7 @@ export default function ProjectDetail() {
   if (error || !project) {
     return (
       <div className="space-y-4">
-        <Button variant="outline" onClick={() => navigate("/projects")} className="gap-2">
+        <Button variant="outline" onClick={() => setLocation("/projects")} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Retour aux projets
         </Button>
@@ -200,7 +200,7 @@ export default function ProjectDetail() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => navigate("/projects")} size="sm">
+          <Button variant="outline" onClick={() => setLocation("/projects")} size="sm">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
