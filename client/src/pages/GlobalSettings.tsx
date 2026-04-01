@@ -1,23 +1,25 @@
-import { useState, useEffect } from "react";
-import { HeroSection } from "@/components/HeroSection";
+import React, { useState, useEffect, useRef } from "react";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { Settings, Upload, Save, RotateCcw, Mail, Globe, MapPin, FileText, Loader2 } from "lucide-react";
+import { Settings, Upload, Save, RotateCcw, Mail, Globe, MapPin, FileText, Loader2, CheckCircle2, AlertCircle, Building2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
 export default function GlobalSettings() {
   const [isSaving, setIsSaving] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Fetch global settings from database
   const { data: settings, isLoading, refetch } = trpc.globalSettings.get.useQuery();
   const updateMutation = trpc.globalSettings.update.useMutation();
 
-  // Local state for form
+  // Local state for form - Combined from both pages
   const [formData, setFormData] = useState({
     associationName: "",
     seatCity: "",
@@ -26,6 +28,7 @@ export default function GlobalSettings() {
     website: "",
     phone: "",
     description: "",
+    logo: null as string | null,
   });
 
   // Initialize form with fetched data
@@ -39,6 +42,7 @@ export default function GlobalSettings() {
         website: settings.website || "",
         phone: settings.phone || "",
         description: settings.description || "",
+        logo: settings.logo || null,
       });
       if (settings.logo) {
         setLogoPreview(settings.logo);
@@ -54,43 +58,58 @@ export default function GlobalSettings() {
     }));
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Le logo ne doit pas dépasser 2MB");
-      return;
-    }
-
-    // Check file type
+    // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast.error("Veuillez sélectionner un fichier image");
+      toast.error("❌ Veuillez sélectionner une image valide");
       return;
     }
 
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("❌ Le fichier doit faire moins de 5MB");
+      return;
+    }
+
+    // Convert to base64
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64 = event.target?.result as string;
       setLogoPreview(base64);
-      toast.success("Logo chargé avec succès");
+      setFormData(prev => ({
+        ...prev,
+        logo: base64,
+      }));
+      toast.success("✅ Logo chargé avec succès");
     };
     reader.readAsDataURL(file);
   };
 
   const handleSave = async () => {
+    if (!formData.associationName.trim()) {
+      toast.error("❌ Le nom de l'association est requis");
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updateMutation.mutateAsync({
-        ...formData,
+        associationName: formData.associationName,
+        seatCity: formData.seatCity,
+        folio: formData.folio,
+        email: formData.email,
+        website: formData.website,
+        phone: formData.phone,
+        description: formData.description,
         logo: logoPreview,
       });
-      toast.success("Paramètres modifiés avec succès");
-      // Invalider le cache pour mettre à jour immédiatement le tableau de bord
+      toast.success("✅ Paramètres modifiés avec succès");
       refetch();
-    } catch (error) {
-      toast.error("Erreur lors de la modification");
+    } catch (error: any) {
+      toast.error(`❌ Erreur : ${error.message}`);
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -98,24 +117,22 @@ export default function GlobalSettings() {
   };
 
   const handleReset = () => {
-    if (confirm("Êtes-vous sûr de vouloir réinitialiser les paramètres par défaut ?")) {
+    if (settings) {
       setFormData({
-        associationName: "Les Bâtisseurs Engagés",
-        seatCity: "N'djaména-tchad",
-        folio: "10512",
-        email: "contact.lesbatisseursengages@gmail.com",
-        website: "www.lesbatisseursengage.com",
-        phone: "",
-        description: "",
+        associationName: settings.associationName || "",
+        seatCity: settings.seatCity || "",
+        folio: settings.folio || "",
+        email: settings.email || "",
+        website: settings.website || "",
+        phone: settings.phone || "",
+        description: settings.description || "",
+        logo: settings.logo || null,
       });
-      setLogoPreview(null);
-      toast.success("Paramètres réinitialisés");
+      if (settings.logo) {
+        setLogoPreview(settings.logo);
+      }
     }
-  };
-
-  const handleRemoveLogo = () => {
-    setLogoPreview(null);
-    toast.success("Logo supprimé");
+    toast.info("Formulaire réinitialisé");
   };
 
   if (isLoading) {
@@ -127,213 +144,246 @@ export default function GlobalSettings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Hero Section */}
-      <HeroSection
-        title="Paramètres Globaux"
-        subtitle="Gérez les informations de votre association"
-        icon="⚙️"
-        variant="accent"
-      />
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Settings className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Paramètres Globaux</h1>
+          <p className="text-muted-foreground mt-1">Configurez les informations et le branding de votre association</p>
+        </div>
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Logo Section */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" />
-              Logo de l'Association
-            </CardTitle>
-            <CardDescription>Téléchargez votre logo (max 2MB)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {logoPreview ? (
-              <div className="space-y-3">
-                <div className="relative w-full h-32 bg-muted rounded-lg flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={logoPreview} 
-                    alt="Logo preview" 
-                    className="max-w-full max-h-full object-contain"
-                  />
-                </div>
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
-                  onClick={handleRemoveLogo}
-                  className="w-full"
-                >
-                  Supprimer le logo
-                </Button>
+      {/* Alert */}
+      <Alert className="bg-blue-50 border-blue-200">
+        <AlertCircle className="h-4 w-4 text-blue-600" />
+        <AlertDescription className="text-blue-800">
+          Ces paramètres s'appliquent à toute l'association et sont visibles dans l'application.
+        </AlertDescription>
+      </Alert>
+
+      {/* Main Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5" />
+            Informations de l'Association
+          </CardTitle>
+          <CardDescription>
+            Mettez à jour les informations principales de votre association
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Logo Upload Section */}
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  Logo de l'Association
+                </Label>
+                <p className="text-sm text-gray-600 mt-1">
+                  Format: PNG, JPG, GIF | Taille max: 5MB
+                </p>
               </div>
-            ) : (
-              <div className="w-full h-32 bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/25">
-                <div className="text-center">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
-                  <p className="text-sm text-muted-foreground">Aucun logo</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Charger un logo
+              </Button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              className="hidden"
+            />
+            {logoPreview && (
+              <div className="flex items-center gap-4">
+                <img
+                  src={logoPreview}
+                  alt="Logo preview"
+                  className="h-20 w-20 object-cover rounded-lg border border-gray-300"
+                />
+                <div className="text-sm text-gray-600">
+                  <p className="font-medium">Aperçu du logo</p>
+                  <p>Le logo s'affichera en haut à gauche de l'application</p>
                 </div>
               </div>
             )}
-            <div className="relative">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleLogoUpload}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              <Button variant="outline" className="w-full">
-                Choisir un fichier
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Settings Form */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Informations de l'Association
-            </CardTitle>
-            <CardDescription>Mettez à jour les détails de votre association</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Association Name */}
+          {/* Name and Description */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="associationName" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Nom de l'association
+              <Label htmlFor="associationName" className="font-semibold">
+                Nom de l'Association *
               </Label>
               <Input
                 id="associationName"
                 name="associationName"
                 value={formData.associationName}
                 onChange={handleInputChange}
-                placeholder="Nom de l'association"
+                placeholder="Ex: Les Bâtisseurs Engagés"
+                className="border-gray-300"
               />
             </div>
-
-            {/* Seat City */}
             <div className="space-y-2">
-              <Label htmlFor="seatCity" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Siège social
+              <Label htmlFor="folio" className="font-semibold">
+                Numéro SIRET/FOLIO
               </Label>
-              <Input
-                id="seatCity"
-                name="seatCity"
-                value={formData.seatCity}
-                onChange={handleInputChange}
-                placeholder="Siège social"
-              />
-            </div>
-
-            {/* Folio */}
-            <div className="space-y-2">
-              <Label htmlFor="folio">Folio N°</Label>
               <Input
                 id="folio"
                 name="folio"
                 value={formData.folio}
                 onChange={handleInputChange}
-                placeholder="Numéro de folio"
+                placeholder="Ex: 123 456 789 00012"
+                className="border-gray-300"
               />
             </div>
+          </div>
 
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Email de contact"
-              />
+          <div className="space-y-2">
+            <Label htmlFor="description" className="font-semibold">
+              Description de l'Association
+            </Label>
+            <Textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Décrivez votre association, sa mission et ses objectifs..."
+              rows={4}
+              className="border-gray-300"
+            />
+          </div>
+
+          {/* Contact Information */}
+          <div className="border-t pt-6">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Informations de Contact
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="font-semibold">
+                  Email de Contact
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="contact@association.fr"
+                  className="border-gray-300"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="font-semibold">
+                  Téléphone
+                </Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="+33 1 23 45 67 89"
+                  className="border-gray-300"
+                />
+              </div>
             </div>
+          </div>
 
-            {/* Website */}
-            <div className="space-y-2">
-              <Label htmlFor="website" className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                Site web
-              </Label>
-              <Input
-                id="website"
-                name="website"
-                value={formData.website}
-                onChange={handleInputChange}
-                placeholder="Site web"
-              />
+          {/* Location and Web */}
+          <div className="border-t pt-6">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Localisation et Web
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="seatCity" className="font-semibold">
+                  Ville du Siège Social
+                </Label>
+                <Input
+                  id="seatCity"
+                  name="seatCity"
+                  value={formData.seatCity}
+                  onChange={handleInputChange}
+                  placeholder="Ex: Paris"
+                  className="border-gray-300"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="website" className="font-semibold">
+                  Site Web
+                </Label>
+                <Input
+                  id="website"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleInputChange}
+                  placeholder="https://www.association.fr"
+                  className="border-gray-300"
+                />
+              </div>
             </div>
+          </div>
 
-            {/* Phone */}
-            <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Numéro de téléphone"
-              />
-            </div>
+          {/* Action Buttons */}
+          <div className="border-t pt-6 flex gap-3 justify-end">
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              disabled={isSaving}
+              className="gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Réinitialiser
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="gap-2 bg-primary hover:bg-primary/90"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Enregistrement...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Enregistrer les modifications
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Description de l'association"
-                rows={4}
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2 pt-4">
-              <Button 
-                onClick={handleSave} 
-                disabled={isSaving || updateMutation.isPending}
-                className="flex-1 gap-2"
-              >
-                {isSaving || updateMutation.isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Modification...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Modifier
-                  </>
-                )}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleReset}
-                className="gap-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Réinitialiser
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Info Box */}
-      <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
-        <CardContent className="pt-6">
-          <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>ℹ️ Note :</strong> Les paramètres sont synchronisés avec la base de données. 
-            Ils seront utilisés pour afficher les informations de l'association sur la page d'accueil et dans le tableau de bord.
-          </p>
+      {/* Info Card */}
+      <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-900">
+            <CheckCircle2 className="h-5 w-5" />
+            À savoir
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-gray-700 space-y-2">
+          <p>✓ Le logo s'affichera en haut à gauche dans la barre latérale de l'application</p>
+          <p>✓ Le nom de l'association apparaîtra à côté du logo</p>
+          <p>✓ Ces paramètres sont visibles par tous les utilisateurs de l'application</p>
+          <p>✓ Tous les champs peuvent être modifiés à tout moment</p>
         </CardContent>
       </Card>
     </div>
