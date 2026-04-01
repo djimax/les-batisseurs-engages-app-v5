@@ -124,3 +124,29 @@
 - [x] Tester l'affichage du nom de l'utilisateur
 - [x] Tester la déconnexion
 - [x] Tester la redirection après déconnexion
+
+
+## Phase 12 - Système de Rapports & Exports (PRIORITAIRE)
+- [ ] Créer les routers tRPC pour générer les rapports
+- [ ] Implémenter l'export PDF (factures, budgets, rapports financiers)
+- [ ] Implémenter l'export Excel avec tableaux croisés
+- [ ] Créer la page "Rapports & Exports"
+- [ ] Ajouter les graphiques statistiques (Recharts)
+- [ ] Implémenter les rapports mensuels/annuels
+
+## Phase 13 - Gestion des Adhésions & Cotisations (PRIORITAIRE)
+- [ ] Créer les tables pour adhésions et cotisations
+- [ ] Implémenter les routers tRPC pour adhésions
+- [ ] Créer la page "Adhésions & Cotisations"
+- [ ] Ajouter le suivi automatique des cotisations
+- [ ] Implémenter les rappels de paiement
+- [ ] Générer les factures/quittances automatiquement
+- [ ] Ajouter l'historique des paiements
+
+## Phase 14 - Tableau de Bord Personnalisable (PRIORITAIRE)
+- [ ] Créer les widgets personnalisables
+- [ ] Implémenter la sauvegarde des préférences
+- [ ] Ajouter les widgets KPI dynamiques
+- [ ] Ajouter les graphiques en temps réel
+- [ ] Implémenter les alertes configurables
+- [ ] Tester la personnalisation par rôle

@@ -18,6 +18,7 @@ import { associationSettingsRouter } from "./routers/association-settings";
 import { exportsRouter } from "./routers/exports";
 import { demoDataRouter } from "./routers/demo-data";
 import { localAuthRouter } from "./routers/local-auth";
+import { reportsRouter } from "./routers/reports";
 
 import { z } from "zod";
 import { 
@@ -60,6 +61,7 @@ export const appRouter = router({
   associationSettings: associationSettingsRouter,
   exports: exportsRouter,
   demoData: demoDataRouter,
+  reports: reportsRouter,
 
   // ============ CATEGORIES ============
   categories: router({
