@@ -144,9 +144,9 @@
 - [ ] Ajouter l'historique des paiements
 
 ## Phase 14 - Tableau de Bord Personnalisable (PRIORITAIRE)
-- [ ] Créer les widgets personnalisables
-- [ ] Implémenter la sauvegarde des préférences
-- [ ] Ajouter les widgets KPI dynamiques
-- [ ] Ajouter les graphiques en temps réel
-- [ ] Implémenter les alertes configurables
-- [ ] Tester la personnalisation par rôle
+- [x] Créer les widgets personnalisables
+- [x] Implémenter la sauvegarde des préférences
+- [x] Ajouter les widgets KPI dynamiques
+- [x] Ajouter les graphiques en temps réel
+- [x] Implémenter les alertes configurables
+- [x] Tester la personnalisation par rôle

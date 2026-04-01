@@ -785,3 +785,44 @@ export const userSessions = mysqlTable("user_sessions", {
 
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = typeof userSessions.$inferInsert;
+
+
+/**
+ * Dashboard widgets configuration - allows users to customize their dashboard
+ */
+export const dashboardWidgets = mysqlTable("dashboard_widgets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  widgetType: varchar("widgetType", { length: 50 }).notNull(), // "kpi", "chart", "list", "activity", "members", "finances"
+  title: varchar("title", { length: 100 }).notNull(),
+  description: text("description"),
+  position: int("position").notNull(), // Order in dashboard
+  size: mysqlEnum("size", ["small", "medium", "large"]).default("medium").notNull(), // Grid size
+  config: json("config"), // Widget-specific configuration
+  isVisible: boolean("isVisible").default(true),
+  refreshInterval: int("refreshInterval").default(300), // Seconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DashboardWidget = typeof dashboardWidgets.$inferSelect;
+export type InsertDashboardWidget = typeof dashboardWidgets.$inferInsert;
+
+/**
+ * Available widget templates for users to choose from
+ */
+export const widgetTemplates = mysqlTable("widget_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }),
+  defaultConfig: json("defaultConfig"),
+  defaultSize: mysqlEnum("defaultSize", ["small", "medium", "large"]).default("medium"),
+  category: varchar("category", { length: 50 }), // "finance", "members", "activity", "documents"
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WidgetTemplate = typeof widgetTemplates.$inferSelect;
+export type InsertWidgetTemplate = typeof widgetTemplates.$inferInsert;

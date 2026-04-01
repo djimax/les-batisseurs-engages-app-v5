@@ -19,6 +19,7 @@ import { exportsRouter } from "./routers/exports";
 import { demoDataRouter } from "./routers/demo-data";
 import { localAuthRouter } from "./routers/local-auth";
 import { reportsRouter } from "./routers/reports";
+import { widgetsRouter } from "./routers/widgets";
 
 import { z } from "zod";
 import { 
@@ -62,6 +63,7 @@ export const appRouter = router({
   exports: exportsRouter,
   demoData: demoDataRouter,
   reports: reportsRouter,
+  widgets: widgetsRouter,
 
   // ============ CATEGORIES ============
   categories: router({
