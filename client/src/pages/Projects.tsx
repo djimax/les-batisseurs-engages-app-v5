@@ -4,27 +4,137 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { AlertCircle, Plus, Briefcase } from "lucide-react";
+import { AlertCircle, Plus, Briefcase, Edit2, Trash2, Eye } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useLocation } from "wouter";
+import { toast } from "sonner";
 
 export default function Projects() {
+  const [, navigate] = useLocation();
   const [status, setStatus] = useState<string | undefined>();
-  const [isCreating, setIsCreating] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<any>(null);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: "",
+    budget: "",
+    priority: "medium",
+  });
 
   const { data: projects = [], isLoading, error } = trpc.projects.list.useQuery({ status });
   const createMutation = trpc.projects.create.useMutation();
+  const updateMutation = trpc.projects.update.useMutation();
+  const deleteMutation = trpc.projects.delete.useMutation();
+  const utils = trpc.useUtils();
 
-  const handleCreate = async () => {
-    try {
-      await createMutation.mutateAsync({
-        name: "Nouveau Projet",
+  const handleOpenDialog = (project?: any) => {
+    if (project) {
+      setEditingProject(project);
+      setFormData({
+        name: project.name,
+        description: project.description || "",
+        startDate: project.startDate?.split("T")[0] || "",
+        endDate: project.endDate?.split("T")[0] || "",
+        budget: project.budget?.toString() || "",
+        priority: project.priority || "medium",
+      });
+    } else {
+      setEditingProject(null);
+      setFormData({
+        name: "",
+        description: "",
         startDate: new Date().toISOString().split("T")[0],
-        budget: 10000,
+        endDate: "",
+        budget: "",
         priority: "medium",
       });
-      setIsCreating(false);
+    }
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setEditingProject(null);
+    setFormData({
+      name: "",
+      description: "",
+      startDate: new Date().toISOString().split("T")[0],
+      endDate: "",
+      budget: "",
+      priority: "medium",
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name.trim()) {
+      toast.error("Le nom du projet est requis");
+      return;
+    }
+
+    try {
+      if (editingProject) {
+        await updateMutation.mutateAsync({
+          id: editingProject.id,
+          name: formData.name,
+          description: formData.description,
+          startDate: formData.startDate,
+          endDate: formData.endDate || undefined,
+          budget: formData.budget ? parseInt(formData.budget) : undefined,
+          priority: formData.priority as any,
+        });
+        toast.success("Projet modifié avec succès");
+      } else {
+        await createMutation.mutateAsync({
+          name: formData.name,
+          description: formData.description,
+          startDate: formData.startDate,
+          endDate: formData.endDate || undefined,
+          budget: formData.budget ? parseInt(formData.budget) : undefined,
+          priority: formData.priority as any,
+        });
+        toast.success("Projet créé avec succès");
+      }
+      handleCloseDialog();
+      utils.projects.list.invalidate();
     } catch (err) {
-      console.error("Erreur lors de la création du projet:", err);
+      console.error("Erreur:", err);
+      toast.error(editingProject ? "Erreur lors de la modification" : "Erreur lors de la création");
+    }
+  };
+
+  const handleDelete = async (projectId: number) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce projet ?")) return;
+
+    try {
+      await deleteMutation.mutateAsync({ id: projectId });
+      toast.success("Projet supprimé avec succès");
+      utils.projects.list.invalidate();
+    } catch (err) {
+      console.error("Erreur:", err);
+      toast.error("Erreur lors de la suppression");
     }
   };
 
@@ -71,10 +181,100 @@ export default function Projects() {
           <h1 className="text-3xl font-bold">Projets</h1>
           <p className="text-muted-foreground">Gestion des projets et initiatives</p>
         </div>
-        <Button onClick={() => setIsCreating(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Nouveau Projet
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => handleOpenDialog()} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Nouveau Projet
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{editingProject ? "Modifier le projet" : "Créer un nouveau projet"}</DialogTitle>
+              <DialogDescription>
+                {editingProject ? "Modifiez les informations du projet" : "Remplissez les informations du projet"}
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Nom du projet *</label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Ex: Rénovation du bâtiment"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Description</label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Décrivez le projet..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Date de début *</label>
+                  <Input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Date de fin</label>
+                  <Input
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Budget (€)</label>
+                  <Input
+                    type="number"
+                    value={formData.budget}
+                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Priorité</label>
+                  <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Basse</SelectItem>
+                      <SelectItem value="medium">Moyenne</SelectItem>
+                      <SelectItem value="high">Haute</SelectItem>
+                      <SelectItem value="critical">Critique</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                  {editingProject ? "Modifier" : "Créer"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Statistiques */}
@@ -107,6 +307,45 @@ export default function Projects() {
         </Card>
       </div>
 
+      {/* Filtres */}
+      <div className="flex gap-2">
+        <Button
+          variant={status === undefined ? "default" : "outline"}
+          onClick={() => setStatus(undefined)}
+          size="sm"
+        >
+          Tous
+        </Button>
+        <Button
+          variant={status === "planning" ? "default" : "outline"}
+          onClick={() => setStatus("planning")}
+          size="sm"
+        >
+          Planification
+        </Button>
+        <Button
+          variant={status === "active" ? "default" : "outline"}
+          onClick={() => setStatus("active")}
+          size="sm"
+        >
+          Actifs
+        </Button>
+        <Button
+          variant={status === "on-hold" ? "default" : "outline"}
+          onClick={() => setStatus("on-hold")}
+          size="sm"
+        >
+          En attente
+        </Button>
+        <Button
+          variant={status === "completed" ? "default" : "outline"}
+          onClick={() => setStatus("completed")}
+          size="sm"
+        >
+          Complétés
+        </Button>
+      </div>
+
       {/* Erreurs */}
       {error && (
         <Alert variant="destructive">
@@ -137,9 +376,35 @@ export default function Projects() {
                     </div>
                     <CardDescription>{project.description}</CardDescription>
                   </div>
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge className={getStatusColor(project.status)}>
+                      {project.status}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate(`/projects/${project.id}`)}
+                      aria-label="Voir les détails"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleOpenDialog(project)}
+                      aria-label="Modifier"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(project.id)}
+                      aria-label="Supprimer"
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -151,7 +416,7 @@ export default function Projects() {
                   <Progress value={project.progress || 0} className="h-2" />
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="grid grid-cols-4 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Budget</p>
                     <p className="font-bold">{project.budget?.toLocaleString()} €</p>
@@ -159,6 +424,12 @@ export default function Projects() {
                   <div>
                     <p className="text-muted-foreground">Début</p>
                     <p className="font-bold">{new Date(project.startDate).toLocaleDateString("fr-FR")}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Fin</p>
+                    <p className="font-bold">
+                      {project.endDate ? new Date(project.endDate).toLocaleDateString("fr-FR") : "N/A"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Priorité</p>

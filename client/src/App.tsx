@@ -35,6 +35,7 @@ const Budgets = lazy(() => import("@/pages/Budgets"));
 const Invoices = lazy(() => import("@/pages/Invoices"));
 const Memberships = lazy(() => import("@/pages/Memberships"));
 const Projects = lazy(() => import("@/pages/Projects"));
+const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotificationCenter = lazy(() => import("./pages/NotificationCenter"));
 const ExportCenter = lazy(() => import("./pages/ExportCenter"));
 const DemoDataManager = lazy(() => import("@/pages/DemoDataManager"));
@@ -96,6 +97,7 @@ function Router() {
                 <Route path="/invoices" component={Invoices} />
                 <Route path="/memberships" component={Memberships} />
                 <Route path="/projects" component={Projects} />
+                <Route path="/projects/:id" component={ProjectDetail} />
                 <Route path="/notifications" component={NotificationCenter} />
                 <Route path="/export-center" component={ExportCenter} />
                 <Route path="/demo-data" component={DemoDataManager} />

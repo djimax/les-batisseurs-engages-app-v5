@@ -150,3 +150,14 @@
 - [x] Ajouter les graphiques en temps réel
 - [x] Implémenter les alertes configurables
 - [x] Tester la personnalisation par rôle
+
+
+## Phase 15 - Gestion Complète des Projets
+- [x] Enrichir le router tRPC projects avec update, delete, getMembers, addMember, removeMember
+- [x] Créer une page Projects complète avec formulaire de création/édition en modal
+- [x] Implémenter la gestion des tâches (create, update, delete, complete)
+- [x] Ajouter l'assignation de membres aux projets
+- [x] Créer une page détail de projet avec onglets (Infos, Tâches, Membres, Budget, Historique)
+- [x] Implémenter le suivi du budget et des dépenses
+- [x] Ajouter les graphiques de progression et budget
+- [x] Tester le système complet de gestion de projets
