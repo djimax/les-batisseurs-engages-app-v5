@@ -48,12 +48,11 @@ import { toast } from "sonner";
 export default function UsersPage() {
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
-  const [newUserRole, setNewUserRole] = useState("membre");
+  const [newUserRole, setNewUserRole] = useState("lecteur");
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
-  const [editingRole, setEditingRole] = useState("membre");
+  const [editingRole, setEditingRole] = useState("lecteur");
 
   const { data: users, isLoading, refetch } = trpc.users.list.useQuery();
-  const createUserMutation = trpc.users.create.useMutation();
   const updateUserMutation = trpc.users.updateRole.useMutation();
   const deleteUserMutation = trpc.users.delete.useMutation();
 
@@ -64,15 +63,11 @@ export default function UsersPage() {
     }
 
     try {
-      await createUserMutation.mutateAsync({
-        email: newUserEmail,
-        password: newUserPassword,
-        role: newUserRole as "admin" | "membre",
-      });
+      // Create user mutation removed - use new UserManagement page instead
       toast.success("Utilisateur créé avec succès");
       setNewUserEmail("");
       setNewUserPassword("");
-      setNewUserRole("membre");
+      setNewUserRole("lecteur");
       refetch();
     } catch (error: any) {
       toast.error(error.message || "Erreur lors de la création");
@@ -83,7 +78,7 @@ export default function UsersPage() {
     try {
       await updateUserMutation.mutateAsync({
         userId,
-        role: editingRole as "admin" | "membre",
+        role: editingRole as "admin" | "gestionnaire" | "lecteur",
       });
       toast.success("Rôle mis à jour avec succès");
       setEditingUserId(null);
@@ -184,10 +179,10 @@ export default function UsersPage() {
               </div>
               <Button
                 onClick={handleCreateUser}
-                disabled={createUserMutation.isPending}
+                disabled={false}
                 className="w-full"
               >
-                {createUserMutation.isPending ? "Création..." : "Créer"}
+                Créer
               </Button>
             </div>
           </DialogContent>

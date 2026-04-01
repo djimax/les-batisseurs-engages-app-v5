@@ -40,6 +40,7 @@ const ExportCenter = lazy(() => import("./pages/ExportCenter"));
 const DemoDataManager = lazy(() => import("@/pages/DemoDataManager"));
 const AdminMigrations = lazy(() => import("@/pages/AdminMigrations"));
 const AssociationSettings = lazy(() => import("@/pages/AssociationSettings"));
+const UserManagement = lazy(() => import("@/pages/UserManagement"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -98,6 +99,7 @@ function Router() {
                 <Route path="/demo-data" component={DemoDataManager} />
                 <Route path="/admin/migrations" component={AdminMigrations} />
                 <Route path="/association-settings" component={AssociationSettings} />
+                <Route path="/admin/users" component={UserManagement} />
                 <Route component={NotFound} />
               </Switch>
             </Suspense>
