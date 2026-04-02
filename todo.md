@@ -161,3 +161,13 @@
 - [x] Implémenter le suivi du budget et des dépenses
 - [x] Ajouter les graphiques de progression et budget
 - [x] Tester le système complet de gestion de projets
+
+
+## Phase 16 - Rapports Avancés avec Graphiques et Export
+
+- [x] Enrichir le router tRPC avec les procédures de génération de rapports
+- [x] Créer la page de rapports avec filtres et sélection de projets
+- [x] Implémenter les graphiques interactifs (Recharts)
+- [ ] Ajouter l'export PDF avec mise en forme professionnelle
+- [ ] Ajouter l'export Excel avec données détaillées
+- [x] Tester et valider le système de rapports

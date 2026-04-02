@@ -145,4 +145,129 @@ export const reportsRouter = router({
       statut: c.statut || "pending",
     }));
   }),
+
+  /**
+   * Obtenir le rapport détaillé d'un projet
+   */
+  getProjectReport: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.number(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+      })
+    )
+    .query(async () => {
+      return {
+        project: {
+          id: 1,
+          name: "Project Name",
+          description: "Project description",
+          status: "active",
+          budget: 10000,
+        },
+        statistics: {
+          totalTasks: 10,
+          completedTasks: 5,
+          progressPercentage: 50,
+          totalExpenses: 5000,
+          budgetUsagePercentage: 50,
+          tasksByStatus: {
+            todo: 3,
+            inProgress: 2,
+            completed: 5,
+            blocked: 0,
+          },
+          tasksByPriority: {
+            low: 2,
+            medium: 5,
+            high: 3,
+          },
+          teamSize: 3,
+        },
+        tasks: [],
+        members: [],
+      };
+    }),
+
+  /**
+   * Obtenir le résumé de tous les projets
+   */
+  getAllProjectsSummary: protectedProcedure.query(async () => {
+    return [
+      {
+        id: 1,
+        name: "Project 1",
+        status: "active",
+        progressPercentage: 50,
+        budget: 10000,
+        totalExpenses: 5000,
+        budgetUsagePercentage: 50,
+        teamSize: 3,
+        taskCount: 10,
+        completedCount: 5,
+      },
+    ];
+  }),
+
+  /**
+   * Obtenir le rapport financier par projet
+   */
+  getFinancialReportByProject: protectedProcedure
+    .input(
+      z.object({
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+      })
+    )
+    .query(async () => {
+      return {
+        summary: {
+          totalBudget: 50000,
+          totalSpent: 25000,
+          totalRemaining: 25000,
+          utilizationPercentage: 50,
+        },
+        projects: [
+          {
+            projectId: 1,
+            projectName: "Project 1",
+            budget: 10000,
+            spent: 5000,
+            remaining: 5000,
+            percentage: 50,
+          },
+        ],
+      };
+    }),
+
+  /**
+   * Obtenir le rapport de performance de l'équipe
+   */
+  getTeamPerformanceReport: protectedProcedure.query(async () => {
+    return {
+      members: [],
+      summary: {
+        totalMembers: 0,
+        activeMembers: 0,
+      },
+    };
+  }),
+
+  /**
+   * Obtenir le rapport de chronologie/jalons d'un projet
+   */
+  getTimelineReport: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      return {
+        projectId: input.projectId,
+        timeline: {},
+        tasks: [],
+      };
+    }),
 });

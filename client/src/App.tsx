@@ -43,6 +43,7 @@ const AdminMigrations = lazy(() => import("@/pages/AdminMigrations"));
 const AssociationSettings = lazy(() => import("@/pages/AssociationSettings"));
 const UserManagement = lazy(() => import("@/pages/UserManagement"));
 const Reports = lazy(() => import("@/pages/Reports"));
+const AdvancedReports = lazy(() => import("@/pages/AdvancedReports"));
 const CustomizableDashboard = lazy(() => import("@/pages/CustomizableDashboard"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -105,6 +106,7 @@ function Router() {
                 <Route path="/association-settings" component={AssociationSettings} />
                 <Route path="/admin/users" component={UserManagement} />
                 <Route path="/reports" component={Reports} />
+                <Route path="/advanced-reports" component={AdvancedReports} />
                 <Route path="/dashboard" component={CustomizableDashboard} />
                 <Route component={NotFound} />
               </Switch>
