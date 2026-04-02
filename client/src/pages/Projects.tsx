@@ -23,11 +23,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLocation } from "wouter";
 import { toast } from "sonner";
 
 export default function Projects() {
-  const [, setLocation] = useLocation();
   const [status, setStatus] = useState<string | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<any>(null);
@@ -383,7 +381,7 @@ export default function Projects() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setLocation(`/projects/${project.id}`)}
+                      onClick={() => window.location.href = `/projects/${project.id}`}
                       aria-label="Voir les détails"
                     >
                       <Eye className="h-4 w-4" />
