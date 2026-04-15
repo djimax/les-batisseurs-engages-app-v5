@@ -1,6 +1,23 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
-import { getDb } from "../db";
+import { 
+  getAllProjects, 
+  getProjectById, 
+  createProject, 
+  updateProject, 
+  deleteProject,
+  getTasksByProjectId,
+  getProjectMembers,
+  addProjectMember,
+  removeProjectMember,
+  getProjectExpenses,
+  addProjectExpense,
+  deleteProjectExpense,
+  createTask,
+  updateTask,
+  deleteTask,
+  getTaskById
+} from "../db";
 import { TRPCError } from "@trpc/server";
 
 export const projectsRouter = router({
@@ -8,18 +25,8 @@ export const projectsRouter = router({
   list: protectedProcedure
     .input(z.object({ status: z.string().optional() }).optional())
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return [];
-
       try {
-        const statusFilter = input?.status ? `AND status = '${input.status}'` : "";
-        const result = await (db as any).$client.query(`
-          SELECT id, name, description, startDate, endDate, budget, status, progress, priority, createdAt, createdBy
-          FROM projects
-          WHERE 1=1 ${statusFilter}
-          ORDER BY startDate DESC
-        `);
-        return result?.[0] || [];
+        return await getAllProjects({ status: input?.status });
       } catch (error) {
         console.error("[Projects] Error listing:", error);
         return [];
@@ -29,196 +36,193 @@ export const projectsRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return null;
-
       try {
-        const result = await (db as any).$client.query(`SELECT * FROM projects WHERE id = ${input.id}`);
-        if (!result?.[0] || result[0].length === 0) return null;
+        const project = await getProjectById(input.id);
+        if (!project) return null;
 
-        const project = result[0][0];
-
-        // Récupérer les tâches
-        const tasks = await (db as any).$client.query(`
-          SELECT id, title, description, status, priority, dueDate, assignedTo, progress, createdAt
-          FROM tasks
-          WHERE projectId = ${input.id}
-          ORDER BY priority DESC, dueDate ASC
-        `);
-
-        // Récupérer les membres assignés
-        const members = await (db as any).$client.query(`
-          SELECT DISTINCT u.id, u.name, u.email, pm.role, pm.joinedAt
-          FROM project_members pm
-          JOIN users u ON pm.userId = u.id
-          WHERE pm.projectId = ${input.id}
-          ORDER BY pm.joinedAt DESC
-        `);
-
-        // Récupérer les dépenses
-        const expenses = await (db as any).$client.query(`
-          SELECT id, description, amount, category, date, createdBy
-          FROM project_expenses
-          WHERE projectId = ${input.id}
-          ORDER BY date DESC
-        `);
-
-        // Récupérer l'historique
-        const history = await (db as any).$client.query(`
-          SELECT id, action, changedBy, changedAt, details
-          FROM project_history
-          WHERE projectId = ${input.id}
-          ORDER BY changedAt DESC
-          LIMIT 20
-        `);
+        const tasks = await getTasksByProjectId(input.id);
+        const members = await getProjectMembers(input.id);
+        const expenses = await getProjectExpenses(input.id);
 
         return {
           ...project,
-          tasks: tasks?.[0] || [],
-          members: members?.[0] || [],
-          expenses: expenses?.[0] || [],
-          history: history?.[0] || [],
+          tasks,
+          members,
+          expenses,
+          statistics: {
+            taskCount: tasks.length,
+            completedCount: tasks.filter(t => t.status === "completed").length,
+            totalExpenses: expenses.reduce((sum, e) => sum + parseFloat(e.amount.toString()), 0),
+            budgetUsagePercentage: project.budget 
+              ? Math.round((expenses.reduce((sum, e) => sum + parseFloat(e.amount.toString()), 0) / parseFloat(project.budget.toString())) * 100)
+              : 0,
+            tasksByStatus: {
+              todo: tasks.filter(t => t.status === "todo").length,
+              inProgress: tasks.filter(t => t.status === "in_progress").length,
+              completed: tasks.filter(t => t.status === "completed").length,
+              blocked: tasks.filter(t => t.status === "blocked").length,
+            }
+          }
         };
       } catch (error) {
-        console.error("[Projects] Error getting by ID:", error);
-        return null;
+        console.error("[Projects] Error getting project:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get project" });
       }
     }),
 
   create: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1, "Le nom du projet est requis"),
-        description: z.string().optional(),
-        startDate: z.string(),
-        endDate: z.string().optional(),
-        budget: z.number().optional(),
-        priority: z.enum(["low", "medium", "high", "critical"]).optional(),
-      })
-    )
+    .input(z.object({
+      name: z.string().min(1),
+      description: z.string().optional(),
+      status: z.string().optional(),
+      priority: z.string().optional(),
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
+      budget: z.string().optional(),
+    }))
     .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
       try {
-        const escapedName = input.name.replace(/'/g, "''");
-        const escapedDesc = (input.description || "").replace(/'/g, "''");
-
-        const result = await (db as any).$client.query(`
-          INSERT INTO projects (name, description, startDate, endDate, budget, priority, status, createdBy, createdAt)
-          VALUES ('${escapedName}', '${escapedDesc}', '${input.startDate}', 
-                  '${input.endDate || null}', ${input.budget || null}, '${input.priority || "medium"}', 'planning', ${ctx.user?.id || 1}, NOW())
-        `);
-
-        const projectId = result?.[0]?.insertId;
-
-        // Ajouter l'entrée dans l'historique
-        if (projectId) {
-          await (db as any).$client.query(`
-            INSERT INTO project_history (projectId, action, changedBy, changedAt, details)
-            VALUES (${projectId}, 'created', ${ctx.user?.id || 1}, NOW(), 'Projet créé')
-          `);
-        }
-
-        return { success: true, id: projectId };
+        const project = await createProject({
+          name: input.name,
+          description: input.description,
+          status: (input.status as any) || "planification",
+          priority: (input.priority as any) || "Moyenne",
+          startDate: input.startDate,
+          endDate: input.endDate,
+          budget: input.budget ? parseFloat(input.budget).toString() : "0",
+          progress: 0,
+          createdBy: ctx.user?.id,
+        });
+        return project;
       } catch (error) {
         console.error("[Projects] Error creating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la création du projet" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create project" });
       }
     }),
 
   update: protectedProcedure
-    .input(
-      z.object({
-        id: z.number(),
-        name: z.string().optional(),
-        description: z.string().optional(),
-        startDate: z.string().optional(),
-        endDate: z.string().optional(),
-        budget: z.number().optional(),
-        priority: z.enum(["low", "medium", "high", "critical"]).optional(),
-        progress: z.number().optional(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
+    .input(z.object({
+      id: z.number(),
+      name: z.string().optional(),
+      description: z.string().optional(),
+      status: z.string().optional(),
+      priority: z.string().optional(),
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
+      budget: z.string().optional(),
+      progress: z.number().optional(),
+    }))
+    .mutation(async ({ input }) => {
       try {
-        const updates: string[] = [];
-        if (input.name) updates.push(`name = '${input.name.replace(/'/g, "''")}'`);
-        if (input.description !== undefined) updates.push(`description = '${(input.description || "").replace(/'/g, "''")}'`);
-        if (input.startDate) updates.push(`startDate = '${input.startDate}'`);
-        if (input.endDate) updates.push(`endDate = '${input.endDate}'`);
-        if (input.budget !== undefined) updates.push(`budget = ${input.budget}`);
-        if (input.priority) updates.push(`priority = '${input.priority}'`);
-        if (input.progress !== undefined) updates.push(`progress = ${input.progress}`);
-
-        if (updates.length === 0) return { success: true };
-
-        await (db as any).$client.query(`
-          UPDATE projects
-          SET ${updates.join(", ")}, updatedAt = NOW()
-          WHERE id = ${input.id}
-        `);
-
-        // Ajouter l'entrée dans l'historique
-        await (db as any).$client.query(`
-          INSERT INTO project_history (projectId, action, changedBy, changedAt, details)
-          VALUES (${input.id}, 'updated', ${ctx.user?.id || 1}, NOW(), 'Projet modifié')
-        `);
-
-        return { success: true };
+        const updated = await updateProject(input.id, {
+          name: input.name,
+          description: input.description,
+          status: (input.status as any) || undefined,
+          priority: (input.priority as any) || undefined,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          budget: input.budget ? parseFloat(input.budget).toString() : undefined,
+          progress: input.progress,
+        });
+        return updated;
       } catch (error) {
         console.error("[Projects] Error updating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la modification du projet" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update project" });
+      }
+    }),
+
+  updateStatus: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      status: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        return await updateProject(input.id, { status: input.status as any });
+      } catch (error) {
+        console.error("[Projects] Error updating status:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update project status" });
       }
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
+    .mutation(async ({ input }) => {
       try {
-        // Supprimer les tâches
-        await (db as any).$client.query(`DELETE FROM tasks WHERE projectId = ${input.id}`);
-        // Supprimer les membres
-        await (db as any).$client.query(`DELETE FROM project_members WHERE projectId = ${input.id}`);
-        // Supprimer les dépenses
-        await (db as any).$client.query(`DELETE FROM project_expenses WHERE projectId = ${input.id}`);
-        // Supprimer l'historique
-        await (db as any).$client.query(`DELETE FROM project_history WHERE projectId = ${input.id}`);
-        // Supprimer le projet
-        await (db as any).$client.query(`DELETE FROM projects WHERE id = ${input.id}`);
-
+        await deleteProject(input.id);
         return { success: true };
       } catch (error) {
         console.error("[Projects] Error deleting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la suppression du projet" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete project" });
       }
     }),
 
-  updateStatus: protectedProcedure
-    .input(z.object({ id: z.number(), status: z.enum(["planning", "active", "on-hold", "completed", "cancelled"]) }))
+  // ============ TASKS CRUD ============
+  createTask: protectedProcedure
+    .input(z.object({
+      projectId: z.number(),
+      title: z.string().min(1),
+      description: z.string().optional(),
+      status: z.string().optional(),
+      priority: z.string().optional(),
+      dueDate: z.date().optional(),
+      assignedTo: z.number().optional(),
+    }))
     .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
       try {
-        await (db as any).$client.query(`UPDATE projects SET status = '${input.status}', updatedAt = NOW() WHERE id = ${input.id}`);
+        return await createTask({
+          projectId: input.projectId,
+          title: input.title,
+          description: input.description,
+          status: (input.status as any) || "todo",
+          priority: (input.priority as any) || "Moyenne",
+          dueDate: input.dueDate,
+          assignedTo: input.assignedTo,
+          createdBy: ctx.user?.id,
+        });
+      } catch (error) {
+        console.error("[Tasks] Error creating:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create task" });
+      }
+    }),
 
-        // Ajouter l'entrée dans l'historique
-        await (db as any).$client.query(`
-          INSERT INTO project_history (projectId, action, changedBy, changedAt, details)
-          VALUES (${input.id}, 'status_changed', ${ctx.user?.id || 1}, NOW(), 'Statut changé en ${input.status}')
-        `);
+  updateTask: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+      status: z.string().optional(),
+      priority: z.string().optional(),
+      dueDate: z.date().optional(),
+      assignedTo: z.number().optional(),
+      progress: z.number().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        return await updateTask(input.id, {
+          title: input.title,
+          description: input.description,
+          status: input.status as any,
+          priority: input.priority as any,
+          dueDate: input.dueDate,
+          assignedTo: input.assignedTo,
+          progress: input.progress,
+        });
+      } catch (error) {
+        console.error("[Tasks] Error updating:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update task" });
+      }
+    }),
 
+  deleteTask: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      try {
+        await deleteTask(input.id);
         return { success: true };
       } catch (error) {
-        console.error("[Projects] Error updating status:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la mise à jour du statut" });
+        console.error("[Tasks] Error deleting:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete task" });
       }
     }),
 
@@ -226,72 +230,45 @@ export const projectsRouter = router({
   getMembers: protectedProcedure
     .input(z.object({ projectId: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return [];
-
       try {
-        const result = await (db as any).$client.query(`
-          SELECT u.id, u.name, u.email, pm.role, pm.joinedAt
-          FROM project_members pm
-          JOIN users u ON pm.userId = u.id
-          WHERE pm.projectId = ${input.projectId}
-          ORDER BY pm.joinedAt DESC
-        `);
-        return result?.[0] || [];
+        return await getProjectMembers(input.projectId);
       } catch (error) {
-        console.error("[Projects] Error getting members:", error);
+        console.error("[ProjectMembers] Error listing:", error);
         return [];
       }
     }),
 
   addMember: protectedProcedure
-    .input(z.object({ projectId: z.number(), userId: z.number(), role: z.string().optional() }))
-    .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
+    .input(z.object({
+      projectId: z.number(),
+      userId: z.number(),
+      role: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
       try {
-        await (db as any).$client.query(`
-          INSERT INTO project_members (projectId, userId, role, joinedAt)
-          VALUES (${input.projectId}, ${input.userId}, '${input.role || "member"}', NOW())
-          ON DUPLICATE KEY UPDATE role = '${input.role || "member"}'
-        `);
-
-        // Ajouter l'entrée dans l'historique
-        await (db as any).$client.query(`
-          INSERT INTO project_history (projectId, action, changedBy, changedAt, details)
-          VALUES (${input.projectId}, 'member_added', ${ctx.user?.id || 1}, NOW(), 'Membre ajouté')
-        `);
-
-        return { success: true };
+        return await addProjectMember({
+          projectId: input.projectId,
+          userId: input.userId,
+          role: input.role || "member",
+        });
       } catch (error) {
-        console.error("[Projects] Error adding member:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de l'ajout du membre" });
+        console.error("[ProjectMembers] Error adding:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to add member" });
       }
     }),
 
   removeMember: protectedProcedure
-    .input(z.object({ projectId: z.number(), userId: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
+    .input(z.object({
+      projectId: z.number(),
+      userId: z.number(),
+    }))
+    .mutation(async ({ input }) => {
       try {
-        await (db as any).$client.query(`
-          DELETE FROM project_members
-          WHERE projectId = ${input.projectId} AND userId = ${input.userId}
-        `);
-
-        // Ajouter l'entrée dans l'historique
-        await (db as any).$client.query(`
-          INSERT INTO project_history (projectId, action, changedBy, changedAt, details)
-          VALUES (${input.projectId}, 'member_removed', ${ctx.user?.id || 1}, NOW(), 'Membre supprimé')
-        `);
-
+        await removeProjectMember(input.projectId, input.userId);
         return { success: true };
       } catch (error) {
-        console.error("[Projects] Error removing member:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la suppression du membre" });
+        console.error("[ProjectMembers] Error removing:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to remove member" });
       }
     }),
 
@@ -299,124 +276,49 @@ export const projectsRouter = router({
   getExpenses: protectedProcedure
     .input(z.object({ projectId: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return [];
-
       try {
-        const result = await (db as any).$client.query(`
-          SELECT id, description, amount, category, date, createdBy, createdAt
-          FROM project_expenses
-          WHERE projectId = ${input.projectId}
-          ORDER BY date DESC
-        `);
-        return result?.[0] || [];
+        return await getProjectExpenses(input.projectId);
       } catch (error) {
-        console.error("[Projects] Error getting expenses:", error);
+        console.error("[ProjectExpenses] Error listing:", error);
         return [];
       }
     }),
 
   addExpense: protectedProcedure
-    .input(
-      z.object({
-        projectId: z.number(),
-        description: z.string(),
-        amount: z.number(),
-        category: z.string().optional(),
-        date: z.string(),
-      })
-    )
+    .input(z.object({
+      projectId: z.number(),
+      title: z.string().min(1),
+      description: z.string().optional(),
+      amount: z.string(),
+      category: z.string().optional(),
+      date: z.date().optional(),
+    }))
     .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
       try {
-        const escapedDesc = input.description.replace(/'/g, "''");
-        const result = await (db as any).$client.query(`
-          INSERT INTO project_expenses (projectId, description, amount, category, date, createdBy, createdAt)
-          VALUES (${input.projectId}, '${escapedDesc}', ${input.amount}, '${input.category || "other"}', '${input.date}', ${ctx.user?.id || 1}, NOW())
-        `);
-
-        return { success: true, id: result?.[0]?.insertId };
+        return await addProjectExpense({
+          projectId: input.projectId,
+          title: input.title,
+          description: input.description,
+          amount: parseFloat(input.amount).toString(),
+          category: input.category,
+          date: input.date,
+          createdBy: ctx.user?.id,
+        });
       } catch (error) {
-        console.error("[Projects] Error adding expense:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de l'ajout de la dépense" });
+        console.error("[ProjectExpenses] Error adding:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to add expense" });
       }
     }),
 
   deleteExpense: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
       try {
-        await (db as any).$client.query(`DELETE FROM project_expenses WHERE id = ${input.id}`);
+        await deleteProjectExpense(input.id);
         return { success: true };
       } catch (error) {
-        console.error("[Projects] Error deleting expense:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la suppression de la dépense" });
-      }
-    }),
-
-  // ============ PROJECT STATISTICS ============
-  getStats: protectedProcedure
-    .input(z.object({ projectId: z.number() }))
-    .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return null;
-
-      try {
-        // Récupérer les infos du projet
-        const projectResult = await (db as any).$client.query(`
-          SELECT budget, progress FROM projects WHERE id = ${input.projectId}
-        `);
-
-        if (!projectResult?.[0] || projectResult[0].length === 0) return null;
-
-        const project = projectResult[0][0];
-
-        // Calculer les dépenses totales
-        const expensesResult = await (db as any).$client.query(`
-          SELECT SUM(amount) as total FROM project_expenses WHERE projectId = ${input.projectId}
-        `);
-
-        const totalExpenses = expensesResult?.[0]?.[0]?.total || 0;
-
-        // Compter les tâches
-        const tasksResult = await (db as any).$client.query(`
-          SELECT 
-            COUNT(*) as total,
-            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-            SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as inProgress
-          FROM tasks WHERE projectId = ${input.projectId}
-        `);
-
-        const tasks = tasksResult?.[0]?.[0] || { total: 0, completed: 0, inProgress: 0 };
-
-        // Compter les membres
-        const membersResult = await (db as any).$client.query(`
-          SELECT COUNT(*) as total FROM project_members WHERE projectId = ${input.projectId}
-        `);
-
-        const members = membersResult?.[0]?.[0]?.total || 0;
-
-        return {
-          budget: project.budget || 0,
-          spent: totalExpenses,
-          remaining: (project.budget || 0) - totalExpenses,
-          progress: project.progress || 0,
-          tasks: {
-            total: tasks.total,
-            completed: tasks.completed,
-            inProgress: tasks.inProgress,
-            pending: tasks.total - tasks.completed - tasks.inProgress,
-          },
-          members,
-        };
-      } catch (error) {
-        console.error("[Projects] Error getting stats:", error);
-        return null;
+        console.error("[ProjectExpenses] Error deleting:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete expense" });
       }
     }),
 });

@@ -98,9 +98,9 @@ export default function Projects() {
           id: editingProject.id,
           name: formData.name,
           description: formData.description,
-          startDate: formData.startDate,
-          endDate: formData.endDate || undefined,
-          budget: formData.budget ? parseInt(formData.budget) : undefined,
+          startDate: formData.startDate ? new Date(formData.startDate) : undefined,
+          endDate: formData.endDate ? new Date(formData.endDate) : undefined,
+          budget: formData.budget ? formData.budget.toString() : undefined,
           priority: formData.priority as any,
         });
         toast.success("Projet modifié avec succès");
@@ -108,9 +108,9 @@ export default function Projects() {
         await createMutation.mutateAsync({
           name: formData.name,
           description: formData.description,
-          startDate: formData.startDate,
-          endDate: formData.endDate || undefined,
-          budget: formData.budget ? parseInt(formData.budget) : undefined,
+          startDate: formData.startDate ? new Date(formData.startDate) : undefined,
+          endDate: formData.endDate ? new Date(formData.endDate) : undefined,
+          budget: formData.budget ? formData.budget.toString() : undefined,
           priority: formData.priority as any,
         });
         toast.success("Projet créé avec succès");

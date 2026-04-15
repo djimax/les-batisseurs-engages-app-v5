@@ -39,7 +39,7 @@ export default function ProjectDetail() {
   const [newExpenseData, setNewExpenseData] = useState({ description: "", amount: "", category: "other", date: new Date().toISOString().split("T")[0] });
 
   const { data: project, isLoading, error } = trpc.projects.getById.useQuery({ id: projectId });
-  const { data: stats } = trpc.projects.getStats.useQuery({ projectId });
+  // const { data: stats } = trpc.projects.getStats.useQuery({ projectId });
   const { data: members } = trpc.projects.getMembers.useQuery({ projectId });
   const { data: expenses } = trpc.projects.getExpenses.useQuery({ projectId });
 
@@ -92,7 +92,7 @@ export default function ProjectDetail() {
     try {
       await updateTaskStatusMutation.mutateAsync({ id: taskId, status: status as any });
       utils.projects.getById.invalidate({ id: projectId });
-      utils.projects.getStats.invalidate({ projectId });
+      // utils.projects.getStats.invalidate({ projectId });
     } catch (err) {
       console.error("Erreur:", err);
       toast.error("Erreur lors de la mise à jour");
@@ -108,16 +108,17 @@ export default function ProjectDetail() {
     try {
       await addExpenseMutation.mutateAsync({
         projectId,
+        title: newExpenseData.description,
         description: newExpenseData.description,
-        amount: parseFloat(newExpenseData.amount),
+        amount: newExpenseData.amount,
         category: newExpenseData.category,
-        date: newExpenseData.date,
+        date: newExpenseData.date ? new Date(newExpenseData.date) : undefined,
       });
       toast.success("Dépense ajoutée avec succès");
       setNewExpenseData({ description: "", amount: "", category: "other", date: new Date().toISOString().split("T")[0] });
       setIsAddingExpense(false);
       utils.projects.getExpenses.invalidate({ projectId });
-      utils.projects.getStats.invalidate({ projectId });
+      // utils.projects.getStats.invalidate({ projectId });
     } catch (err) {
       console.error("Erreur:", err);
       toast.error("Erreur lors de l'ajout de la dépense");
@@ -131,7 +132,7 @@ export default function ProjectDetail() {
       await deleteExpenseMutation.mutateAsync({ id: expenseId });
       toast.success("Dépense supprimée avec succès");
       utils.projects.getExpenses.invalidate({ projectId });
-      utils.projects.getStats.invalidate({ projectId });
+      // utils.projects.getStats.invalidate({ projectId });
     } catch (err) {
       console.error("Erreur:", err);
       toast.error("Erreur lors de la suppression");
@@ -212,15 +213,15 @@ export default function ProjectDetail() {
       </div>
 
       {/* Statistiques */}
-      {stats && (
+      {project && (
         <div className="grid gap-4 md:grid-cols-5">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Progression</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.progress}%</div>
-              <Progress value={stats.progress} className="mt-2 h-2" />
+              <div className="text-2xl font-bold">{project?.progress || 0}%</div>
+              <Progress value={project?.progress || 0} className="mt-2 h-2" />
             </CardContent>
           </Card>
 
@@ -229,8 +230,8 @@ export default function ProjectDetail() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Budget</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.budget.toLocaleString()} €</div>
-              <p className="text-xs text-muted-foreground mt-1">Dépensé: {stats.spent.toLocaleString()} €</p>
+              <div className="text-2xl font-bold">{parseFloat(project?.budget || '0').toLocaleString()} €</div>
+              <p className="text-xs text-muted-foreground mt-1">Dépensé: {(expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0).toLocaleString()} €</p>
             </CardContent>
           </Card>
 
@@ -239,7 +240,7 @@ export default function ProjectDetail() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Tâches</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.tasks.completed}/{stats.tasks.total}</div>
+              <div className="text-2xl font-bold">{project?.tasks?.filter(t => t.status === 'completed').length || 0}/{project?.tasks?.length || 0}</div>
               <p className="text-xs text-muted-foreground mt-1">Complétées</p>
             </CardContent>
           </Card>
@@ -249,7 +250,7 @@ export default function ProjectDetail() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Membres</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.members}</div>
+              <div className="text-2xl font-bold">{members?.length || 0}</div>
             </CardContent>
           </Card>
 
@@ -258,7 +259,7 @@ export default function ProjectDetail() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Restant</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.remaining.toLocaleString()} €</div>
+              <div className="text-2xl font-bold">{(parseFloat(project?.budget || '0') - (expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0)).toLocaleString()} €</div>
               <p className="text-xs text-muted-foreground mt-1">Budget</p>
             </CardContent>
           </Card>
@@ -285,7 +286,7 @@ export default function ProjectDetail() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Date de début</p>
-                  <p className="font-medium">{new Date(project.startDate).toLocaleDateString("fr-FR")}</p>
+                  <p className="font-medium">{project.startDate ? new Date(project.startDate).toLocaleDateString("fr-FR") : "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Date de fin</p>
@@ -394,7 +395,7 @@ export default function ProjectDetail() {
                         {task.dueDate && (
                           <p className="text-xs text-muted-foreground mt-2">
                             <Clock className="h-3 w-3 inline mr-1" />
-                            {new Date(task.dueDate).toLocaleDateString("fr-FR")}
+                            {task.dueDate ? new Date(task.dueDate).toLocaleDateString("fr-FR") : "N/A"}
                           </p>
                         )}
                       </div>
@@ -531,7 +532,7 @@ export default function ProjectDetail() {
             </Dialog>
           </div>
 
-          {stats && (
+          {project && (
             <Card>
               <CardHeader>
                 <CardTitle>Résumé du budget</CardTitle>
@@ -540,20 +541,20 @@ export default function ProjectDetail() {
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Budget alloué</p>
-                    <p className="text-2xl font-bold">{stats.budget.toLocaleString()} €</p>
+                    <p className="text-2xl font-bold">{parseFloat(project?.budget || '0').toLocaleString()} €</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Dépensé</p>
-                    <p className="text-2xl font-bold text-orange-600">{stats.spent.toLocaleString()} €</p>
+                    <p className="text-2xl font-bold text-orange-600">{(expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0).toLocaleString()} €</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Restant</p>
-                    <p className="text-2xl font-bold text-green-600">{stats.remaining.toLocaleString()} €</p>
+                    <p className="text-2xl font-bold text-green-600">{(parseFloat(project?.budget || '0') - (expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0)).toLocaleString()} €</p>
                   </div>
                 </div>
-                <Progress value={(stats.spent / stats.budget) * 100} className="h-2" />
+                <Progress value={((expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0) / parseFloat(project?.budget || '1')) * 100} className="h-2" />
                 <p className="text-sm text-muted-foreground">
-                  {((stats.spent / stats.budget) * 100).toFixed(1)}% du budget utilisé
+                  {(((expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0) / parseFloat(project?.budget || '1')) * 100).toFixed(1)}% du budget utilisé
                 </p>
               </CardContent>
             </Card>
@@ -568,7 +569,7 @@ export default function ProjectDetail() {
                       <div>
                         <p className="font-medium">{expense.description}</p>
                         <p className="text-sm text-muted-foreground">
-                          {expense.category} • {new Date(expense.date).toLocaleDateString("fr-FR")}
+                          {expense.category} • {expense.date ? new Date(expense.date).toLocaleDateString("fr-FR") : "N/A"}
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
@@ -602,23 +603,9 @@ export default function ProjectDetail() {
               <CardTitle>Historique des modifications</CardTitle>
             </CardHeader>
             <CardContent>
-              {project.history && project.history.length > 0 ? (
-                <div className="space-y-2">
-                  {project.history.map((entry: any, idx: number) => (
-                    <div key={idx} className="flex items-start gap-4 p-2 border-l-2 border-muted">
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {new Date(entry.changedAt).toLocaleString("fr-FR")}
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">{entry.action}</p>
-                        <p className="text-sm text-muted-foreground">{entry.details}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-center py-4">Aucun historique</p>
-              )}
+              <div className="text-sm text-muted-foreground">
+                L'historique des modifications sera disponible dans une version future.
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
