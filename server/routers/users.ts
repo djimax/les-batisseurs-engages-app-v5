@@ -186,6 +186,62 @@ export const usersRouter = router({
   }),
 
   /**
+   * Create a new user (admin only)
+   */
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1, "Name is required"),
+        email: z.string().email("Invalid email"),
+        role: z.enum(["admin", "gestionnaire", "lecteur"]).default("lecteur"),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      requireAdmin(ctx.user);
+
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection not available",
+        });
+      }
+
+      try {
+        // Check if user already exists
+        const existing = await db.select().from(users).where(eq(users.email, input.email)).limit(1);
+        if (existing.length > 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "User with this email already exists",
+          });
+        }
+
+        // Create new user
+        await db.insert(users).values({
+          openId: `email-${input.email}-${Date.now()}`,
+          name: input.name,
+          email: input.email,
+          role: input.role,
+          loginMethod: "email",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        return {
+          success: true,
+          message: `User ${input.name} created successfully`,
+        };
+      } catch (error: any) {
+        if (error.code === "BAD_REQUEST") throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Failed to create user: ${error.message}`,
+        });
+      }
+    }),
+
+  /**
    * Get all available roles with descriptions
    */
   getRoles: protectedProcedure.query(() => {
