@@ -205,7 +205,7 @@ export default function ProjectDetail() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{project.name}</h1>
+            <h1 className="text-3xl font-bold">{project.title}</h1>
             <p className="text-muted-foreground">{project.description}</p>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function ProjectDetail() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Tâches</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{project?.tasks?.filter(t => t.status === 'completed').length || 0}/{project?.tasks?.length || 0}</div>
+              <div className="text-2xl font-bold">{project?.tasks?.filter(t => t.status === 'done').length || 0}/{project?.tasks?.length || 0}</div>
               <p className="text-xs text-muted-foreground mt-1">Complétées</p>
             </CardContent>
           </Card>
@@ -294,10 +294,7 @@ export default function ProjectDetail() {
                     {project.endDate ? new Date(project.endDate).toLocaleDateString("fr-FR") : "N/A"}
                   </p>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Priorité</p>
-                  <p className="font-medium">{project.priority}</p>
-                </div>
+
                 <div>
                   <p className="text-sm text-muted-foreground">Créé par</p>
                   <p className="font-medium">{project.createdBy}</p>

@@ -833,15 +833,15 @@ export type InsertWidgetTemplate = typeof widgetTemplates.$inferInsert;
  */
 export const projects = mysqlTable("projects", {
   id: int("id").autoincrement().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  status: mysqlEnum("status", ["planification", "en_cours", "suspendu", "termine", "annule"]).default("planification").notNull(),
-  priority: mysqlEnum("priority", ["Basse", "Moyenne", "Haute"]).default("Moyenne").notNull(),
+  status: mysqlEnum("status", ["planning", "in-progress", "on-hold", "completed", "cancelled"]).default("planning").notNull(),
   startDate: timestamp("startDate"),
   endDate: timestamp("endDate"),
-  budget: decimal("budget", { precision: 12, scale: 2 }).default("0"),
+  budget: decimal("budget", { precision: 10, scale: 2 }),
+  spent: decimal("spent", { precision: 10, scale: 2 }).default("0"),
   progress: int("progress").default(0), // 0-100
-  createdBy: int("createdBy"),
+  createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -857,12 +857,12 @@ export const tasks = mysqlTable("tasks", {
   projectId: int("projectId").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  status: mysqlEnum("status", ["todo", "in_progress", "completed", "blocked"]).default("todo").notNull(),
-  priority: mysqlEnum("priority", ["Basse", "Moyenne", "Haute"]).default("Moyenne").notNull(),
-  dueDate: timestamp("dueDate"),
+  status: mysqlEnum("status", ["todo", "in-progress", "review", "done", "cancelled"]).default("todo").notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
   assignedTo: int("assignedTo"),
-  progress: int("progress").default(0), // 0-100
-  createdBy: int("createdBy"),
+  dueDate: timestamp("dueDate"),
+  completedAt: timestamp("completedAt"),
+  createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

@@ -51,16 +51,15 @@ export const projectsRouter = router({
           expenses,
           statistics: {
             taskCount: tasks.length,
-            completedCount: tasks.filter(t => t.status === "completed").length,
+            completedCount: tasks.filter(t => t.status === "done").length,
             totalExpenses: expenses.reduce((sum, e) => sum + parseFloat(e.amount.toString()), 0),
             budgetUsagePercentage: project.budget 
               ? Math.round((expenses.reduce((sum, e) => sum + parseFloat(e.amount.toString()), 0) / parseFloat(project.budget.toString())) * 100)
               : 0,
             tasksByStatus: {
               todo: tasks.filter(t => t.status === "todo").length,
-              inProgress: tasks.filter(t => t.status === "in_progress").length,
-              completed: tasks.filter(t => t.status === "completed").length,
-              blocked: tasks.filter(t => t.status === "blocked").length,
+            inProgress: tasks.filter(t => t.status === "in-progress").length,
+            completed: tasks.filter(t => t.status === "done").length,
             }
           }
         };
@@ -72,10 +71,9 @@ export const projectsRouter = router({
 
   create: protectedProcedure
     .input(z.object({
-      name: z.string().min(1),
+      title: z.string().min(1),
       description: z.string().optional(),
       status: z.string().optional(),
-      priority: z.string().optional(),
       startDate: z.date().optional(),
       endDate: z.date().optional(),
       budget: z.string().optional(),
@@ -83,15 +81,14 @@ export const projectsRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const project = await createProject({
-          name: input.name,
+          title: input.title,
           description: input.description,
-          status: (input.status as any) || "planification",
-          priority: (input.priority as any) || "Moyenne",
+          status: (input.status as any) || "planning",
           startDate: input.startDate,
           endDate: input.endDate,
-          budget: input.budget ? parseFloat(input.budget).toString() : "0",
+          budget: input.budget ? parseFloat(input.budget).toString() : undefined,
           progress: 0,
-          createdBy: ctx.user?.id,
+          createdBy: ctx.user?.id || 0,
         });
         return project;
       } catch (error) {
@@ -103,10 +100,9 @@ export const projectsRouter = router({
   update: protectedProcedure
     .input(z.object({
       id: z.number(),
-      name: z.string().optional(),
+      title: z.string().optional(),
       description: z.string().optional(),
       status: z.string().optional(),
-      priority: z.string().optional(),
       startDate: z.date().optional(),
       endDate: z.date().optional(),
       budget: z.string().optional(),
@@ -115,14 +111,12 @@ export const projectsRouter = router({
     .mutation(async ({ input }) => {
       try {
         const updated = await updateProject(input.id, {
-          name: input.name,
+          title: input.title,
           description: input.description,
           status: (input.status as any) || undefined,
-          priority: (input.priority as any) || undefined,
           startDate: input.startDate,
           endDate: input.endDate,
           budget: input.budget ? parseFloat(input.budget).toString() : undefined,
-          progress: input.progress,
         });
         return updated;
       } catch (error) {
@@ -206,7 +200,6 @@ export const projectsRouter = router({
           priority: input.priority as any,
           dueDate: input.dueDate,
           assignedTo: input.assignedTo,
-          progress: input.progress,
         });
       } catch (error) {
         console.error("[Tasks] Error updating:", error);
