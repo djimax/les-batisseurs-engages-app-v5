@@ -1114,7 +1114,8 @@ export async function createTask(data: InsertTask) {
 
   try {
     const result = await db.insert(tasks).values(data);
-    return { id: result[0].insertId, ...data };
+    const insertId = (result as any).insertId || (result as any)[0]?.insertId || 0;
+    return { id: insertId, ...data };
   } catch (error) {
     console.error("[Database] Error creating task:", error);
     throw error;
