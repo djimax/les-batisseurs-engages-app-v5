@@ -195,3 +195,10 @@
 - [x] Corriger les erreurs MySQL non-promise dans Invoices router
 - [x] Ajouter les tests Vitest pour le router attachments
 - [x] Vérifier la compilation TypeScript sans erreurs
+
+## Phase 20 - Corrections des Boutons Non-Fonctionnels
+
+- [x] Corriger le bouton "Nouveau Budget" (import useState manquant)
+- [x] Corriger le bouton "Nouvelle Facture" (import useState manquant)
+- [x] Corriger le bouton "Nouveau Contact" dans CRM (import useState présent)
+- [x] Corriger le bouton "Créer Nouveau Rôle" (import useState manquant)
