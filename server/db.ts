@@ -27,7 +27,8 @@ import {
   projects, InsertProject, Project,
   tasks, InsertTask, Task,
   projectMembers, InsertProjectMember, ProjectMember,
-  projectExpenses, InsertProjectExpense, ProjectExpense
+  projectExpenses, InsertProjectExpense, ProjectExpense,
+  taskAttachments, InsertTaskAttachment, TaskAttachment
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1219,6 +1220,47 @@ export async function deleteProjectExpense(id: number) {
     await db.delete(projectExpenses).where(eq(projectExpenses.id, id));
   } catch (error) {
     console.error("[Database] Error deleting project expense:", error);
+    throw error;
+  }
+}
+
+
+// Task Attachments Functions
+export async function createTaskAttachment(data: InsertTaskAttachment) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(taskAttachments).values(data);
+    const insertId = (result as any).insertId || (result as any)[0]?.insertId || 0;
+    return { id: insertId, ...data };
+  } catch (error) {
+    console.error("[Database] Error creating task attachment:", error);
+    throw error;
+  }
+}
+
+export async function getTaskAttachments(taskId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    return await db.select().from(taskAttachments).where(eq(taskAttachments.taskId, taskId));
+  } catch (error) {
+    console.error("[Database] Error getting task attachments:", error);
+    throw error;
+  }
+}
+
+export async function deleteTaskAttachment(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    await db.delete(taskAttachments).where(eq(taskAttachments.id, id));
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Error deleting task attachment:", error);
     throw error;
   }
 }

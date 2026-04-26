@@ -11,7 +11,7 @@ export const budgetsRouter = router({
 
       try {
         const year = input?.year || new Date().getFullYear();
-        const result = await (db as any).$client.query(`
+        const result = await (db as any).$client.promise().query(`
           SELECT id, name, description, year, totalAmount, status, createdAt, updatedAt 
           FROM budgets 
           WHERE year = ${year}
@@ -31,10 +31,10 @@ export const budgetsRouter = router({
       if (!db) return null;
 
       try {
-        const result = await (db as any).$client.query(`SELECT * FROM budgets WHERE id = ${input.id}`);
+        const result = await (db as any).$client.promise().query(`SELECT * FROM budgets WHERE id = ${input.id}`);
         if (!result?.[0] || result[0].length === 0) return null;
 
-        const linesResult = await (db as any).$client.query(`
+        const linesResult = await (db as any).$client.promise().query(`
           SELECT * FROM budget_lines WHERE budgetId = ${input.id} ORDER BY lineNumber
         `);
 

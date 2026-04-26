@@ -903,3 +903,21 @@ export const projectExpenses = mysqlTable("project_expenses", {
 
 export type ProjectExpense = typeof projectExpenses.$inferSelect;
 export type InsertProjectExpense = typeof projectExpenses.$inferInsert;
+
+
+// Task Attachments Table
+export const taskAttachments = mysqlTable("task_attachments", {
+  id: int("id").primaryKey().autoincrement(),
+  taskId: int("task_id").notNull().references(() => tasks.id, { onDelete: "cascade" }),
+  fileName: varchar("file_name", { length: 255 }).notNull(),
+  fileKey: varchar("file_key", { length: 500 }).notNull(), // S3 key
+  fileUrl: text("file_url").notNull(), // S3 URL
+  fileSize: int("file_size").notNull(), // in bytes
+  mimeType: varchar("mime_type", { length: 100 }).notNull(),
+  uploadedBy: int("uploaded_by").notNull().references(() => users.id, { onDelete: "set null" }),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type TaskAttachment = typeof taskAttachments.$inferSelect;
+export type InsertTaskAttachment = typeof taskAttachments.$inferInsert;

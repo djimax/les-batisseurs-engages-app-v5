@@ -26,6 +26,7 @@ import {
 import { AlertCircle, Plus, ArrowLeft, Edit2, Trash2, CheckCircle, Clock, AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { AttachmentsSection } from "@/components/AttachmentsSection";
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -417,6 +418,10 @@ export default function ProjectDetail() {
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
                       </div>
+                    </div>
+                    {/* Attachments Section */}
+                    <div className="mt-4 pt-4 border-t">
+                      <AttachmentsSection taskId={task.id} />
                     </div>
                   </CardContent>
                 </Card>

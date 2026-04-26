@@ -12,7 +12,7 @@ export const invoicesRouter = router({
       try {
         const statusFilter = input?.status ? `AND status = '${input.status}'` : "";
         const limit = input?.limit || 50;
-        const result = await (db as any).$client.query(`
+        const result = await (db as any).$client.promise().query(`
           SELECT id, invoiceNumber, invoiceDate, dueDate, totalAmount, paidAmount, status, createdAt
           FROM invoices
           WHERE 1=1 ${statusFilter}
@@ -42,7 +42,7 @@ export const invoicesRouter = router({
       if (!db) throw new Error("Database not available");
 
       try {
-        const result = await (db as any).$client.query(`
+        const result = await (db as any).$client.promise().query(`
           INSERT INTO invoices (invoiceNumber, invoiceDate, dueDate, totalAmount, description, supplierId, createdBy, status)
           VALUES ('${input.invoiceNumber}', '${input.invoiceDate}', '${input.dueDate}', ${input.totalAmount}, 
                   '${input.description || ""}', ${input.supplierId || null}, ${ctx.user?.id || 1}, 'draft')

@@ -43,6 +43,13 @@
       "when": 1776225528479,
       "tag": "0005_bright_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1777193997789,
+      "tag": "0006_awesome_violations",
+      "breakpoints": true
     }
   ]
 }

@@ -171,3 +171,27 @@
 - [ ] Ajouter l'export PDF avec mise en forme professionnelle
 - [ ] Ajouter l'export Excel avec données détaillées
 - [x] Tester et valider le système de rapports
+
+## Phase 17 - Corrections des Erreurs Existantes
+- [x] Corriger les erreurs React Hook dans ProjectDetail
+- [x] Corriger les erreurs WebSocket
+- [x] Aligner le schéma Drizzle avec la structure TiDB
+- [x] Corriger les types TypeScript
+
+
+## Phase 18 - Pièces Jointes pour les Tâches
+
+- [x] Créer la table task_attachments dans le schéma Drizzle
+- [x] Générer la migration SQL pour task_attachments
+- [x] Ajouter les procédures tRPC (uploadAttachment, getTaskAttachments, deleteAttachment)
+- [x] Créer le composant d'upload de fichiers avec drag-and-drop
+- [x] Intégrer l'affichage des pièces jointes dans ProjectDetail
+- [ ] Ajouter la gestion des permissions pour les fichiers
+- [x] Tester l'upload et le téléchargement de fichiers
+
+## Phase 19 - Corrections et Améliorations
+
+- [x] Corriger les erreurs MySQL non-promise dans Budgets router
+- [x] Corriger les erreurs MySQL non-promise dans Invoices router
+- [x] Ajouter les tests Vitest pour le router attachments
+- [x] Vérifier la compilation TypeScript sans erreurs
