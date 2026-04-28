@@ -221,3 +221,5 @@
 ## Phase 22 - Corrections des Bugs Additionnels
 
 - [x] Corriger le bouton "Nouveau Projet" (logique Dialog simplifiée)
+- [x] Corriger le bouton "Nouvelle Facture" (import useState présent, pattern simple)
+- [x] Corriger le bouton "Créer Nouvelle Campagne" (import useState présent, pattern simple)
