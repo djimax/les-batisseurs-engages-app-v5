@@ -177,9 +177,12 @@ export default function Projects() {
           <h1 className="text-3xl font-bold">Projets</h1>
           <p className="text-muted-foreground">Gestion des projets et initiatives</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          if (!open) handleCloseDialog();
+          else handleOpenDialog();
+        }}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()} className="gap-2">
+            <Button className="gap-2">
               <Plus className="h-4 w-4" />
               Nouveau Projet
             </Button>

@@ -216,3 +216,8 @@
 - [x] Intégrer le tableau de bord personnalisable dans Home.tsx
 - [ ] Ajouter les tests Vitest pour les routers de widgets
 - [x] Tester et valider le système complet de widgets (TypeScript compile sans erreurs)
+
+
+## Phase 22 - Corrections des Bugs Additionnels
+
+- [x] Corriger le bouton "Nouveau Projet" (logique Dialog simplifiée)
