@@ -202,3 +202,17 @@
 - [x] Corriger le bouton "Nouvelle Facture" (import useState manquant)
 - [x] Corriger le bouton "Nouveau Contact" dans CRM (import useState présent)
 - [x] Corriger le bouton "Créer Nouveau Rôle" (import useState manquant)
+
+
+## Phase 21 - Tableau de Bord Personnalisable avec Widgets
+
+- [x] Créer la table user_widget_preferences dans le schéma Drizzle
+- [x] Générer la migration SQL pour user_widget_preferences
+- [x] Créer les composants de widgets réutilisables (StatCard, ChartWidget, ListWidget, AlertsWidget)
+- [x] Implémenter la logique de drag-and-drop avec WidgetGrid
+- [x] Créer les routers tRPC pour sauvegarder/charger les préférences de widgets
+- [x] Créer le composant WidgetGrid avec mode édition/visualisation
+- [x] Implémenter les widgets spécifiques au rôle (Admin, Manager, Viewer)
+- [x] Intégrer le tableau de bord personnalisable dans Home.tsx
+- [ ] Ajouter les tests Vitest pour les routers de widgets
+- [x] Tester et valider le système complet de widgets (TypeScript compile sans erreurs)

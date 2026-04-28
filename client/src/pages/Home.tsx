@@ -1,10 +1,16 @@
-import { trpc } from "@/lib/trpc";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { WidgetGrid, WidgetItem } from "@/components/widgets/WidgetGrid";
+import { StatCard as StatCardWidget } from "@/components/widgets/StatCard";
+import { ChartWidget } from "@/components/widgets/ChartWidget";
+import { AlertsWidget } from "@/components/widgets/AlertsWidget";
+import { ListWidget } from "@/components/widgets/ListWidget";
 import {
   FileText,
   Users,

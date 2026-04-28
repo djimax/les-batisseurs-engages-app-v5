@@ -921,3 +921,26 @@ export const taskAttachments = mysqlTable("task_attachments", {
 
 export type TaskAttachment = typeof taskAttachments.$inferSelect;
 export type InsertTaskAttachment = typeof taskAttachments.$inferInsert;
+
+/**
+ * User widget preferences for customizable dashboard
+ */
+export const userWidgetPreferences = mysqlTable("user_widget_preferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  widgetId: varchar("widgetId", { length: 100 }).notNull(),
+  widgetType: varchar("widgetType", { length: 50 }).notNull(), // 'stats', 'chart', 'list', 'alerts'
+  title: varchar("title", { length: 255 }).notNull(),
+  position: int("position").notNull(), // Order in the grid
+  isVisible: boolean("isVisible").default(true).notNull(),
+  width: int("width").default(1).notNull(), // Grid width (1-4)
+  height: int("height").default(1).notNull(), // Grid height (1-3)
+  config: json("config").$type<Record<string, any>>().default({}), // Widget-specific configuration
+  refreshInterval: int("refreshInterval").default(300), // Refresh interval in seconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserWidgetPreference = typeof userWidgetPreferences.$inferSelect;
+export type InsertUserWidgetPreference = typeof userWidgetPreferences.$inferInsert;
+
