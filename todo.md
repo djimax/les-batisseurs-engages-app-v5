@@ -223,3 +223,32 @@
 - [x] Corriger le bouton "Nouveau Projet" (logique Dialog simplifiée)
 - [x] Corriger le bouton "Nouvelle Facture" (import useState présent, pattern simple)
 - [x] Corriger le bouton "Créer Nouvelle Campagne" (import useState présent, pattern simple)
+
+## Phase 24 - Modales de Formulaires et Intégrations
+
+- [x] Créer le composant ProjectFormDialog
+- [x] Créer le composant MemberFormDialog
+- [x] Créer le composant DocumentFormDialog
+- [x] Créer le composant AdhesionFormDialog
+- [x] Intégrer ProjectFormDialog dans Projects.tsx
+- [x] Intégrer MemberFormDialog dans Members.tsx
+- [x] Intégrer DocumentFormDialog dans Documents.tsx
+- [x] Intégrer AdhesionFormDialog dans Memberships.tsx
+- [ ] Tester toutes les modales de formulaires
+- [ ] Sauvegarder checkpoint final
+
+
+## Phase 23 - Système d'ID Cohérent pour Membres et Adhérents
+
+- [x] Analyser le schéma actuel (tables members et adhesions)
+- [x] Ajouter une colonne memberID auto-générée dans la table members
+- [x] Ajouter une colonne adhesionID auto-générée dans la table adhesions
+- [x] Créer des routers tRPC pour rechercher par ID ou nom
+- [x] Créer un composant MemberSearchBox avec recherche bidirectionnelle
+- [x] Créer le composant AdhesionFormDialog
+- [x] Intégrer AdhesionFormDialog dans Memberships.tsx
+- [ ] Appliquer la migration SQL pour les colonnes ID
+- [ ] Intégrer la recherche dans Members.tsx
+- [ ] Intégrer la recherche dans CRMContacts.tsx
+- [ ] Ajouter les tests Vitest pour les routers de recherche
+- [ ] Tester et valider le système complet

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Plus, Users } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AdhesionFormDialog } from "@/components/AdhesionFormDialog";
 
 export default function Memberships() {
   const [memberId, setMemberId] = useState<number | undefined>();
@@ -55,10 +56,7 @@ export default function Memberships() {
           <h1 className="text-3xl font-bold">Adhésions</h1>
           <p className="text-muted-foreground">Gestion des adhésions et cotisations</p>
         </div>
-        <Button onClick={() => setIsCreating(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Nouvelle Adhésion
-        </Button>
+        <AdhesionFormDialog />
       </div>
 
       {/* Statistiques */}

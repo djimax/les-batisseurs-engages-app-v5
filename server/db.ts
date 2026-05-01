@@ -28,7 +28,8 @@ import {
   tasks, InsertTask, Task,
   projectMembers, InsertProjectMember, ProjectMember,
   projectExpenses, InsertProjectExpense, ProjectExpense,
-  taskAttachments, InsertTaskAttachment, TaskAttachment
+  taskAttachments, InsertTaskAttachment, TaskAttachment,
+  adhesions, InsertAdhesion, Adhesion
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -355,11 +356,22 @@ export async function getMemberById(id: number) {
   return result[0];
 }
 
-export async function createMember(data: InsertMember) {
+function generateMemberId(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `MEM-${year}${month}${day}-${random}`;
+}
+
+export async function createMember(data: Omit<InsertMember, 'memberId'>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(members).values(data);
-  return { id: result[0].insertId, ...data };
+  const memberId = generateMemberId();
+  const dataWithId = { ...data, memberId } as InsertMember;
+  const result = await db.insert(members).values(dataWithId);
+  return { id: result[0].insertId, ...dataWithId };
 }
 
 export async function updateMember(id: number, data: Partial<InsertMember>) {
@@ -1263,4 +1275,43 @@ export async function deleteTaskAttachment(id: number) {
     console.error("[Database] Error deleting task attachment:", error);
     throw error;
   }
+}
+
+
+/**
+ * Search members by ID or name
+ */
+export async function searchMembers(query: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const results = await db.select().from(members).where(
+    or(
+      like(members.memberId, `%${query}%`),
+      like(sql`CONCAT(${members.firstName}, ' ', ${members.lastName})`, `%${query}%`),
+      like(members.email, `%${query}%`)
+    )
+  ).limit(10);
+  
+  return results;
+}
+
+/**
+ * Get member by ID (memberId string)
+ */
+export async function getMemberByMemberId(memberId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(members).where(eq(members.memberId, memberId)).limit(1);
+  return result[0];
+}
+
+/**
+ * Get adhesion by ID (adhesionId string)
+ */
+export async function getAdhesionByAdhesionId(adhesionId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(adhesions).where(eq(adhesions.adhesionId, adhesionId)).limit(1);
+  return result[0];
 }

@@ -21,6 +21,7 @@ import { localAuthRouter } from "./routers/local-auth";
 import { reportsRouter } from "./routers/reports";
 import { widgetsRouter } from "./routers/widgets";
 import { attachmentsRouter } from "./routers/attachments";
+import { searchRouter } from "./routers/search";
 
 import { z } from "zod";
 import { 
@@ -66,6 +67,7 @@ export const appRouter = router({
   reports: reportsRouter,
   widgets: widgetsRouter,
   attachments: attachmentsRouter,
+  search: searchRouter,
 
   // ============ CATEGORIES ============
   categories: router({

@@ -85,6 +85,7 @@ export type InsertDocumentNote = typeof documentNotes.$inferInsert;
  */
 export const members = mysqlTable("members", {
   id: int("id").autoincrement().primaryKey(),
+  memberId: varchar("memberId", { length: 50 }).notNull().unique(), // Format: MEM-YYYYMMDD-XXXX
   userId: int("userId"),
   firstName: varchar("firstName", { length: 100 }).notNull(),
   lastName: varchar("lastName", { length: 100 }).notNull(),
@@ -232,6 +233,7 @@ export type InsertCampaign = typeof campaigns.$inferInsert;
  */
 export const adhesions = mysqlTable("adhesions", {
   id: int("id").autoincrement().primaryKey(),
+  adhesionId: varchar("adhesionId", { length: 50 }).notNull().unique(), // Format: ADH-YYYYMMDD-XXXX
   memberId: int("memberId").notNull(),
   annee: int("annee").notNull(),
   montant: decimal("montant", { precision: 10, scale: 2 }).notNull(),
