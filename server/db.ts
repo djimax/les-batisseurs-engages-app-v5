@@ -1,4 +1,4 @@
-import { eq, and, like, desc, asc, sql, or } from "drizzle-orm";
+import { eq, and, like, desc, asc, sql, or, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, 
@@ -356,19 +356,54 @@ export async function getMemberById(id: number) {
   return result[0];
 }
 
-function generateMemberId(): string {
+/**
+ * Generate member ID with format: [genre][mois][année][ordre]
+ * Genre: 1=homme, 2=femme, 3=autre
+ * Mois/Année: MMYY (ex: 0225 pour février 2025)
+ * Ordre: 4 chiffres (0001, 0002, 0003, etc.)
+ * Example: 1022500003 (homme, février 2025, 3ème membre)
+ */
+async function generateMemberId(gender: string): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Map gender to number
+  const genderMap: { [key: string]: string } = {
+    'homme': '1',
+    'femme': '2',
+    'autre': '3'
+  };
+  const genderCode = genderMap[gender] || '3';
+  
+  // Get current date
   const now = new Date();
-  const year = now.getFullYear();
+  const year = String(now.getFullYear()).slice(-2); // Last 2 digits of year
   const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `MEM-${year}${month}${day}-${random}`;
+  const monthYear = month + year; // MMYY format
+  
+  // Get the count of members created this month
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+  const membersThisMonth = await db
+    .select()
+    .from(members)
+    .where(
+      and(
+        gte(members.joinedAt, currentMonthStart),
+        lte(members.joinedAt, currentMonthEnd)
+      )
+    );
+  
+  const orderNumber = (membersThisMonth.length + 1).toString().padStart(4, '0');
+  
+  return `${genderCode}${monthYear}${orderNumber}`;
 }
 
 export async function createMember(data: Omit<InsertMember, 'memberId'>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const memberId = generateMemberId();
+  const memberId = await generateMemberId(data.gender || 'autre');
   const dataWithId = { ...data, memberId } as InsertMember;
   const result = await db.insert(members).values(dataWithId);
   return { id: result[0].insertId, ...dataWithId };

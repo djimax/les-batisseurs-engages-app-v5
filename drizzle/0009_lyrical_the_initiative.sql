@@ -1,0 +1,1 @@
+ALTER TABLE `members` ADD `gender` enum('homme','femme','autre') DEFAULT 'autre' NOT NULL;

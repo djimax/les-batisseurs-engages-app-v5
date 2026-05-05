@@ -85,12 +85,13 @@ export type InsertDocumentNote = typeof documentNotes.$inferInsert;
  */
 export const members = mysqlTable("members", {
   id: int("id").autoincrement().primaryKey(),
-  memberId: varchar("memberId", { length: 50 }).notNull().unique(), // Format: MEM-YYYYMMDD-XXXX
+  memberId: varchar("memberId", { length: 50 }).notNull().unique(), // Format: [genre][mois][année][ordre] ex: 1022500003
   userId: int("userId"),
   firstName: varchar("firstName", { length: 100 }).notNull(),
   lastName: varchar("lastName", { length: 100 }).notNull(),
   email: varchar("email", { length: 320 }),
   phone: varchar("phone", { length: 20 }),
+  gender: mysqlEnum("gender", ["homme", "femme", "autre"]).default("autre").notNull(), // 1=homme, 2=femme, 3=autre
   role: varchar("role", { length: 100 }).default("Membre"), // Peut être: Président, Secrétaire Général, Secrétaire Général Adjoint, Trésorier Général, Trésorier Général Adjoint, Membre
   function: varchar("function", { length: 100 }),
   status: mysqlEnum("status", ["active", "inactive", "pending"]).default("active").notNull(),

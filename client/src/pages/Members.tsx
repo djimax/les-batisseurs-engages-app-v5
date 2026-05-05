@@ -94,6 +94,7 @@ export default function Members() {
     function: "",
     status: "active" as "active" | "inactive" | "pending",
     memberRole: "member" as "admin" | "secretary" | "member",
+    gender: "1" as "1" | "2" | "3",
   });
 
   const { data: members, isLoading } = trpc.members.list.useQuery();
@@ -144,6 +145,7 @@ export default function Members() {
       function: "",
       status: "active",
       memberRole: "member",
+      gender: "1",
     });
   };
 
@@ -174,6 +176,7 @@ export default function Members() {
       function: member.function || "",
       status: member.status,
       memberRole: member.memberRole || "member",
+      gender: member.gender || "1",
     });
     setIsEditDialogOpen(true);
   };
@@ -351,6 +354,7 @@ export default function Members() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>ID Membre</TableHead>
                     <TableHead>Membre</TableHead>
                     <TableHead>Rôle</TableHead>
                     <TableHead>Contact</TableHead>
@@ -361,6 +365,11 @@ export default function Members() {
                 <TableBody>
                   {filteredMembers.map((member) => (
                     <TableRow key={member.id}>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-mono text-xs">
+                          {member.memberId || "-"}
+                        </Badge>
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9">
@@ -548,6 +557,22 @@ export default function Members() {
                 placeholder="Ex: Responsable communication"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="gender">Genre</Label>
+              <Select 
+                value={formData.gender} 
+                onValueChange={(v: any) => setFormData({ ...formData, gender: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Homme</SelectItem>
+                  <SelectItem value="2">Femme</SelectItem>
+                  <SelectItem value="3">Autre</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
@@ -655,6 +680,22 @@ export default function Members() {
                 value={formData.function}
                 onChange={(e) => setFormData({ ...formData, function: e.target.value })}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editGender">Genre</Label>
+              <Select 
+                value={formData.gender} 
+                onValueChange={(v: any) => setFormData({ ...formData, gender: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Homme</SelectItem>
+                  <SelectItem value="2">Femme</SelectItem>
+                  <SelectItem value="3">Autre</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>

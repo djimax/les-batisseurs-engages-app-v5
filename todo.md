@@ -267,3 +267,15 @@
 - [x] Vérification du tableau de bord (affichage correct des statistiques)
 - [x] Correction de la migration SQL pour memberId et adhesionId
 - [x] Correction de la configuration HMR Vite
+
+
+## Phase 26 - Système d'ID Automatique pour les Membres
+
+- [x] Ajouter la colonne gender (enum: homme, femme, autre) au schéma Drizzle
+- [x] Générer la migration SQL pour la colonne gender
+- [x] Créer la fonction generateMemberId() dans db.ts
+- [x] Mettre à jour createMember pour générer l'ID automatiquement
+- [x] Ajouter le champ gender au formulaire MemberFormDialog
+- [x] Afficher l'ID généré dans la liste des membres
+- [x] Ajouter des tests Vitest pour la génération d'ID
+- [x] Tester le système complet d'ID automatique
