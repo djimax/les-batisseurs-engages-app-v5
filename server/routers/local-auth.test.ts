@@ -24,8 +24,7 @@ describe("Local Auth Router", () => {
       const result = await caller.localAuth.register({
         email: `test-${Date.now()}@example.com`,
         password: "TestPassword123!",
-        firstName: "Test",
-        lastName: "User",
+        name: "Test User",
       });
 
       expect(result.success).toBe(true);
@@ -39,6 +38,7 @@ describe("Local Auth Router", () => {
         await caller.localAuth.register({
           email: "invalid-email",
           password: "TestPassword123!",
+          name: "Test User",
         });
         expect.fail("Should have thrown an error");
       } catch (error: any) {
@@ -51,6 +51,7 @@ describe("Local Auth Router", () => {
         await caller.localAuth.register({
           email: `test-${Date.now()}@example.com`,
           password: "weak",
+          name: "Test User",
         });
         expect.fail("Should have thrown an error");
       } catch (error: any) {
@@ -66,6 +67,7 @@ describe("Local Auth Router", () => {
       await caller.localAuth.register({
         email,
         password: "TestPassword123!",
+        name: "Test User",
       });
 
       // Second registration with same email
@@ -73,6 +75,7 @@ describe("Local Auth Router", () => {
         await caller.localAuth.register({
           email,
           password: "TestPassword456!",
+          name: "Test User 2",
         });
         expect.fail("Should have thrown an error");
       } catch (error: any) {
@@ -92,8 +95,7 @@ describe("Local Auth Router", () => {
       await caller.localAuth.register({
         email: testEmail,
         password: testPassword,
-        firstName: "Test",
-        lastName: "User",
+        name: "Test User",
       });
     });
 
@@ -141,6 +143,7 @@ describe("Local Auth Router", () => {
       const registerResult = await caller.localAuth.register({
         email,
         password: "TestPassword123!",
+        name: "Test User",
       });
 
       // Logout
@@ -158,6 +161,7 @@ describe("Local Auth Router", () => {
       const registerResult = await caller.localAuth.register({
         email: `test-${Date.now()}@example.com`,
         password: "TestPassword123!",
+        name: "Test User",
       });
 
       // Verify session

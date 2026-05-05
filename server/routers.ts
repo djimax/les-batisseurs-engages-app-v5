@@ -6,7 +6,6 @@ import { emailRouter } from "./email-router";
 import { adminSettingsRouter } from "./admin-settings-router";
 import { crmRouter } from "./crm-router";
 import { authRouter } from "./auth-router";
-import { usersRouter as usersRouterOld } from "./users-router";
 import { usersRouter } from "./routers/users";
 import { budgetsRouter } from "./routers/budgets";
 import { invoicesRouter } from "./routers/invoices";

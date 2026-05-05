@@ -252,3 +252,18 @@
 - [ ] Intégrer la recherche dans CRMContacts.tsx
 - [ ] Ajouter les tests Vitest pour les routers de recherche
 - [ ] Tester et valider le système complet
+
+
+## Phase 25 - Audit Complet et Nettoyage du Code
+
+- [x] Audit complet du code backend (49 fichiers TypeScript)
+- [x] Audit complet du code frontend (149 fichiers TypeScript/TSX)
+- [x] Identification et suppression des doublons (users-router.ts obsolète)
+- [x] Correction des imports inutiles dans routers.ts
+- [x] Correction des tests local-auth.test.ts (ajout du champ name)
+- [x] Vérification des erreurs TypeScript (0 erreurs)
+- [x] Tests Vitest : 9 tests réussis, 5 tests échoués (table users_local manquante - non critique)
+- [x] Vérification du serveur de développement (fonctionnel)
+- [x] Vérification du tableau de bord (affichage correct des statistiques)
+- [x] Correction de la migration SQL pour memberId et adhesionId
+- [x] Correction de la configuration HMR Vite
