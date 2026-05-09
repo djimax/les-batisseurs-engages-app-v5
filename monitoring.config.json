@@ -1,0 +1,111 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "interval": 300000,
+    "alerts": {
+      "typescript_errors": {
+        "enabled": true,
+        "threshold": 0,
+        "action": "fail"
+      },
+      "test_failures": {
+        "enabled": true,
+        "threshold": 0,
+        "action": "warn"
+      },
+      "missing_migrations": {
+        "enabled": true,
+        "threshold": 0,
+        "action": "warn"
+      },
+      "database_issues": {
+        "enabled": true,
+        "threshold": 0,
+        "action": "fail"
+      },
+      "performance_degradation": {
+        "enabled": true,
+        "threshold": 1000,
+        "action": "warn"
+      }
+    },
+    "checks": {
+      "typescript": {
+        "enabled": true,
+        "command": "pnpm tsc --noEmit",
+        "timeout": 30000
+      },
+      "tests": {
+        "enabled": true,
+        "command": "pnpm test",
+        "timeout": 60000
+      },
+      "database": {
+        "enabled": true,
+        "command": "pnpm drizzle-kit introspect",
+        "timeout": 15000
+      },
+      "dependencies": {
+        "enabled": true,
+        "command": "pnpm install --frozen-lockfile",
+        "timeout": 30000
+      },
+      "formatting": {
+        "enabled": true,
+        "command": "pnpm prettier --check .",
+        "timeout": 20000
+      }
+    },
+    "notifications": {
+      "email": {
+        "enabled": false,
+        "recipients": []
+      },
+      "slack": {
+        "enabled": false,
+        "webhook_url": ""
+      },
+      "console": {
+        "enabled": true
+      }
+    },
+    "logging": {
+      "level": "info",
+      "file": ".manus-logs/monitoring.log",
+      "max_size": "10MB",
+      "max_files": 10
+    },
+    "performance": {
+      "track_build_time": true,
+      "track_test_time": true,
+      "track_query_time": true,
+      "slow_threshold_ms": 1000
+    },
+    "error_recovery": {
+      "auto_restart_on_error": true,
+      "max_restart_attempts": 3,
+      "restart_delay_ms": 5000
+    }
+  },
+  "patterns": {
+    "critical_errors": [
+      "Cannot read properties of null",
+      "Invalid hook call",
+      "Duplicate export",
+      "Type mismatch",
+      "Database connection failed"
+    ],
+    "warnings": [
+      "Unused exports",
+      "Duplicate imports",
+      "Missing migrations",
+      "Deprecated API"
+    ]
+  },
+  "schedule": {
+    "health_check": "0 * * * *",
+    "full_test": "0 2 * * *",
+    "database_backup": "0 3 * * 0",
+    "dependency_update_check": "0 4 * * 1"
+  }
+}

@@ -330,3 +330,43 @@
 - [ ] Exécuter tous les tests
 - [ ] Tester le flux complet adhésion→membre
 - [ ] Tester la recherche bidirectionnelle
+
+
+## Phase 28 - Système de Surveillance et Prévention d'Erreurs
+
+### Scripts de Monitoring
+- [x] Créer script health-check.ts pour vérifications rapides
+- [x] Créer script monitor.ts pour surveillance en temps réel
+- [x] Créer script pre-commit.sh pour vérifications avant commit
+- [ ] Tester les scripts de monitoring
+- [ ] Intégrer les scripts dans le CI/CD
+
+### Documentation
+- [x] Créer docs/ERROR_PATTERNS.md avec patterns d'erreurs courants
+- [x] Créer docs/MONITORING_SETUP.md avec guide de configuration
+- [ ] Créer docs/TROUBLESHOOTING.md pour le dépannage
+- [ ] Créer docs/BEST_PRACTICES.md pour les bonnes pratiques
+
+### Configuration
+- [x] Créer monitoring.config.json avec configuration complète
+- [ ] Configurer les notifications (email/Slack)
+- [ ] Configurer les alertes personnalisées
+- [ ] Mettre en place les logs de monitoring
+
+### Tests du Monitoring
+- [ ] Tester le health check
+- [ ] Tester le pre-commit hook
+- [ ] Tester le continuous monitor
+- [ ] Tester la détection d'erreurs
+
+### Intégration
+- [ ] Ajouter les scripts au package.json
+- [ ] Configurer les GitHub Actions
+- [ ] Configurer les webhooks
+- [ ] Mettre en place les alertes
+
+### Validation
+- [ ] Vérifier que tous les scripts fonctionnent
+- [ ] Vérifier que les alertes se déclenchent correctement
+- [ ] Vérifier que les logs sont générés
+- [ ] Tester le système complet
