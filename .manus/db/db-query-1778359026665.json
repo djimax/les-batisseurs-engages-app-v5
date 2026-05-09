@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `adhesions` MODIFY COLUMN `memberId` varchar(50) NOT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xej4aa6NxGydCN.root --database 7xgeN4rvEbMWtYrbPN2Bxz --execute ALTER TABLE `adhesions` MODIFY COLUMN `memberId` varchar(50) NOT NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 595
+}

@@ -1,6 +1,6 @@
 import { protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
-import { searchMembers, getMemberByMemberId, getAdhesionByAdhesionId } from "../db";
+import { searchMembers, getMemberByMemberId, getAdhesionById } from "../db";
 
 export const searchRouter = {
   searchMembers: protectedProcedure
@@ -21,9 +21,9 @@ export const searchRouter = {
 
   getAdhesionById: protectedProcedure
     .input(z.object({
-      adhesionId: z.string(),
+      adhesionId: z.number(),
     }))
     .query(async ({ input }: any) => {
-      return await getAdhesionByAdhesionId(input.adhesionId);
+      return await getAdhesionById(input.adhesionId);
     }),
 };

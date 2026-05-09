@@ -71,6 +71,20 @@
       "when": 1778002596875,
       "tag": "0009_lyrical_the_initiative",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1778358851051,
+      "tag": "0010_crazy_elektra",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1778359020114,
+      "tag": "0011_needy_carlie_cooper",
+      "breakpoints": true
     }
   ]
 }

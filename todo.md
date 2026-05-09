@@ -279,3 +279,54 @@
 - [x] Afficher l'ID généré dans la liste des membres
 - [x] Ajouter des tests Vitest pour la génération d'ID
 - [x] Tester le système complet d'ID automatique
+
+
+## Phase 27 - Restructuration du Système d'Adhésions et Membres
+
+### Analyse et Restructuration du Schéma
+- [x] Analyser les tables actuelles (members, adhesions)
+- [x] Déplacer la génération d'ID vers la table adhesions (première adhésion)
+- [x] Ajouter colonne memberId (string) dans adhesions
+- [x] Ajouter colonne cotisationStatus dans members (À jour, En retard, Impayé, Exempté)
+- [x] Créer table cotisation_criteria pour les critères configurables
+
+### Migrations SQL
+- [x] Générer migration pour adhesions avec colonnes firstName, lastName, gender, email, phone
+- [x] Générer migration pour cotisation_criteria
+- [x] Générer migration pour ajouter cotisationStatus dans members
+- [x] Appliquer les migrations (0010 et 0011)
+
+### Backend (db.ts et routers)
+- [x] Utiliser fonction generateMemberId() existante pour format [genre][MMYY][ordre]
+- [x] Créer fonction createAdhesionWithMember() qui génére ID + crée/met à jour membre
+- [x] Ajouter fonction calculateCotisationStatus() pour calculer statut cotisation
+- [x] Ajouter fonction updateMemberCotisationStatus() pour gérer statut
+- [x] Corriger imports et types dans db.ts
+
+### Frontend - Formulaire d'Adhésion
+- [ ] Modifier AdhesionFormDialog pour créer adhérent directement
+- [ ] Ajouter champ gender au formulaire d'adhésion
+- [ ] Afficher l'ID généré après création
+- [ ] Ajouter confirmation automatique du statut membre
+
+### Frontend - Liste des Membres
+- [ ] Ajouter colonne statut cotisation avec badge coloré
+- [ ] Afficher "ID - Nom" dans la liste
+- [ ] Ajouter filtres par statut cotisation
+- [ ] Intégrer recherche bidirectionnelle ID-Nom
+
+### Frontend - Gestion des Critères
+- [ ] Créer page/modal pour configurer critères de cotisation
+- [ ] Ajouter UI pour définir montant, fréquence, dates limites
+- [ ] Implémenter calcul automatique du statut
+
+### Tests
+- [ ] Écrire tests Vitest pour createAdhesionWithMember()
+- [ ] Écrire tests pour calculateCotisationStatus()
+- [ ] Tester recherche ID-Nom
+
+### Validation
+- [x] Vérifier TypeScript sans erreurs
+- [ ] Exécuter tous les tests
+- [ ] Tester le flux complet adhésion→membre
+- [ ] Tester la recherche bidirectionnelle

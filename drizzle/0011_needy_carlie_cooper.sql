@@ -1,0 +1,1 @@
+ALTER TABLE `adhesions` MODIFY COLUMN `memberId` varchar(50) NOT NULL;

@@ -29,7 +29,8 @@ import {
   projectMembers, InsertProjectMember, ProjectMember,
   projectExpenses, InsertProjectExpense, ProjectExpense,
   taskAttachments, InsertTaskAttachment, TaskAttachment,
-  adhesions, InsertAdhesion, Adhesion
+  adhesions, InsertAdhesion, Adhesion,
+  cotisationCriteria, InsertCotisationCriteria, CotisationCriteria
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1342,11 +1343,144 @@ export async function getMemberByMemberId(memberId: string) {
 }
 
 /**
- * Get adhesion by ID (adhesionId string)
+ * Get adhesion by ID (adhesion id number)
  */
-export async function getAdhesionByAdhesionId(adhesionId: string) {
+export async function getAdhesionById(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.select().from(adhesions).where(eq(adhesions.adhesionId, adhesionId)).limit(1);
+  const result = await db.select().from(adhesions).where(eq(adhesions.id, id)).limit(1);
   return result[0];
+}
+
+
+
+/**
+ * Create adhesion and automatically create/update member
+ * Returns the created adhesion with member info
+ */
+export async function createAdhesionWithMember(data: {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  gender: string;
+  annee: number;
+  montant: number;
+  dateAdhesion: Date;
+  dateExpiration: Date;
+  status?: string;
+}): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Generate member ID
+    const memberId = await generateMemberId(data.gender);
+
+    // Check if member already exists with this ID
+    let member = await getMemberByMemberId(memberId);
+
+    if (!member) {
+      // Create new member
+      const [memberResult] = await db.insert(members).values({
+        memberId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        gender: data.gender as any,
+        status: "active",
+        cotisationStatus: "à_jour",
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      member = await getMemberByMemberId(memberId);
+    }
+
+    // Create adhesion
+    const adhesionResult = await db.insert(adhesions).values({
+      memberId: member!.memberId,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email || undefined,
+      phone: data.phone || undefined,
+      gender: data.gender as "homme" | "femme" | "autre",
+      annee: data.annee,
+      montant: data.montant,
+      dateAdhesion: data.dateAdhesion,
+      dateExpiration: data.dateExpiration,
+      status: (data.status || "active") as "active" | "expired" | "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as any);
+
+    // Return adhesion with member info
+    const adhesion = await getAdhesionById(adhesionResult[0].insertId);
+    return {
+      ...adhesion,
+      memberId: member!.memberId,
+      memberName: `${member!.firstName} ${member!.lastName}`,
+    };
+  } catch (error) {
+    console.error("Error creating adhesion with member:", error);
+    throw error;
+  }
+}
+
+/**
+ * Calculate cotisation status based on criteria
+ */
+export async function calculateCotisationStatus(memberMemberId: string): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Get active criteria
+  const criteria = await db
+    .select()
+    .from(cotisationCriteria)
+    .where(eq(cotisationCriteria.isActive, true))
+    .limit(1);
+
+  if (!criteria.length) return "à_jour";
+
+  const criterion = criteria[0];
+  const now = new Date();
+
+  // Get latest adhesion for this member
+  const latestAdhesion = await db
+    .select()
+    .from(adhesions)
+    .where(eq(adhesions.memberId, memberMemberId))
+    .orderBy(desc(adhesions.dateExpiration))
+    .limit(1);
+
+  if (!latestAdhesion.length) return "impayé";
+
+  const adhesion = latestAdhesion[0];
+  const daysUntilExpiration = Math.floor(
+    (new Date(adhesion.dateExpiration).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  if (daysUntilExpiration < 0) return "impayé";
+  if (daysUntilExpiration < criterion.joursRetardMax) return "en_retard";
+  return "à_jour";
+}
+
+/**
+ * Update member cotisation status
+ */
+export async function updateMemberCotisationStatus(memberMemberId: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const member = await getMemberByMemberId(memberMemberId);
+  if (!member) return;
+
+  const status = await calculateCotisationStatus(memberMemberId);
+  await db
+    .update(members)
+    .set({ cotisationStatus: status as any })
+    .where(eq(members.memberId, memberMemberId));
 }
