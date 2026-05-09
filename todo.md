@@ -370,3 +370,43 @@
 - [ ] Vérifier que les alertes se déclenchent correctement
 - [ ] Vérifier que les logs sont générés
 - [ ] Tester le système complet
+
+
+## Phase 29 - Déploiement en Production
+
+### Scripts de Déploiement
+- [x] Créer scripts/deploy.sh pour l'automatisation
+- [x] Créer scripts/setup-webhooks.ts pour les webhooks
+- [x] Créer .github/workflows/ci-cd.yml pour GitHub Actions
+- [ ] Tester le script de déploiement
+- [ ] Valider en environnement de staging
+
+### Documentation de Déploiement
+- [x] Créer docs/PRODUCTION_DEPLOYMENT.md
+- [x] Créer docs/ENVIRONMENT_VARIABLES.md
+- [ ] Créer guide de troubleshooting de déploiement
+- [ ] Documenter les procédures de rollback
+
+### Configuration des Webhooks
+- [ ] Configurer webhook Slack
+- [ ] Configurer webhook Email
+- [ ] Configurer webhook GitHub
+- [ ] Tester les webhooks
+
+### GitHub Actions
+- [ ] Configurer les secrets GitHub
+- [ ] Tester le workflow CI/CD
+- [ ] Configurer les notifications
+- [ ] Mettre en place les approvals
+
+### Validation en Production
+- [ ] Exécuter le health check
+- [ ] Tester le monitoring continu
+- [ ] Vérifier les logs
+- [ ] Tester les alertes
+
+### Documentation Finale
+- [ ] Créer README de déploiement
+- [ ] Documenter les procédures opérationnelles
+- [ ] Créer guide de maintenance
+- [ ] Archiver les configurations
