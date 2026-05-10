@@ -1,20 +1,16 @@
 // Service Worker for offline support
-const CACHE_NAME = 'les-batisseurs-v1';
-const OFFLINE_URL = '/offline.html';
+const CACHE_NAME = "les-batisseurs-v1";
+const OFFLINE_URL = "/offline.html";
 
 // Assets to cache on install
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-];
+const ASSETS_TO_CACHE = ["/", "/index.html", "/manifest.json"];
 
 // Install event - cache assets
-self.addEventListener('install', (event) => {
-  console.log('[ServiceWorker] Installing...');
+self.addEventListener("install", event => {
+  console.log("[ServiceWorker] Installing...");
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Caching assets');
+    caches.open(CACHE_NAME).then(cache => {
+      console.log("[ServiceWorker] Caching assets");
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
@@ -22,14 +18,14 @@ self.addEventListener('install', (event) => {
 });
 
 // Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-  console.log('[ServiceWorker] Activating...');
+self.addEventListener("activate", event => {
+  console.log("[ServiceWorker] Activating...");
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
+        cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('[ServiceWorker] Deleting old cache:', cacheName);
+            console.log("[ServiceWorker] Deleting old cache:", cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -40,23 +36,23 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", event => {
   const { request } = event;
 
   // Skip non-GET requests
-  if (request.method !== 'GET') {
+  if (request.method !== "GET") {
     return;
   }
 
   // Skip API requests - handle separately
-  if (request.url.includes('/api/')) {
+  if (request.url.includes("/api/")) {
     event.respondWith(
       fetch(request)
-        .then((response) => {
+        .then(response => {
           // Cache successful API responses
           if (response.ok) {
             const cache = caches.open(CACHE_NAME);
-            cache.then((c) => c.put(request, response.clone()));
+            cache.then(c => c.put(request, response.clone()));
           }
           return response;
         })
@@ -70,15 +66,19 @@ self.addEventListener('fetch', (event) => {
 
   // For other requests, use cache-first strategy
   event.respondWith(
-    caches.match(request).then((response) => {
+    caches.match(request).then(response => {
       if (response) {
         return response;
       }
 
       return fetch(request)
-        .then((response) => {
+        .then(response => {
           // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type === 'error') {
+          if (
+            !response ||
+            response.status !== 200 ||
+            response.type === "error"
+          ) {
             return response;
           }
 
@@ -86,7 +86,7 @@ self.addEventListener('fetch', (event) => {
           const responseToCache = response.clone();
 
           // Cache the response
-          caches.open(CACHE_NAME).then((cache) => {
+          caches.open(CACHE_NAME).then(cache => {
             cache.put(request, responseToCache);
           });
 
@@ -101,37 +101,37 @@ self.addEventListener('fetch', (event) => {
 });
 
 // Message handling for cache control
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+self.addEventListener("message", event => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
 
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
+  if (event.data && event.data.type === "CLEAR_CACHE") {
     caches.delete(CACHE_NAME).then(() => {
-      console.log('[ServiceWorker] Cache cleared');
+      console.log("[ServiceWorker] Cache cleared");
     });
   }
 
-  if (event.data && event.data.type === 'CACHE_URLS') {
+  if (event.data && event.data.type === "CACHE_URLS") {
     const urls = event.data.urls || [];
-    caches.open(CACHE_NAME).then((cache) => {
-      cache.addAll(urls).catch((error) => {
-        console.log('[ServiceWorker] Error caching URLs:', error);
+    caches.open(CACHE_NAME).then(cache => {
+      cache.addAll(urls).catch(error => {
+        console.log("[ServiceWorker] Error caching URLs:", error);
       });
     });
   }
 });
 
 // Background sync for offline data
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-data') {
+self.addEventListener("sync", event => {
+  if (event.tag === "sync-data") {
     event.waitUntil(
       // Attempt to sync offline data
-      self.clients.matchAll().then((clients) => {
-        clients.forEach((client) => {
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
           client.postMessage({
-            type: 'SYNC_DATA',
-            message: 'Syncing offline data...',
+            type: "SYNC_DATA",
+            message: "Syncing offline data...",
           });
         });
       })

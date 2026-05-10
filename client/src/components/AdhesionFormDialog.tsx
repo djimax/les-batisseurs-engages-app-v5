@@ -26,14 +26,19 @@ interface AdhesionFormDialogProps {
   trigger?: React.ReactNode;
 }
 
-export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogProps) {
+export function AdhesionFormDialog({
+  onSuccess,
+  trigger,
+}: AdhesionFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     memberId: "",
     annee: new Date().getFullYear(),
     montant: "",
     dateAdhesion: new Date().toISOString().split("T")[0],
-    dateExpiration: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    dateExpiration: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
     status: "pending",
   });
 
@@ -42,7 +47,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await createMutation.mutateAsync({
         memberId: parseInt(formData.memberId),
@@ -59,10 +64,12 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
         annee: new Date().getFullYear(),
         montant: "",
         dateAdhesion: new Date().toISOString().split("T")[0],
-        dateExpiration: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        dateExpiration: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
         status: "pending",
       });
-      
+
       if (onSuccess) {
         onSuccess();
       }
@@ -95,7 +102,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
             <Label htmlFor="memberId">Membre</Label>
             <Select
               value={formData.memberId}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 setFormData({ ...formData, memberId: value })
               }
             >
@@ -103,7 +110,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
                 <SelectValue placeholder="Sélectionner un membre" />
               </SelectTrigger>
               <SelectContent>
-                {(members as any[]).map((member) => (
+                {(members as any[]).map(member => (
                   <SelectItem key={member.id} value={member.id.toString()}>
                     {member.firstName} {member.lastName}
                   </SelectItem>
@@ -118,7 +125,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
               id="annee"
               type="number"
               value={formData.annee}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, annee: parseInt(e.target.value) })
               }
               required
@@ -132,7 +139,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
               type="number"
               step="0.01"
               value={formData.montant}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, montant: e.target.value })
               }
               placeholder="0.00"
@@ -146,7 +153,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
               id="dateAdhesion"
               type="date"
               value={formData.dateAdhesion}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, dateAdhesion: e.target.value })
               }
               required
@@ -159,7 +166,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
               id="dateExpiration"
               type="date"
               value={formData.dateExpiration}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, dateExpiration: e.target.value })
               }
               required
@@ -170,7 +177,7 @@ export function AdhesionFormDialog({ onSuccess, trigger }: AdhesionFormDialogPro
             <Label htmlFor="status">Statut</Label>
             <Select
               value={formData.status}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 setFormData({ ...formData, status: value })
               }
             >

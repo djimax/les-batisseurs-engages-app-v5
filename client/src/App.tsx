@@ -44,7 +44,9 @@ const AssociationSettings = lazy(() => import("@/pages/AssociationSettings"));
 const UserManagement = lazy(() => import("@/pages/UserManagement"));
 const Reports = lazy(() => import("@/pages/Reports"));
 const AdvancedReports = lazy(() => import("@/pages/AdvancedReports"));
-const CustomizableDashboard = lazy(() => import("@/pages/CustomizableDashboard"));
+const CustomizableDashboard = lazy(
+  () => import("@/pages/CustomizableDashboard")
+);
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -103,7 +105,10 @@ function Router() {
                 <Route path="/export-center" component={ExportCenter} />
                 <Route path="/demo-data" component={DemoDataManager} />
                 <Route path="/admin/migrations" component={AdminMigrations} />
-                <Route path="/association-settings" component={AssociationSettings} />
+                <Route
+                  path="/association-settings"
+                  component={AssociationSettings}
+                />
                 <Route path="/admin/users" component={UserManagement} />
                 <Route path="/reports" component={Reports} />
                 <Route path="/advanced-reports" component={AdvancedReports} />

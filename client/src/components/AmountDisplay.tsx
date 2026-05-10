@@ -1,9 +1,9 @@
-import React from 'react';
-import { useFormatAmount } from '@/hooks/useFormatAmount';
+import React from "react";
+import { useFormatAmount } from "@/hooks/useFormatAmount";
 
 interface AmountDisplayProps {
   amount: number;
-  sourceCurrency?: 'EUR' | 'CFA';
+  sourceCurrency?: "EUR" | "CFA";
   showEquivalent?: boolean;
   decimals?: number;
   className?: string;
@@ -15,10 +15,10 @@ interface AmountDisplayProps {
  */
 export const AmountDisplay: React.FC<AmountDisplayProps> = ({
   amount,
-  sourceCurrency = 'EUR',
+  sourceCurrency = "EUR",
   showEquivalent = false,
   decimals = 2,
-  className = '',
+  className = "",
   label,
 }) => {
   const { formatAmountWithConversion } = useFormatAmount();
@@ -38,7 +38,7 @@ export const AmountDisplay: React.FC<AmountDisplayProps> = ({
 
 interface AmountWithEquivalentProps {
   amount: number;
-  sourceCurrency?: 'EUR' | 'CFA';
+  sourceCurrency?: "EUR" | "CFA";
   decimals?: number;
   className?: string;
   label?: string;
@@ -49,9 +49,9 @@ interface AmountWithEquivalentProps {
  */
 export const AmountWithEquivalent: React.FC<AmountWithEquivalentProps> = ({
   amount,
-  sourceCurrency = 'EUR',
+  sourceCurrency = "EUR",
   decimals = 2,
-  className = '',
+  className = "",
   label,
 }) => {
   const { formatAmountWithConversion } = useFormatAmount();
@@ -71,7 +71,7 @@ export const AmountWithEquivalent: React.FC<AmountWithEquivalentProps> = ({
 
 interface AmountTableCellProps {
   amount: number;
-  sourceCurrency?: 'EUR' | 'CFA';
+  sourceCurrency?: "EUR" | "CFA";
   showEquivalent?: boolean;
   decimals?: number;
 }
@@ -81,7 +81,7 @@ interface AmountTableCellProps {
  */
 export const AmountTableCell: React.FC<AmountTableCellProps> = ({
   amount,
-  sourceCurrency = 'EUR',
+  sourceCurrency = "EUR",
   showEquivalent = false,
   decimals = 2,
 }) => {

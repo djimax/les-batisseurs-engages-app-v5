@@ -16,9 +16,10 @@ export function AttachmentsSection({ taskId }: AttachmentsSectionProps) {
   const [isUploading, setIsUploading] = useState(false);
 
   const utils = trpc.useUtils();
-  const { data: attachments, isLoading } = trpc.attachments.getTaskAttachments.useQuery({
-    taskId,
-  });
+  const { data: attachments, isLoading } =
+    trpc.attachments.getTaskAttachments.useQuery({
+      taskId,
+    });
 
   const uploadMutation = trpc.attachments.uploadTaskAttachment.useMutation({
     onSuccess: () => {
@@ -27,7 +28,7 @@ export function AttachmentsSection({ taskId }: AttachmentsSectionProps) {
       setIsUploadOpen(false);
       utils.attachments.getTaskAttachments.invalidate({ taskId });
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(`Erreur: ${error.message}`);
     },
   });
@@ -37,7 +38,7 @@ export function AttachmentsSection({ taskId }: AttachmentsSectionProps) {
       toast.success("Fichier supprimé");
       utils.attachments.getTaskAttachments.invalidate({ taskId });
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(`Erreur: ${error.message}`);
     },
   });
@@ -145,7 +146,7 @@ export function AttachmentsSection({ taskId }: AttachmentsSectionProps) {
           <h3 className="text-sm font-medium text-gray-900">
             Pièces jointes ({attachments.length})
           </h3>
-          {attachments.map((attachment) => (
+          {attachments.map(attachment => (
             <Card key={attachment.id} className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1 min-w-0">

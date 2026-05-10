@@ -24,35 +24,35 @@ import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 import {
-      LayoutDashboard,
-      LogOut,
-      PanelLeft,
-      Users,
-      FileText,
-      FolderOpen,
-      Settings,
-      Activity,
-      Archive,
-      DollarSign,
-      Megaphone,
-      UserCheck,
-      Calendar,
-      History,
-      Shield,
-      Eye,
-      Mail,
-      BarChart3,
-      PhoneCall,
-      Globe,
-      Cog,
-      ChevronDown,
-      Building2,
-      Briefcase,
-      Bell,
-      Database,
-      Download,
-      HardDrive,
-    } from "lucide-react";
+  LayoutDashboard,
+  LogOut,
+  PanelLeft,
+  Users,
+  FileText,
+  FolderOpen,
+  Settings,
+  Activity,
+  Archive,
+  DollarSign,
+  Megaphone,
+  UserCheck,
+  Calendar,
+  History,
+  Shield,
+  Eye,
+  Mail,
+  BarChart3,
+  PhoneCall,
+  Globe,
+  Cog,
+  ChevronDown,
+  Building2,
+  Briefcase,
+  Bell,
+  Database,
+  Download,
+  HardDrive,
+} from "lucide-react";
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
@@ -76,9 +76,7 @@ const menuGroups: MenuGroup[] = [
   {
     label: "Tableau de bord",
     icon: LayoutDashboard,
-    items: [
-      { icon: LayoutDashboard, label: "Vue d'ensemble", path: "/" },
-    ],
+    items: [{ icon: LayoutDashboard, label: "Vue d'ensemble", path: "/" }],
   },
   {
     label: "Gestion des Membres",
@@ -105,9 +103,7 @@ const menuGroups: MenuGroup[] = [
   {
     label: "Projets",
     icon: Briefcase,
-    items: [
-      { icon: Briefcase, label: "Projets", path: "/projects" },
-    ],
+    items: [{ icon: Briefcase, label: "Projets", path: "/projects" }],
   },
   {
     label: "Notifications",
@@ -129,10 +125,30 @@ const menuGroups: MenuGroup[] = [
     label: "CRM",
     icon: BarChart3,
     items: [
-      { icon: BarChart3, label: "Tableau de bord", path: "/crm", adminOnly: true },
-      { icon: Users, label: "Contacts", path: "/crm/contacts", adminOnly: true },
-      { icon: PhoneCall, label: "Activités", path: "/crm/activities", adminOnly: true },
-      { icon: BarChart3, label: "Rapports", path: "/crm/reports", adminOnly: true },
+      {
+        icon: BarChart3,
+        label: "Tableau de bord",
+        path: "/crm",
+        adminOnly: true,
+      },
+      {
+        icon: Users,
+        label: "Contacts",
+        path: "/crm/contacts",
+        adminOnly: true,
+      },
+      {
+        icon: PhoneCall,
+        label: "Activités",
+        path: "/crm/activities",
+        adminOnly: true,
+      },
+      {
+        icon: BarChart3,
+        label: "Rapports",
+        path: "/crm/reports",
+        adminOnly: true,
+      },
     ],
   },
   {
@@ -147,11 +163,31 @@ const menuGroups: MenuGroup[] = [
     label: "Administration",
     icon: Cog,
     items: [
-      { icon: Building2, label: "Paramètres Globaux", path: "/global-settings", adminOnly: true },
-      { icon: Users, label: "Gestion des Utilisateurs", path: "/admin/users", adminOnly: true },
+      {
+        icon: Building2,
+        label: "Paramètres Globaux",
+        path: "/global-settings",
+        adminOnly: true,
+      },
+      {
+        icon: Users,
+        label: "Gestion des Utilisateurs",
+        path: "/admin/users",
+        adminOnly: true,
+      },
       { icon: Shield, label: "Rôles", path: "/admin/roles", adminOnly: true },
-      { icon: Eye, label: "Journaux", path: "/admin/audit-logs", adminOnly: true },
-      { icon: Database, label: "Migrations BD", path: "/admin/migrations", adminOnly: true },
+      {
+        icon: Eye,
+        label: "Journaux",
+        path: "/admin/audit-logs",
+        adminOnly: true,
+      },
+      {
+        icon: Database,
+        label: "Migrations BD",
+        path: "/admin/migrations",
+        adminOnly: true,
+      },
       { icon: Activity, label: "Activité", path: "/activity" },
       { icon: History, label: "Historique", path: "/audit-history" },
     ],
@@ -161,7 +197,12 @@ const menuGroups: MenuGroup[] = [
     icon: Database,
     items: [
       { icon: Download, label: "Centre d'Export", path: "/export-center" },
-      { icon: Database, label: "Gestionnaire Données", path: "/demo-data", adminOnly: true },
+      {
+        icon: Database,
+        label: "Gestionnaire Données",
+        path: "/demo-data",
+        adminOnly: true,
+      },
     ],
   },
 ];
@@ -202,11 +243,14 @@ export default function DashboardLayout({
               Les Bâtisseurs Engagés
             </h1>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Connectez-vous pour accéder au portail de gestion de l'association.
+              Connectez-vous pour accéder au portail de gestion de
+              l'association.
             </p>
           </div>
           <Button
-            onClick={() => { window.location.href = getLoginUrl(); }}
+            onClick={() => {
+              window.location.href = getLoginUrl();
+            }}
             size="lg"
             className="w-full"
           >
@@ -247,14 +291,16 @@ function DashboardLayoutContent({
   const { data: settings } = trpc.globalSettings.get.useQuery();
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => {
-    const active = menuGroups.find((g) =>
-      g.items.some((item) => item.path === location)
+    const active = menuGroups.find(g =>
+      g.items.some(item => item.path === location)
     );
-    return new Set(active ? [active.label, "Tableau de bord"] : ["Tableau de bord"]);
+    return new Set(
+      active ? [active.label, "Tableau de bord"] : ["Tableau de bord"]
+    );
   });
 
   const activeItem = useMemo(
-    () => menuGroups.flatMap((g) => g.items).find((item) => item.path === location),
+    () => menuGroups.flatMap(g => g.items).find(item => item.path === location),
     [location]
   );
 
@@ -288,7 +334,7 @@ function DashboardLayoutContent({
   }, [isResizing, setSidebarWidth]);
 
   const toggleGroup = (label: string) => {
-    setExpandedGroups((prev) => {
+    setExpandedGroups(prev => {
       const next = new Set(prev);
       if (next.has(label)) next.delete(label);
       else next.add(label);
@@ -307,7 +353,10 @@ function DashboardLayoutContent({
 
   return (
     <>
-      <div className="flex h-screen w-full max-w-full overflow-hidden" ref={sidebarRef}>
+      <div
+        className="flex h-screen w-full max-w-full overflow-hidden"
+        ref={sidebarRef}
+      >
         <Sidebar
           collapsible="icon"
           className="border-r-0 flex-shrink-0 h-full"
@@ -339,9 +388,11 @@ function DashboardLayoutContent({
 
           <SidebarContent className="gap-0 pt-2 overflow-y-auto">
             <SidebarMenu className="px-2 py-1">
-              {menuGroups.map((group) => {
+              {menuGroups.map(group => {
                 const isExpanded = expandedGroups.has(group.label);
-                const hasActiveItem = group.items.some((item) => item.path === location);
+                const hasActiveItem = group.items.some(
+                  item => item.path === location
+                );
                 const GroupIcon = group.icon;
 
                 return (
@@ -368,8 +419,14 @@ function DashboardLayoutContent({
                     </button>
 
                     {(isExpanded || isCollapsed) && (
-                      <div className={isCollapsed ? "space-y-0.5" : "ml-2 space-y-0.5 mt-0.5"}>
-                        {group.items.map((item) => {
+                      <div
+                        className={
+                          isCollapsed
+                            ? "space-y-0.5"
+                            : "ml-2 space-y-0.5 mt-0.5"
+                        }
+                      >
+                        {group.items.map(item => {
                           const isActive = location === item.path;
                           const ItemIcon = item.icon;
                           return (
@@ -462,9 +519,7 @@ function DashboardLayoutContent({
             )}
           </header>
 
-          <main className="flex-1 overflow-auto p-4 md:p-6">
-            {children}
-          </main>
+          <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
         </SidebarInset>
       </div>
     </>
