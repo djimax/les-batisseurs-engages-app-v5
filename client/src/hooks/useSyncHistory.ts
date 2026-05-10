@@ -1,12 +1,12 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from "react";
 
 export interface SyncEvent {
   id: string;
   timestamp: string;
-  type: 'export' | 'import' | 'create' | 'update' | 'delete';
-  entity: 'document' | 'member' | 'category' | 'note';
+  type: "export" | "import" | "create" | "update" | "delete";
+  entity: "document" | "member" | "category" | "note";
   entityName: string;
-  status: 'success' | 'error';
+  status: "success" | "error";
   message: string;
 }
 
@@ -15,12 +15,12 @@ export function useSyncHistory() {
 
   // Charger l'historique au démarrage
   useEffect(() => {
-    const saved = localStorage.getItem('syncHistory');
+    const saved = localStorage.getItem("syncHistory");
     if (saved) {
       try {
         setSyncHistory(JSON.parse(saved));
       } catch (error) {
-        console.error('Erreur lors du chargement de l\'historique:', error);
+        console.error("Erreur lors du chargement de l'historique:", error);
       }
     }
   }, []);
@@ -29,25 +29,31 @@ export function useSyncHistory() {
   const saveHistory = useCallback((events: SyncEvent[]) => {
     // Garder seulement les 100 derniers événements
     const limited = events.slice(-100);
-    localStorage.setItem('syncHistory', JSON.stringify(limited));
+    localStorage.setItem("syncHistory", JSON.stringify(limited));
     setSyncHistory(limited);
   }, []);
 
   // Ajouter un événement
-  const addEvent = useCallback((event: Omit<SyncEvent, 'id'>) => {
-    const newEvent: SyncEvent = {
-      ...event,
-      id: `${Date.now()}-${Math.random()}`,
-    };
-    const updated = [...syncHistory, newEvent];
-    saveHistory(updated);
-  }, [syncHistory, saveHistory]);
+  const addEvent = useCallback(
+    (event: Omit<SyncEvent, "id">) => {
+      const newEvent: SyncEvent = {
+        ...event,
+        id: `${Date.now()}-${Math.random()}`,
+      };
+      const updated = [...syncHistory, newEvent];
+      saveHistory(updated);
+    },
+    [syncHistory, saveHistory]
+  );
 
   // Obtenir la dernière synchronisation
   const getLastSync = useCallback(() => {
     const lastSync = syncHistory
-      .filter(e => e.type === 'export' || e.type === 'import')
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .filter(e => e.type === "export" || e.type === "import")
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      )
       .at(0);
     return lastSync;
   }, [syncHistory]);
@@ -56,13 +62,11 @@ export function useSyncHistory() {
   const getStats = useCallback(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    const todayEvents = syncHistory.filter(
-      e => new Date(e.timestamp) >= today
-    );
 
-    const successCount = syncHistory.filter(e => e.status === 'success').length;
-    const errorCount = syncHistory.filter(e => e.status === 'error').length;
+    const todayEvents = syncHistory.filter(e => new Date(e.timestamp) >= today);
+
+    const successCount = syncHistory.filter(e => e.status === "success").length;
+    const errorCount = syncHistory.filter(e => e.status === "error").length;
 
     return {
       totalEvents: syncHistory.length,
@@ -75,7 +79,7 @@ export function useSyncHistory() {
 
   // Effacer l'historique
   const clearHistory = useCallback(() => {
-    localStorage.removeItem('syncHistory');
+    localStorage.removeItem("syncHistory");
     setSyncHistory([]);
   }, []);
 

@@ -3,7 +3,13 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle, Eye, EyeOff, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -75,7 +81,9 @@ export default function Register() {
       }
 
       if (passwordStrength.errors.length > 0) {
-        setError(`Le mot de passe doit contenir : ${passwordStrength.errors.join(", ")}`);
+        setError(
+          `Le mot de passe doit contenir : ${passwordStrength.errors.join(", ")}`
+        );
         setIsLoading(false);
         return;
       }
@@ -116,7 +124,9 @@ export default function Register() {
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Les Bâtisseurs Engagés</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">
+            Les Bâtisseurs Engagés
+          </h1>
           <p className="text-slate-400">Créer un compte</p>
         </div>
 
@@ -135,7 +145,9 @@ export default function Register() {
               {error && (
                 <Alert className="border-red-200 bg-red-50">
                   <AlertCircle className="h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-900">{error}</AlertDescription>
+                  <AlertDescription className="text-red-900">
+                    {error}
+                  </AlertDescription>
                 </Alert>
               )}
 
@@ -149,7 +161,7 @@ export default function Register() {
                   type="text"
                   placeholder="Jean Dupont"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={e => setName(e.target.value)}
                   disabled={isLoading}
                   className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
                 />
@@ -165,7 +177,7 @@ export default function Register() {
                   type="email"
                   placeholder="votre@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   disabled={isLoading}
                   className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
                 />
@@ -191,7 +203,11 @@ export default function Register() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
 
@@ -203,14 +219,18 @@ export default function Register() {
                         <div
                           key={i}
                           className={`h-1 flex-1 rounded-full ${
-                            i < passwordStrength.score ? getPasswordStrengthColor() : "bg-slate-600"
+                            i < passwordStrength.score
+                              ? getPasswordStrengthColor()
+                              : "bg-slate-600"
                           }`}
                         />
                       ))}
                     </div>
                     {passwordStrength.errors.length > 0 && (
                       <div className="text-xs text-slate-400">
-                        <p className="font-medium mb-1">Le mot de passe doit contenir :</p>
+                        <p className="font-medium mb-1">
+                          Le mot de passe doit contenir :
+                        </p>
                         <ul className="space-y-1">
                           {passwordStrength.errors.map((error, i) => (
                             <li key={i} className="flex items-center gap-1">
@@ -241,7 +261,7 @@ export default function Register() {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={e => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
                     className="bg-slate-700 border-slate-600 text-white placeholder-slate-500 pr-10"
                   />
@@ -250,7 +270,11 @@ export default function Register() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>

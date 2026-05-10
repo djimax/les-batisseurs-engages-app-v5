@@ -62,7 +62,7 @@ export function usePasswordAuth() {
   // Fonction de connexion
   const login = (email: string, password: string): boolean => {
     setError(null);
-    
+
     if (!email || !password) {
       setError("Veuillez entrer votre email et votre mot de passe");
       return false;
@@ -83,7 +83,7 @@ export function usePasswordAuth() {
         setError("Ce compte est désactivé. Contactez l'administrateur.");
         return false;
       }
-      
+
       const token = Math.random().toString(36).substring(2);
       sessionStorage.setItem(SESSION_KEY, token);
       sessionStorage.setItem("current_user_email", email);

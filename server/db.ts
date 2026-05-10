@@ -1,38 +1,89 @@
 import { eq, and, like, desc, asc, sql, or, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { 
-  InsertUser, users, 
-  categories, InsertCategory, Category,
-  documents, InsertDocument, Document,
-  documentNotes, InsertDocumentNote,
-  members, InsertMember,
-  documentPermissions, InsertDocumentPermission,
-  activityLogs, InsertActivityLog,
-  cotisations, InsertCotisation,
-  dons, InsertDon,
-  depenses, InsertDepense,
-  transactions, InsertTransaction,
-  emailTemplates, InsertEmailTemplate, EmailTemplate,
-  emailHistory, InsertEmailHistory, EmailHistory,
-  emailRecipients, InsertEmailRecipient, EmailRecipient,
-  appSettings, InsertAppSetting, AppSetting,
-  crmContacts, InsertCrmContact, CrmContact,
-  crmActivities, InsertCrmActivity, CrmActivity,
-  adhesionPipeline, InsertAdhesionPipeline, AdhesionPipeline,
-  crmReports, InsertCrmReport, CrmReport,
-  crmEmailIntegration, InsertCrmEmailIntegration, CrmEmailIntegration,
-  globalSettings, InsertGlobalSettings, GlobalSettings,
-  usersLocal, InsertUserLocal, UserLocal,
-  userSessions, InsertUserSession, UserSession,
-  projects, InsertProject, Project,
-  tasks, InsertTask, Task,
-  projectMembers, InsertProjectMember, ProjectMember,
-  projectExpenses, InsertProjectExpense, ProjectExpense,
-  taskAttachments, InsertTaskAttachment, TaskAttachment,
-  adhesions, InsertAdhesion, Adhesion,
-  cotisationCriteria, InsertCotisationCriteria, CotisationCriteria
+import {
+  InsertUser,
+  users,
+  categories,
+  InsertCategory,
+  Category,
+  documents,
+  InsertDocument,
+  Document,
+  documentNotes,
+  InsertDocumentNote,
+  members,
+  InsertMember,
+  documentPermissions,
+  InsertDocumentPermission,
+  activityLogs,
+  InsertActivityLog,
+  cotisations,
+  InsertCotisation,
+  dons,
+  InsertDon,
+  depenses,
+  InsertDepense,
+  transactions,
+  InsertTransaction,
+  emailTemplates,
+  InsertEmailTemplate,
+  EmailTemplate,
+  emailHistory,
+  InsertEmailHistory,
+  EmailHistory,
+  emailRecipients,
+  InsertEmailRecipient,
+  EmailRecipient,
+  appSettings,
+  InsertAppSetting,
+  AppSetting,
+  crmContacts,
+  InsertCrmContact,
+  CrmContact,
+  crmActivities,
+  InsertCrmActivity,
+  CrmActivity,
+  adhesionPipeline,
+  InsertAdhesionPipeline,
+  AdhesionPipeline,
+  crmReports,
+  InsertCrmReport,
+  CrmReport,
+  crmEmailIntegration,
+  InsertCrmEmailIntegration,
+  CrmEmailIntegration,
+  globalSettings,
+  InsertGlobalSettings,
+  GlobalSettings,
+  usersLocal,
+  InsertUserLocal,
+  UserLocal,
+  userSessions,
+  InsertUserSession,
+  UserSession,
+  projects,
+  InsertProject,
+  Project,
+  tasks,
+  InsertTask,
+  Task,
+  projectMembers,
+  InsertProjectMember,
+  ProjectMember,
+  projectExpenses,
+  InsertProjectExpense,
+  ProjectExpense,
+  taskAttachments,
+  InsertTaskAttachment,
+  TaskAttachment,
+  adhesions,
+  InsertAdhesion,
+  Adhesion,
+  cotisationCriteria,
+  InsertCotisationCriteria,
+  CotisationCriteria,
 } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -59,13 +110,16 @@ const schema = {
   crmEmailIntegration,
   usersLocal,
   userSessions,
-  globalSettings
+  globalSettings,
 };
 
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL, { schema, mode: 'default' }) as any;
+      _db = drizzle(process.env.DATABASE_URL, {
+        schema,
+        mode: "default",
+      }) as any;
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -113,8 +167,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = user.role;
       updateSet.role = user.role;
     } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
+      values.role = "admin";
+      updateSet.role = "admin";
     }
 
     if (!values.lastSignedIn) {
@@ -141,7 +195,11 @@ export async function getUserByOpenId(openId: string) {
     return undefined;
   }
 
-  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.openId, openId))
+    .limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
 
@@ -155,7 +213,11 @@ export async function getAllCategories() {
 export async function getCategoryById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(categories).where(eq(categories.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(categories)
+    .where(eq(categories.id, id))
+    .limit(1);
   return result[0];
 }
 
@@ -169,7 +231,7 @@ export async function createCategory(data: InsertCategory) {
 export async function seedDefaultCategories() {
   const db = await getDb();
   if (!db) return;
-  
+
   try {
     const existing = await db.select().from(categories);
     if (existing.length > 0) return;
@@ -179,13 +241,62 @@ export async function seedDefaultCategories() {
   }
 
   const defaultCategories: InsertCategory[] = [
-    { name: "Documents Juridiques", slug: "juridique", description: "Statuts, règlements, autorisations", color: "#e76f51", icon: "scale", sortOrder: 1 },
-    { name: "Gouvernance et Pilotage", slug: "gouvernance", description: "Feuille de route, organigramme, PV", color: "#2d7a4f", icon: "users", sortOrder: 2 },
-    { name: "Documents Opérationnels", slug: "operationnel", description: "Projets, rapports, planning", color: "#f4a261", icon: "clipboard", sortOrder: 3 },
-    { name: "Documents Financiers", slug: "financier", description: "Budget, comptabilité, audits", color: "#264653", icon: "wallet", sortOrder: 4 },
-    { name: "Ressources Humaines", slug: "rh", description: "Membres, bénévoles, contrats", color: "#9c89b8", icon: "user-check", sortOrder: 5 },
-    { name: "Communication", slug: "communication", description: "Logo, brochures, réseaux sociaux", color: "#00b4d8", icon: "megaphone", sortOrder: 6 },
-    { name: "Financement", slug: "financement", description: "Demandes, partenariats, subventions", color: "#e9c46a", icon: "hand-coins", sortOrder: 7 },
+    {
+      name: "Documents Juridiques",
+      slug: "juridique",
+      description: "Statuts, règlements, autorisations",
+      color: "#e76f51",
+      icon: "scale",
+      sortOrder: 1,
+    },
+    {
+      name: "Gouvernance et Pilotage",
+      slug: "gouvernance",
+      description: "Feuille de route, organigramme, PV",
+      color: "#2d7a4f",
+      icon: "users",
+      sortOrder: 2,
+    },
+    {
+      name: "Documents Opérationnels",
+      slug: "operationnel",
+      description: "Projets, rapports, planning",
+      color: "#f4a261",
+      icon: "clipboard",
+      sortOrder: 3,
+    },
+    {
+      name: "Documents Financiers",
+      slug: "financier",
+      description: "Budget, comptabilité, audits",
+      color: "#264653",
+      icon: "wallet",
+      sortOrder: 4,
+    },
+    {
+      name: "Ressources Humaines",
+      slug: "rh",
+      description: "Membres, bénévoles, contrats",
+      color: "#9c89b8",
+      icon: "user-check",
+      sortOrder: 5,
+    },
+    {
+      name: "Communication",
+      slug: "communication",
+      description: "Logo, brochures, réseaux sociaux",
+      color: "#00b4d8",
+      icon: "megaphone",
+      sortOrder: 6,
+    },
+    {
+      name: "Financement",
+      slug: "financement",
+      description: "Demandes, partenariats, subventions",
+      color: "#e9c46a",
+      icon: "hand-coins",
+      sortOrder: 7,
+    },
   ];
 
   await db.insert(categories).values(defaultCategories);
@@ -209,10 +320,20 @@ export async function getAllDocuments(filters?: {
     conditions.push(eq(documents.categoryId, filters.categoryId));
   }
   if (filters?.status) {
-    conditions.push(eq(documents.status, filters.status as "pending" | "in-progress" | "completed"));
+    conditions.push(
+      eq(
+        documents.status,
+        filters.status as "pending" | "in-progress" | "completed"
+      )
+    );
   }
   if (filters?.priority) {
-    conditions.push(eq(documents.priority, filters.priority as "low" | "medium" | "high" | "urgent"));
+    conditions.push(
+      eq(
+        documents.priority,
+        filters.priority as "low" | "medium" | "high" | "urgent"
+      )
+    );
   }
   if (filters?.search) {
     conditions.push(
@@ -229,16 +350,28 @@ export async function getAllDocuments(filters?: {
   }
 
   if (conditions.length > 0) {
-    return db.select().from(documents).where(and(...conditions)).orderBy(desc(documents.updatedAt));
+    return db
+      .select()
+      .from(documents)
+      .where(and(...conditions))
+      .orderBy(desc(documents.updatedAt));
   }
-  
-  return db.select().from(documents).where(eq(documents.isArchived, false)).orderBy(desc(documents.updatedAt));
+
+  return db
+    .select()
+    .from(documents)
+    .where(eq(documents.isArchived, false))
+    .orderBy(desc(documents.updatedAt));
 }
 
 export async function getDocumentById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(documents).where(eq(documents.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(documents)
+    .where(eq(documents.id, id))
+    .limit(1);
   return result[0];
 }
 
@@ -249,7 +382,10 @@ export async function createDocument(data: InsertDocument) {
   return { id: result[0].insertId, ...data };
 }
 
-export async function updateDocument(id: number, data: Partial<InsertDocument>) {
+export async function updateDocument(
+  id: number,
+  data: Partial<InsertDocument>
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(documents).set(data).where(eq(documents.id, id));
@@ -264,10 +400,14 @@ export async function deleteDocument(id: number) {
 
 export async function getDocumentStats() {
   const db = await getDb();
-  if (!db) return { total: 0, completed: 0, inProgress: 0, pending: 0, urgent: 0 };
+  if (!db)
+    return { total: 0, completed: 0, inProgress: 0, pending: 0, urgent: 0 };
 
-  const allDocs = await db.select().from(documents).where(eq(documents.isArchived, false));
-  
+  const allDocs = await db
+    .select()
+    .from(documents)
+    .where(eq(documents.isArchived, false));
+
   return {
     total: allDocs.length,
     completed: allDocs.filter(d => d.status === "completed").length,
@@ -280,7 +420,7 @@ export async function getDocumentStats() {
 export async function seedDefaultDocuments() {
   const db = await getDb();
   if (!db) return;
-  
+
   const existing = await db.select().from(documents).limit(1);
   if (existing.length > 0) return;
 
@@ -291,33 +431,159 @@ export async function seedDefaultDocuments() {
 
   const defaultDocs: InsertDocument[] = [
     // Juridique
-    { title: "Statuts de l'association", description: "Version validée et conforme", categoryId: catMap["juridique"], priority: "urgent", status: "pending" },
-    { title: "Règlement intérieur", description: "Règles de fonctionnement interne", categoryId: catMap["juridique"], priority: "urgent", status: "pending" },
-    { title: "Autorisation de fonctionner", description: "Ministère de l'Intérieur", categoryId: catMap["juridique"], priority: "urgent", status: "pending" },
-    { title: "PV de l'AG constitutive", description: "Procès-verbal de création", categoryId: catMap["juridique"], priority: "high", status: "pending" },
-    { title: "Liste du Bureau Exécutif", description: "Noms, fonctions et contacts", categoryId: catMap["juridique"], priority: "high", status: "pending" },
+    {
+      title: "Statuts de l'association",
+      description: "Version validée et conforme",
+      categoryId: catMap["juridique"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Règlement intérieur",
+      description: "Règles de fonctionnement interne",
+      categoryId: catMap["juridique"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Autorisation de fonctionner",
+      description: "Ministère de l'Intérieur",
+      categoryId: catMap["juridique"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "PV de l'AG constitutive",
+      description: "Procès-verbal de création",
+      categoryId: catMap["juridique"],
+      priority: "high",
+      status: "pending",
+    },
+    {
+      title: "Liste du Bureau Exécutif",
+      description: "Noms, fonctions et contacts",
+      categoryId: catMap["juridique"],
+      priority: "high",
+      status: "pending",
+    },
     // Gouvernance
-    { title: "Feuille de route stratégique", description: "Vision 1-3 ans", categoryId: catMap["gouvernance"], priority: "urgent", status: "pending" },
-    { title: "Plan d'actions annuel", description: "Actions de l'année", categoryId: catMap["gouvernance"], priority: "urgent", status: "pending" },
-    { title: "Organigramme", description: "Structure organisationnelle", categoryId: catMap["gouvernance"], priority: "urgent", status: "pending" },
-    { title: "Fiches de fonctions", description: "Rôles et responsabilités", categoryId: catMap["gouvernance"], priority: "high", status: "pending" },
+    {
+      title: "Feuille de route stratégique",
+      description: "Vision 1-3 ans",
+      categoryId: catMap["gouvernance"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Plan d'actions annuel",
+      description: "Actions de l'année",
+      categoryId: catMap["gouvernance"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Organigramme",
+      description: "Structure organisationnelle",
+      categoryId: catMap["gouvernance"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Fiches de fonctions",
+      description: "Rôles et responsabilités",
+      categoryId: catMap["gouvernance"],
+      priority: "high",
+      status: "pending",
+    },
     // Opérationnel
-    { title: "Note institutionnelle", description: "Présentation 2-3 pages", categoryId: catMap["operationnel"], priority: "urgent", status: "pending" },
-    { title: "Portfolio des projets", description: "Projets réalisés", categoryId: catMap["operationnel"], priority: "urgent", status: "pending" },
-    { title: "Fiches projets", description: "Contexte et objectifs", categoryId: catMap["operationnel"], priority: "urgent", status: "pending" },
+    {
+      title: "Note institutionnelle",
+      description: "Présentation 2-3 pages",
+      categoryId: catMap["operationnel"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Portfolio des projets",
+      description: "Projets réalisés",
+      categoryId: catMap["operationnel"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Fiches projets",
+      description: "Contexte et objectifs",
+      categoryId: catMap["operationnel"],
+      priority: "urgent",
+      status: "pending",
+    },
     // Financier
-    { title: "Budget annuel", description: "Budget de fonctionnement", categoryId: catMap["financier"], priority: "urgent", status: "pending" },
-    { title: "Plan de financement", description: "Sources de revenus", categoryId: catMap["financier"], priority: "high", status: "pending" },
-    { title: "Livre de caisse", description: "Suivi des entrées/sorties", categoryId: catMap["financier"], priority: "high", status: "pending" },
+    {
+      title: "Budget annuel",
+      description: "Budget de fonctionnement",
+      categoryId: catMap["financier"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Plan de financement",
+      description: "Sources de revenus",
+      categoryId: catMap["financier"],
+      priority: "high",
+      status: "pending",
+    },
+    {
+      title: "Livre de caisse",
+      description: "Suivi des entrées/sorties",
+      categoryId: catMap["financier"],
+      priority: "high",
+      status: "pending",
+    },
     // RH
-    { title: "Registre des membres", description: "Liste complète des membres", categoryId: catMap["rh"], priority: "high", status: "pending" },
-    { title: "Fiches d'adhésion", description: "Formulaires d'inscription", categoryId: catMap["rh"], priority: "medium", status: "pending" },
+    {
+      title: "Registre des membres",
+      description: "Liste complète des membres",
+      categoryId: catMap["rh"],
+      priority: "high",
+      status: "pending",
+    },
+    {
+      title: "Fiches d'adhésion",
+      description: "Formulaires d'inscription",
+      categoryId: catMap["rh"],
+      priority: "medium",
+      status: "pending",
+    },
     // Communication
-    { title: "Logo officiel", description: "Identité visuelle", categoryId: catMap["communication"], priority: "high", status: "pending" },
-    { title: "Brochure de présentation", description: "Document de communication", categoryId: catMap["communication"], priority: "medium", status: "pending" },
+    {
+      title: "Logo officiel",
+      description: "Identité visuelle",
+      categoryId: catMap["communication"],
+      priority: "high",
+      status: "pending",
+    },
+    {
+      title: "Brochure de présentation",
+      description: "Document de communication",
+      categoryId: catMap["communication"],
+      priority: "medium",
+      status: "pending",
+    },
     // Financement
-    { title: "Dossier de demande de financement", description: "Template pour bailleurs", categoryId: catMap["financement"], priority: "urgent", status: "pending" },
-    { title: "Lettre de demande de partenariat", description: "Modèle de lettre", categoryId: catMap["financement"], priority: "high", status: "pending" },
+    {
+      title: "Dossier de demande de financement",
+      description: "Template pour bailleurs",
+      categoryId: catMap["financement"],
+      priority: "urgent",
+      status: "pending",
+    },
+    {
+      title: "Lettre de demande de partenariat",
+      description: "Modèle de lettre",
+      categoryId: catMap["financement"],
+      priority: "high",
+      status: "pending",
+    },
   ];
 
   await db.insert(documents).values(defaultDocs);
@@ -327,7 +593,11 @@ export async function seedDefaultDocuments() {
 export async function getNotesByDocumentId(documentId: number) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(documentNotes).where(eq(documentNotes.documentId, documentId)).orderBy(desc(documentNotes.createdAt));
+  return db
+    .select()
+    .from(documentNotes)
+    .where(eq(documentNotes.documentId, documentId))
+    .orderBy(desc(documentNotes.createdAt));
 }
 
 export async function createNote(data: InsertDocumentNote) {
@@ -353,7 +623,11 @@ export async function getAllMembers() {
 export async function getMemberById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(members).where(eq(members.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(members)
+    .where(eq(members.id, id))
+    .limit(1);
   return result[0];
 }
 
@@ -367,25 +641,25 @@ export async function getMemberById(id: number) {
 async function generateMemberId(gender: string): Promise<string> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   // Map gender to number
   const genderMap: { [key: string]: string } = {
-    'homme': '1',
-    'femme': '2',
-    'autre': '3'
+    homme: "1",
+    femme: "2",
+    autre: "3",
   };
-  const genderCode = genderMap[gender] || '3';
-  
+  const genderCode = genderMap[gender] || "3";
+
   // Get current date
   const now = new Date();
   const year = String(now.getFullYear()).slice(-2); // Last 2 digits of year
-  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, "0");
   const monthYear = month + year; // MMYY format
-  
+
   // Get the count of members created this month
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  
+
   const membersThisMonth = await db
     .select()
     .from(members)
@@ -395,16 +669,16 @@ async function generateMemberId(gender: string): Promise<string> {
         lte(members.joinedAt, currentMonthEnd)
       )
     );
-  
-  const orderNumber = (membersThisMonth.length + 1).toString().padStart(4, '0');
-  
+
+  const orderNumber = (membersThisMonth.length + 1).toString().padStart(4, "0");
+
   return `${genderCode}${monthYear}${orderNumber}`;
 }
 
-export async function createMember(data: Omit<InsertMember, 'memberId'>) {
+export async function createMember(data: Omit<InsertMember, "memberId">) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const memberId = await generateMemberId(data.gender || 'autre');
+  const memberId = await generateMemberId(data.gender || "autre");
   const dataWithId = { ...data, memberId } as InsertMember;
   const result = await db.insert(members).values(dataWithId);
   return { id: result[0].insertId, ...dataWithId };
@@ -433,16 +707,19 @@ export async function logActivity(data: InsertActivityLog) {
 export async function getRecentActivity(limit: number = 20) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(activityLogs).orderBy(desc(activityLogs.createdAt)).limit(limit);
+  return db
+    .select()
+    .from(activityLogs)
+    .orderBy(desc(activityLogs.createdAt))
+    .limit(limit);
 }
-
 
 // ============ COTISATIONS ============
 
 export async function createCotisation(data: InsertCotisation) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const result = await db.insert(cotisations).values(data);
   return result;
 }
@@ -450,21 +727,27 @@ export async function createCotisation(data: InsertCotisation) {
 export async function getCotisations() {
   const db = await getDb();
   if (!db) return [];
-  
+
   return await db.select().from(cotisations);
 }
 
 export async function getCotisationsByMember(memberId: number) {
   const db = await getDb();
   if (!db) return [];
-  
-  return await db.select().from(cotisations).where(eq(cotisations.memberId, memberId));
+
+  return await db
+    .select()
+    .from(cotisations)
+    .where(eq(cotisations.memberId, memberId));
 }
 
-export async function updateCotisation(id: number, data: Partial<InsertCotisation>) {
+export async function updateCotisation(
+  id: number,
+  data: Partial<InsertCotisation>
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   return await db.update(cotisations).set(data).where(eq(cotisations.id, id));
 }
 
@@ -473,14 +756,14 @@ export async function updateCotisation(id: number, data: Partial<InsertCotisatio
 export async function createDon(data: InsertDon) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   return await db.insert(dons).values(data);
 }
 
 export async function getDons() {
   const db = await getDb();
   if (!db) return [];
-  
+
   return await db.select().from(dons);
 }
 
@@ -489,14 +772,14 @@ export async function getDons() {
 export async function createDepense(data: InsertDepense) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   return await db.insert(depenses).values(data);
 }
 
 export async function getDepenses() {
   const db = await getDb();
   if (!db) return [];
-  
+
   return await db.select().from(depenses);
 }
 
@@ -505,14 +788,14 @@ export async function getDepenses() {
 export async function createTransaction(data: InsertTransaction) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   return await db.insert(transactions).values(data);
 }
 
 export async function getTransactions() {
   const db = await getDb();
   if (!db) return [];
-  
+
   return await db.select().from(transactions);
 }
 
@@ -521,19 +804,31 @@ export async function getTransactions() {
 export async function getFinancialStats() {
   const db = await getDb();
   if (!db) return null;
-  
+
   const allCotisations = await db.select().from(cotisations);
   const allDons = await db.select().from(dons);
   const allDepenses = await db.select().from(depenses);
-  
-  const totalCotisations = allCotisations.reduce((sum, c) => sum + parseFloat(c.montant), 0);
+
+  const totalCotisations = allCotisations.reduce(
+    (sum, c) => sum + parseFloat(c.montant),
+    0
+  );
   const totalDons = allDons.reduce((sum, d) => sum + parseFloat(d.montant), 0);
-  const totalDepenses = allDepenses.reduce((sum, d) => sum + parseFloat(d.montant), 0);
-  
-  const cotisationsPayees = allCotisations.filter(c => c.statut === "payée").length;
-  const cotisationsEnAttente = allCotisations.filter(c => c.statut === "en attente").length;
-  const cotisationsEnRetard = allCotisations.filter(c => c.statut === "en retard").length;
-  
+  const totalDepenses = allDepenses.reduce(
+    (sum, d) => sum + parseFloat(d.montant),
+    0
+  );
+
+  const cotisationsPayees = allCotisations.filter(
+    c => c.statut === "payée"
+  ).length;
+  const cotisationsEnAttente = allCotisations.filter(
+    c => c.statut === "en attente"
+  ).length;
+  const cotisationsEnRetard = allCotisations.filter(
+    c => c.statut === "en retard"
+  ).length;
+
   return {
     totalCotisations,
     totalDons,
@@ -552,13 +847,20 @@ export async function getFinancialStats() {
 export async function getEmailTemplates() {
   const db = await getDb();
   if (!db) return [];
-  return await db.select().from(emailTemplates).orderBy(desc(emailTemplates.createdAt));
+  return await db
+    .select()
+    .from(emailTemplates)
+    .orderBy(desc(emailTemplates.createdAt));
 }
 
 export async function getEmailTemplateById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(emailTemplates).where(eq(emailTemplates.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(emailTemplates)
+    .where(eq(emailTemplates.id, id))
+    .limit(1);
   return result[0];
 }
 
@@ -569,7 +871,10 @@ export async function createEmailTemplate(data: InsertEmailTemplate) {
   return { id: result[0].insertId, ...data };
 }
 
-export async function updateEmailTemplate(id: number, data: Partial<InsertEmailTemplate>) {
+export async function updateEmailTemplate(
+  id: number,
+  data: Partial<InsertEmailTemplate>
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(emailTemplates).set(data).where(eq(emailTemplates.id, id));
@@ -587,7 +892,9 @@ export async function deleteEmailTemplate(id: number) {
 export async function getEmailHistory(limit: number = 50) {
   const db = await getDb();
   if (!db) return [];
-  return await db.select().from(emailHistory)
+  return await db
+    .select()
+    .from(emailHistory)
     .orderBy(desc(emailHistory.createdAt))
     .limit(limit);
 }
@@ -595,7 +902,11 @@ export async function getEmailHistory(limit: number = 50) {
 export async function getEmailHistoryById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(emailHistory).where(eq(emailHistory.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(emailHistory)
+    .where(eq(emailHistory.id, id))
+    .limit(1);
   return result[0];
 }
 
@@ -606,7 +917,10 @@ export async function createEmailHistory(data: InsertEmailHistory) {
   return { id: result[0].insertId, ...data };
 }
 
-export async function updateEmailHistory(id: number, data: Partial<InsertEmailHistory>) {
+export async function updateEmailHistory(
+  id: number,
+  data: Partial<InsertEmailHistory>
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(emailHistory).set(data).where(eq(emailHistory.id, id));
@@ -618,7 +932,9 @@ export async function updateEmailHistory(id: number, data: Partial<InsertEmailHi
 export async function getEmailRecipients(emailHistoryId: number) {
   const db = await getDb();
   if (!db) return [];
-  return await db.select().from(emailRecipients)
+  return await db
+    .select()
+    .from(emailRecipients)
     .where(eq(emailRecipients.emailHistoryId, emailHistoryId));
 }
 
@@ -629,19 +945,27 @@ export async function createEmailRecipient(data: InsertEmailRecipient) {
   return { id: result[0].insertId, ...data };
 }
 
-export async function updateEmailRecipient(id: number, data: Partial<InsertEmailRecipient>) {
+export async function updateEmailRecipient(
+  id: number,
+  data: Partial<InsertEmailRecipient>
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(emailRecipients).set(data).where(eq(emailRecipients.id, id));
 }
 
-
 // ============ APP SETTINGS ============
 
-export async function getAppSetting(key: string): Promise<AppSetting | undefined> {
+export async function getAppSetting(
+  key: string
+): Promise<AppSetting | undefined> {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(appSettings).where(eq(appSettings.key, key)).limit(1);
+  const result = await db
+    .select()
+    .from(appSettings)
+    .where(eq(appSettings.key, key))
+    .limit(1);
   return result[0];
 }
 
@@ -651,13 +975,21 @@ export async function getAllAppSettings(): Promise<AppSetting[]> {
   return await db.select().from(appSettings);
 }
 
-export async function updateAppSetting(key: string, value: string, updatedBy: number, description?: string) {
+export async function updateAppSetting(
+  key: string,
+  value: string,
+  updatedBy: number,
+  description?: string
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const existing = await getAppSetting(key);
   if (existing) {
-    await db.update(appSettings).set({ value, description, updatedBy, updatedAt: new Date() }).where(eq(appSettings.key, key));
+    await db
+      .update(appSettings)
+      .set({ value, description, updatedBy, updatedAt: new Date() })
+      .where(eq(appSettings.key, key));
     return getAppSetting(key);
   } else {
     const result = await db.insert(appSettings).values({
@@ -667,7 +999,16 @@ export async function updateAppSetting(key: string, value: string, updatedBy: nu
       type: "string",
       updatedBy,
     });
-    return { id: result[0].insertId, key, value, description, type: "string", updatedBy, updatedAt: new Date(), createdAt: new Date() };
+    return {
+      id: result[0].insertId,
+      key,
+      value,
+      description,
+      type: "string",
+      updatedBy,
+      updatedAt: new Date(),
+      createdAt: new Date(),
+    };
   }
 }
 
@@ -678,32 +1019,52 @@ export async function deleteAppSetting(key: string) {
 }
 
 // ============ CRM CONTACTS FUNCTIONS ============
-export async function createCrmContact(data: InsertCrmContact): Promise<CrmContact> {
+export async function createCrmContact(
+  data: InsertCrmContact
+): Promise<CrmContact> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await (db as any).insert(crmContacts).values(data);
-  const contact = await (db as any).query.crmContacts.findFirst({ where: eq(crmContacts.id, result[0].insertId) });
+  const contact = await (db as any).query.crmContacts.findFirst({
+    where: eq(crmContacts.id, result[0].insertId),
+  });
   return contact as CrmContact;
 }
 
-export async function getCrmContact(id: number): Promise<CrmContact | undefined> {
+export async function getCrmContact(
+  id: number
+): Promise<CrmContact | undefined> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  return (db as any).query.crmContacts.findFirst({ where: eq(crmContacts.id, id) });
+  return (db as any).query.crmContacts.findFirst({
+    where: eq(crmContacts.id, id),
+  });
 }
 
-export async function listCrmContacts(filters?: { segment?: string; status?: string; search?: string }): Promise<CrmContact[]> {
+export async function listCrmContacts(filters?: {
+  segment?: string;
+  status?: string;
+  search?: string;
+}): Promise<CrmContact[]> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   let query = (db as any).query.crmContacts.findMany();
   return query as Promise<CrmContact[]>;
 }
 
-export async function updateCrmContact(id: number, data: Partial<InsertCrmContact>): Promise<CrmContact> {
+export async function updateCrmContact(
+  id: number,
+  data: Partial<InsertCrmContact>
+): Promise<CrmContact> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await (db as any).update(crmContacts).set({ ...data, updatedAt: new Date() }).where(eq(crmContacts.id, id));
-  const contact = await (db as any).query.crmContacts.findFirst({ where: eq(crmContacts.id, id) });
+  await (db as any)
+    .update(crmContacts)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(crmContacts.id, id));
+  const contact = await (db as any).query.crmContacts.findFirst({
+    where: eq(crmContacts.id, id),
+  });
   return contact as CrmContact;
 }
 
@@ -714,25 +1075,41 @@ export async function deleteCrmContact(id: number): Promise<void> {
 }
 
 // ============ CRM ACTIVITIES FUNCTIONS ============
-export async function createCrmActivity(data: InsertCrmActivity): Promise<CrmActivity> {
+export async function createCrmActivity(
+  data: InsertCrmActivity
+): Promise<CrmActivity> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await (db as any).insert(crmActivities).values(data);
-  const activity = await (db as any).query.crmActivities.findFirst({ where: eq(crmActivities.id, result[0].insertId) });
+  const activity = await (db as any).query.crmActivities.findFirst({
+    where: eq(crmActivities.id, result[0].insertId),
+  });
   return activity as CrmActivity;
 }
 
-export async function listCrmActivities(contactId: number): Promise<CrmActivity[]> {
+export async function listCrmActivities(
+  contactId: number
+): Promise<CrmActivity[]> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  return (db as any).query.crmActivities.findMany({ where: eq(crmActivities.contactId, contactId) });
+  return (db as any).query.crmActivities.findMany({
+    where: eq(crmActivities.contactId, contactId),
+  });
 }
 
-export async function updateCrmActivity(id: number, data: Partial<InsertCrmActivity>): Promise<CrmActivity> {
+export async function updateCrmActivity(
+  id: number,
+  data: Partial<InsertCrmActivity>
+): Promise<CrmActivity> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await (db as any).update(crmActivities).set({ ...data, updatedAt: new Date() }).where(eq(crmActivities.id, id));
-  const activity = await (db as any).query.crmActivities.findFirst({ where: eq(crmActivities.id, id) });
+  await (db as any)
+    .update(crmActivities)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(crmActivities.id, id));
+  const activity = await (db as any).query.crmActivities.findFirst({
+    where: eq(crmActivities.id, id),
+  });
   return activity as CrmActivity;
 }
 
@@ -743,60 +1120,85 @@ export async function deleteCrmActivity(id: number): Promise<void> {
 }
 
 // ============ ADHESION PIPELINE FUNCTIONS ============
-export async function createAdhesionPipeline(data: InsertAdhesionPipeline): Promise<AdhesionPipeline> {
+export async function createAdhesionPipeline(
+  data: InsertAdhesionPipeline
+): Promise<AdhesionPipeline> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await (db as any).insert(adhesionPipeline).values(data);
-  const pipeline = await (db as any).query.adhesionPipeline.findFirst({ where: eq(adhesionPipeline.id, result[0].insertId) });
+  const pipeline = await (db as any).query.adhesionPipeline.findFirst({
+    where: eq(adhesionPipeline.id, result[0].insertId),
+  });
   return pipeline as AdhesionPipeline;
 }
 
-export async function updateAdhesionPipeline(id: number, data: Partial<InsertAdhesionPipeline>): Promise<AdhesionPipeline> {
+export async function updateAdhesionPipeline(
+  id: number,
+  data: Partial<InsertAdhesionPipeline>
+): Promise<AdhesionPipeline> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await (db as any).update(adhesionPipeline).set({ ...data, updatedAt: new Date() }).where(eq(adhesionPipeline.id, id));
-  const pipeline = await (db as any).query.adhesionPipeline.findFirst({ where: eq(adhesionPipeline.id, id) });
+  await (db as any)
+    .update(adhesionPipeline)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(adhesionPipeline.id, id));
+  const pipeline = await (db as any).query.adhesionPipeline.findFirst({
+    where: eq(adhesionPipeline.id, id),
+  });
   return pipeline as AdhesionPipeline;
 }
 
-export async function listAdhesionPipeline(stage?: string): Promise<AdhesionPipeline[]> {
+export async function listAdhesionPipeline(
+  stage?: string
+): Promise<AdhesionPipeline[]> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return (db as any).query.adhesionPipeline.findMany();
 }
 
 // ============ CRM REPORTS FUNCTIONS ============
-export async function createCrmReport(data: InsertCrmReport): Promise<CrmReport> {
+export async function createCrmReport(
+  data: InsertCrmReport
+): Promise<CrmReport> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await (db as any).insert(crmReports).values(data);
-  const report = await (db as any).query.crmReports.findFirst({ where: eq(crmReports.id, result[0].insertId as any) });
+  const report = await (db as any).query.crmReports.findFirst({
+    where: eq(crmReports.id, result[0].insertId as any),
+  });
   return report as CrmReport;
 }
 
 export async function listCrmReports(type?: string): Promise<CrmReport[]> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const reports = await (db as any).query.crmReports.findMany() as any;
+  const reports = (await (db as any).query.crmReports.findMany()) as any;
   return reports;
 }
 
 // ============ CRM EMAIL INTEGRATION FUNCTIONS ============
-export async function createCrmEmailIntegration(data: InsertCrmEmailIntegration): Promise<CrmEmailIntegration> {
+export async function createCrmEmailIntegration(
+  data: InsertCrmEmailIntegration
+): Promise<CrmEmailIntegration> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await (db as any).insert(crmEmailIntegration).values(data);
-  const email = await (db as any).query.crmEmailIntegration.findFirst({ where: eq(crmEmailIntegration.id, result[0].insertId as any) });
+  const email = await (db as any).query.crmEmailIntegration.findFirst({
+    where: eq(crmEmailIntegration.id, result[0].insertId as any),
+  });
   return email as CrmEmailIntegration;
 }
 
-export async function listCrmEmailIntegration(contactId: number): Promise<CrmEmailIntegration[]> {
+export async function listCrmEmailIntegration(
+  contactId: number
+): Promise<CrmEmailIntegration[]> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const emails = await (db as any).query.crmEmailIntegration.findMany({ where: eq(crmEmailIntegration.contactId, contactId) }) as any;
+  const emails = (await (db as any).query.crmEmailIntegration.findMany({
+    where: eq(crmEmailIntegration.contactId, contactId),
+  })) as any;
   return emails;
 }
-
 
 // Global Settings Management
 export async function getGlobalSettings() {
@@ -806,20 +1208,27 @@ export async function getGlobalSettings() {
   return result[0];
 }
 
-export async function updateGlobalSettings(data: Partial<InsertGlobalSettings>) {
+export async function updateGlobalSettings(
+  data: Partial<InsertGlobalSettings>
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   // Check if settings exist
   const existing = await getGlobalSettings();
-  
+
   if (existing) {
     // Update existing
-    await db.update(globalSettings).set(data).where(eq(globalSettings.id, existing.id));
+    await db
+      .update(globalSettings)
+      .set(data)
+      .where(eq(globalSettings.id, existing.id));
     return getGlobalSettings();
   } else {
     // Create new
-    const result = await db.insert(globalSettings).values(data as InsertGlobalSettings);
+    const result = await db
+      .insert(globalSettings)
+      .values(data as InsertGlobalSettings);
     return getGlobalSettings();
   }
 }
@@ -827,7 +1236,7 @@ export async function updateGlobalSettings(data: Partial<InsertGlobalSettings>) 
 export async function initializeGlobalSettings() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
   const existing = await getGlobalSettings();
   if (!existing) {
     await db.insert(globalSettings).values({
@@ -844,13 +1253,16 @@ export async function initializeGlobalSettings() {
   return getGlobalSettings();
 }
 
-
 // ============ LOCAL AUTH FUNCTIONS ============
 
 /**
  * Create a local user account
  */
-export async function createLocalUser(email: string, passwordHash: string, userId?: number): Promise<UserLocal> {
+export async function createLocalUser(
+  email: string,
+  passwordHash: string,
+  userId?: number
+): Promise<UserLocal> {
   const db = await getDb();
   if (!db) {
     throw new Error("Database not available");
@@ -899,14 +1311,20 @@ export async function createLocalUser(email: string, passwordHash: string, userI
 /**
  * Get local user by email
  */
-export async function getLocalUserByEmail(email: string): Promise<UserLocal | null> {
+export async function getLocalUserByEmail(
+  email: string
+): Promise<UserLocal | null> {
   const db = await getDb();
   if (!db) {
     throw new Error("Database not available");
   }
 
   try {
-    const result = await db.select().from(usersLocal).where(eq(usersLocal.email, email)).limit(1);
+    const result = await db
+      .select()
+      .from(usersLocal)
+      .where(eq(usersLocal.email, email))
+      .limit(1);
     return result[0] || null;
   } catch (error) {
     console.error("[Database] Error getting local user:", error);
@@ -917,14 +1335,20 @@ export async function getLocalUserByEmail(email: string): Promise<UserLocal | nu
 /**
  * Get local user by userId
  */
-export async function getLocalUserByUserId(userId: number): Promise<UserLocal | null> {
+export async function getLocalUserByUserId(
+  userId: number
+): Promise<UserLocal | null> {
   const db = await getDb();
   if (!db) {
     throw new Error("Database not available");
   }
 
   try {
-    const result = await db.select().from(usersLocal).where(eq(usersLocal.userId, userId)).limit(1);
+    const result = await db
+      .select()
+      .from(usersLocal)
+      .where(eq(usersLocal.userId, userId))
+      .limit(1);
     return result[0] || null;
   } catch (error) {
     console.error("[Database] Error getting local user by userId:", error);
@@ -935,18 +1359,24 @@ export async function getLocalUserByUserId(userId: number): Promise<UserLocal | 
 /**
  * Update local user password
  */
-export async function updateLocalUserPassword(userId: number, newPasswordHash: string): Promise<void> {
+export async function updateLocalUserPassword(
+  userId: number,
+  newPasswordHash: string
+): Promise<void> {
   const db = await getDb();
   if (!db) {
     throw new Error("Database not available");
   }
 
   try {
-    await db.update(usersLocal).set({
-      passwordHash: newPasswordHash,
-      passwordResetToken: null,
-      passwordResetTokenExpiry: null,
-    }).where(eq(usersLocal.userId, userId));
+    await db
+      .update(usersLocal)
+      .set({
+        passwordHash: newPasswordHash,
+        passwordResetToken: null,
+        passwordResetTokenExpiry: null,
+      })
+      .where(eq(usersLocal.userId, userId));
   } catch (error) {
     console.error("[Database] Error updating password:", error);
     throw error;
@@ -963,9 +1393,12 @@ export async function updateLastLoginTime(userId: number): Promise<void> {
   }
 
   try {
-    await db.update(usersLocal).set({
-      lastLoginAt: new Date(),
-    }).where(eq(usersLocal.userId, userId));
+    await db
+      .update(usersLocal)
+      .set({
+        lastLoginAt: new Date(),
+      })
+      .where(eq(usersLocal.userId, userId));
   } catch (error) {
     console.error("[Database] Error updating last login:", error);
     throw error;
@@ -975,7 +1408,12 @@ export async function updateLastLoginTime(userId: number): Promise<void> {
 /**
  * Create a user session
  */
-export async function createUserSession(userId: number, token: string, userAgent?: string, ipAddress?: string): Promise<UserSession> {
+export async function createUserSession(
+  userId: number,
+  token: string,
+  userAgent?: string,
+  ipAddress?: string
+): Promise<UserSession> {
   const db = await getDb();
   if (!db) {
     throw new Error("Database not available");
@@ -1009,19 +1447,25 @@ export async function createUserSession(userId: number, token: string, userAgent
 /**
  * Get user session by token
  */
-export async function getUserSessionByToken(token: string): Promise<UserSession | null> {
+export async function getUserSessionByToken(
+  token: string
+): Promise<UserSession | null> {
   const db = await getDb();
   if (!db) {
     throw new Error("Database not available");
   }
 
   try {
-    const result = await db.select().from(userSessions).where(
-      and(
-        eq(userSessions.token, token),
-        sql`${userSessions.expiresAt} > NOW()`
+    const result = await db
+      .select()
+      .from(userSessions)
+      .where(
+        and(
+          eq(userSessions.token, token),
+          sql`${userSessions.expiresAt} > NOW()`
+        )
       )
-    ).limit(1);
+      .limit(1);
     return result[0] || null;
   } catch (error) {
     console.error("[Database] Error getting session:", error);
@@ -1063,7 +1507,6 @@ export async function cleanupExpiredSessions(): Promise<void> {
   }
 }
 
-
 // ============ PROJECT FUNCTIONS ============
 export async function getAllProjects(filters?: { status?: string }) {
   const db = await getDb();
@@ -1071,7 +1514,11 @@ export async function getAllProjects(filters?: { status?: string }) {
 
   try {
     if (filters?.status) {
-      return await db.select().from(projects).where(eq(projects.status, filters.status as any)).orderBy(desc(projects.createdAt));
+      return await db
+        .select()
+        .from(projects)
+        .where(eq(projects.status, filters.status as any))
+        .orderBy(desc(projects.createdAt));
     }
     return await db.select().from(projects).orderBy(desc(projects.createdAt));
   } catch (error) {
@@ -1085,7 +1532,11 @@ export async function getProjectById(id: number) {
   if (!db) return undefined;
 
   try {
-    const result = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+    const result = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.id, id))
+      .limit(1);
     return result[0];
   } catch (error) {
     console.error("[Database] Error getting project:", error);
@@ -1137,7 +1588,11 @@ export async function getTasksByProjectId(projectId: number) {
   if (!db) return [];
 
   try {
-    return await db.select().from(tasks).where(eq(tasks.projectId, projectId)).orderBy(desc(tasks.createdAt));
+    return await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.projectId, projectId))
+      .orderBy(desc(tasks.createdAt));
   } catch (error) {
     console.error("[Database] Error getting tasks:", error);
     return [];
@@ -1149,7 +1604,11 @@ export async function getTaskById(id: number) {
   if (!db) return undefined;
 
   try {
-    const result = await db.select().from(tasks).where(eq(tasks.id, id)).limit(1);
+    const result = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.id, id))
+      .limit(1);
     return result[0];
   } catch (error) {
     console.error("[Database] Error getting task:", error);
@@ -1163,7 +1622,8 @@ export async function createTask(data: InsertTask) {
 
   try {
     const result = await db.insert(tasks).values(data);
-    const insertId = (result as any).insertId || (result as any)[0]?.insertId || 0;
+    const insertId =
+      (result as any).insertId || (result as any)[0]?.insertId || 0;
     return { id: insertId, ...data };
   } catch (error) {
     console.error("[Database] Error creating task:", error);
@@ -1202,7 +1662,10 @@ export async function getProjectMembers(projectId: number) {
   if (!db) return [];
 
   try {
-    return await db.select().from(projectMembers).where(eq(projectMembers.projectId, projectId));
+    return await db
+      .select()
+      .from(projectMembers)
+      .where(eq(projectMembers.projectId, projectId));
   } catch (error) {
     console.error("[Database] Error getting project members:", error);
     return [];
@@ -1227,7 +1690,14 @@ export async function removeProjectMember(projectId: number, userId: number) {
   if (!db) throw new Error("Database not available");
 
   try {
-    await db.delete(projectMembers).where(and(eq(projectMembers.projectId, projectId), eq(projectMembers.userId, userId)));
+    await db
+      .delete(projectMembers)
+      .where(
+        and(
+          eq(projectMembers.projectId, projectId),
+          eq(projectMembers.userId, userId)
+        )
+      );
   } catch (error) {
     console.error("[Database] Error removing project member:", error);
     throw error;
@@ -1240,7 +1710,11 @@ export async function getProjectExpenses(projectId: number) {
   if (!db) return [];
 
   try {
-    return await db.select().from(projectExpenses).where(eq(projectExpenses.projectId, projectId)).orderBy(desc(projectExpenses.date));
+    return await db
+      .select()
+      .from(projectExpenses)
+      .where(eq(projectExpenses.projectId, projectId))
+      .orderBy(desc(projectExpenses.date));
   } catch (error) {
     console.error("[Database] Error getting project expenses:", error);
     return [];
@@ -1272,7 +1746,6 @@ export async function deleteProjectExpense(id: number) {
   }
 }
 
-
 // Task Attachments Functions
 export async function createTaskAttachment(data: InsertTaskAttachment) {
   const db = await getDb();
@@ -1280,7 +1753,8 @@ export async function createTaskAttachment(data: InsertTaskAttachment) {
 
   try {
     const result = await db.insert(taskAttachments).values(data);
-    const insertId = (result as any).insertId || (result as any)[0]?.insertId || 0;
+    const insertId =
+      (result as any).insertId || (result as any)[0]?.insertId || 0;
     return { id: insertId, ...data };
   } catch (error) {
     console.error("[Database] Error creating task attachment:", error);
@@ -1293,7 +1767,10 @@ export async function getTaskAttachments(taskId: number) {
   if (!db) throw new Error("Database not available");
 
   try {
-    return await db.select().from(taskAttachments).where(eq(taskAttachments.taskId, taskId));
+    return await db
+      .select()
+      .from(taskAttachments)
+      .where(eq(taskAttachments.taskId, taskId));
   } catch (error) {
     console.error("[Database] Error getting task attachments:", error);
     throw error;
@@ -1313,22 +1790,28 @@ export async function deleteTaskAttachment(id: number) {
   }
 }
 
-
 /**
  * Search members by ID or name
  */
 export async function searchMembers(query: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
-  const results = await db.select().from(members).where(
-    or(
-      like(members.memberId, `%${query}%`),
-      like(sql`CONCAT(${members.firstName}, ' ', ${members.lastName})`, `%${query}%`),
-      like(members.email, `%${query}%`)
+
+  const results = await db
+    .select()
+    .from(members)
+    .where(
+      or(
+        like(members.memberId, `%${query}%`),
+        like(
+          sql`CONCAT(${members.firstName}, ' ', ${members.lastName})`,
+          `%${query}%`
+        ),
+        like(members.email, `%${query}%`)
+      )
     )
-  ).limit(10);
-  
+    .limit(10);
+
   return results;
 }
 
@@ -1338,7 +1821,11 @@ export async function searchMembers(query: string) {
 export async function getMemberByMemberId(memberId: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.select().from(members).where(eq(members.memberId, memberId)).limit(1);
+  const result = await db
+    .select()
+    .from(members)
+    .where(eq(members.memberId, memberId))
+    .limit(1);
   return result[0];
 }
 
@@ -1348,11 +1835,13 @@ export async function getMemberByMemberId(memberId: string) {
 export async function getAdhesionById(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.select().from(adhesions).where(eq(adhesions.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(adhesions)
+    .where(eq(adhesions.id, id))
+    .limit(1);
   return result[0];
 }
-
-
 
 /**
  * Create adhesion and automatically create/update member
@@ -1432,7 +1921,9 @@ export async function createAdhesionWithMember(data: {
 /**
  * Calculate cotisation status based on criteria
  */
-export async function calculateCotisationStatus(memberMemberId: string): Promise<string> {
+export async function calculateCotisationStatus(
+  memberMemberId: string
+): Promise<string> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
@@ -1460,7 +1951,8 @@ export async function calculateCotisationStatus(memberMemberId: string): Promise
 
   const adhesion = latestAdhesion[0];
   const daysUntilExpiration = Math.floor(
-    (new Date(adhesion.dateExpiration).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    (new Date(adhesion.dateExpiration).getTime() - now.getTime()) /
+      (1000 * 60 * 60 * 24)
   );
 
   if (daysUntilExpiration < 0) return "impayé";
@@ -1471,7 +1963,9 @@ export async function calculateCotisationStatus(memberMemberId: string): Promise
 /**
  * Update member cotisation status
  */
-export async function updateMemberCotisationStatus(memberMemberId: string): Promise<void> {
+export async function updateMemberCotisationStatus(
+  memberMemberId: string
+): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 

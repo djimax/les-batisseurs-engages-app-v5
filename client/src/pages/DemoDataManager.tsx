@@ -1,8 +1,20 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertTriangle, CheckCircle2, Trash2, Database } from "lucide-react";
+import {
+  Loader2,
+  AlertTriangle,
+  CheckCircle2,
+  Trash2,
+  Database,
+} from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -12,9 +24,26 @@ export default function DemoDataManager() {
 
   // Demo data generation is handled via direct SQL execution
   // Placeholder mutations and queries
-  const generateMutation = { mutateAsync: async () => ({ message: "Demo data generated" }), isLoading: false };
-  const resetMutation = { mutateAsync: async () => ({ message: "Demo data reset" }), isLoading: false };
-  const statusQuery = { data: { hasDemoData: true, members: 20, contacts: 8, projects: 5, invoices: 8, documents: 10 }, refetch: async () => {}, isLoading: false };
+  const generateMutation = {
+    mutateAsync: async () => ({ message: "Demo data generated" }),
+    isLoading: false,
+  };
+  const resetMutation = {
+    mutateAsync: async () => ({ message: "Demo data reset" }),
+    isLoading: false,
+  };
+  const statusQuery = {
+    data: {
+      hasDemoData: true,
+      members: 20,
+      contacts: 8,
+      projects: 5,
+      invoices: 8,
+      documents: 10,
+    },
+    refetch: async () => {},
+    isLoading: false,
+  };
 
   const handleGenerateDemo = async () => {
     setIsGenerating(true);
@@ -24,7 +53,9 @@ export default function DemoDataManager() {
       // Refresh status
       await statusQuery.refetch();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to generate demo data");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to generate demo data"
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -42,7 +73,9 @@ export default function DemoDataManager() {
       // Refresh status
       await statusQuery.refetch();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to reset demo data");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to reset demo data"
+      );
     } finally {
       setIsResetting(false);
     }
@@ -55,9 +88,12 @@ export default function DemoDataManager() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-slate-900">Demo Data Manager</h1>
+          <h1 className="text-4xl font-bold text-slate-900">
+            Demo Data Manager
+          </h1>
           <p className="text-lg text-slate-600">
-            Generate or reset realistic demonstration data for testing all application features
+            Generate or reset realistic demonstration data for testing all
+            application features
           </p>
         </div>
 
@@ -143,7 +179,9 @@ export default function DemoDataManager() {
           {/* Generate Button */}
           <Card className="border-green-200 bg-green-50">
             <CardHeader>
-              <CardTitle className="text-green-900">Generate Demo Data</CardTitle>
+              <CardTitle className="text-green-900">
+                Generate Demo Data
+              </CardTitle>
               <CardDescription className="text-green-700">
                 Create realistic test data for all modules
               </CardDescription>
@@ -193,9 +231,7 @@ export default function DemoDataManager() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-slate-600">
-                This will:
-              </p>
+              <p className="text-sm text-slate-600">This will:</p>
               <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
                 <li>Delete all members and contacts</li>
                 <li>Remove all financial records</li>
@@ -241,7 +277,9 @@ export default function DemoDataManager() {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">Administrative</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">
+                  Administrative
+                </h3>
                 <ul className="space-y-1 text-sm text-slate-600">
                   <li>✓ Member management and roles</li>
                   <li>✓ Document organization</li>
@@ -259,7 +297,9 @@ export default function DemoDataManager() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">Operations</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">
+                  Operations
+                </h3>
                 <ul className="space-y-1 text-sm text-slate-600">
                   <li>✓ Project management</li>
                   <li>✓ Task assignment and tracking</li>
@@ -288,21 +328,30 @@ export default function DemoDataManager() {
           <CardContent>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="bg-slate-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-slate-900 mb-2">Partner Presentations</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">
+                  Partner Presentations
+                </h3>
                 <p className="text-sm text-slate-600">
-                  Demonstrate real-world functionality to potential partners and donors
+                  Demonstrate real-world functionality to potential partners and
+                  donors
                 </p>
               </div>
               <div className="bg-slate-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-slate-900 mb-2">Fundraising</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">
+                  Fundraising
+                </h3>
                 <p className="text-sm text-slate-600">
-                  Show comprehensive management capabilities to funding organizations
+                  Show comprehensive management capabilities to funding
+                  organizations
                 </p>
               </div>
               <div className="bg-slate-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-slate-900 mb-2">Testing & Training</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">
+                  Testing & Training
+                </h3>
                 <p className="text-sm text-slate-600">
-                  Complete environment for testing all features and training staff
+                  Complete environment for testing all features and training
+                  staff
                 </p>
               </div>
             </div>

@@ -25,7 +25,8 @@ export default function CustomizableDashboard() {
   const [draggedWidget, setDraggedWidget] = useState<number | null>(null);
 
   // Fetch user's widgets
-  const { data: userWidgets, isLoading } = trpc.widgets.getUserWidgets.useQuery();
+  const { data: userWidgets, isLoading } =
+    trpc.widgets.getUserWidgets.useQuery();
 
   // Mutations
   const removeWidgetMutation = trpc.widgets.removeWidget.useMutation();
@@ -43,7 +44,7 @@ export default function CustomizableDashboard() {
       { id },
       {
         onSuccess: () => {
-          setWidgets(widgets.filter((w) => w.id !== id));
+          setWidgets(widgets.filter(w => w.id !== id));
           toast.success("Widget supprimé");
         },
         onError: () => {
@@ -80,8 +81,8 @@ export default function CustomizableDashboard() {
     e.preventDefault();
     if (draggedWidget === null || draggedWidget === targetId) return;
 
-    const draggedIndex = widgets.findIndex((w) => w.id === draggedWidget);
-    const targetIndex = widgets.findIndex((w) => w.id === targetId);
+    const draggedIndex = widgets.findIndex(w => w.id === draggedWidget);
+    const targetIndex = widgets.findIndex(w => w.id === targetId);
 
     if (draggedIndex === -1 || targetIndex === -1) return;
 
@@ -102,7 +103,7 @@ export default function CustomizableDashboard() {
 
     // Save to server
     reorderWidgetsMutation.mutate({
-      widgets: newWidgets.map((w) => ({ id: w.id, position: w.position })),
+      widgets: newWidgets.map(w => ({ id: w.id, position: w.position })),
     });
   };
 
@@ -161,14 +162,18 @@ export default function CustomizableDashboard() {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center">Chargement du tableau de bord...</div>;
+    return (
+      <div className="p-8 text-center">Chargement du tableau de bord...</div>
+    );
   }
 
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Tableau de Bord Personnalisable</h1>
+          <h1 className="text-3xl font-bold">
+            Tableau de Bord Personnalisable
+          </h1>
           <p className="text-gray-600 mt-2">
             {isEditMode
               ? "Glissez-déposez pour réorganiser les widgets"
@@ -195,7 +200,9 @@ export default function CustomizableDashboard() {
 
       {widgets.length === 0 ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500 mb-4">Aucun widget sur votre tableau de bord</p>
+          <p className="text-gray-500 mb-4">
+            Aucun widget sur votre tableau de bord
+          </p>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Ajouter le premier widget
@@ -206,12 +213,12 @@ export default function CustomizableDashboard() {
           className="grid grid-cols-3 gap-4 auto-rows-max"
           onDragOver={isEditMode ? handleDragOver : undefined}
         >
-          {widgets.map((widget) => (
+          {widgets.map(widget => (
             <div
               key={widget.id}
               draggable={isEditMode}
-              onDragStart={(e) => handleDragStart(e, widget.id)}
-              onDrop={(e) => handleDrop(e, widget.id)}
+              onDragStart={e => handleDragStart(e, widget.id)}
+              onDrop={e => handleDrop(e, widget.id)}
               className={isEditMode ? "cursor-move" : ""}
             >
               <WidgetContainer

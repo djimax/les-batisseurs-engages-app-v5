@@ -1,21 +1,33 @@
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { 
-  Archive, 
-  FileText, 
-  Search, 
+import {
+  Archive,
+  FileText,
+  Search,
   RotateCcw,
   Trash2,
   FolderOpen,
   Calendar,
   Download,
-  Filter
+  Filter,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -35,7 +47,11 @@ export default function Archives() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const { data: categories } = trpc.categories.list.useQuery();
-  const { data: archivedDocs, isLoading, refetch } = trpc.documents.archived.useQuery({
+  const {
+    data: archivedDocs,
+    isLoading,
+    refetch,
+  } = trpc.documents.archived.useQuery({
     categoryId: categoryFilter !== "all" ? parseInt(categoryFilter) : undefined,
     search: search || undefined,
   });
@@ -128,7 +144,7 @@ export default function Archives() {
               <Input
                 placeholder="Rechercher dans les archives..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={e => setSearch(e.target.value)}
                 className="pl-9"
               />
             </div>
@@ -138,7 +154,7 @@ export default function Archives() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les catégories</SelectItem>
-                {categories?.map((cat) => (
+                {categories?.map(cat => (
                   <SelectItem key={cat.id} value={cat.id.toString()}>
                     {cat.name}
                   </SelectItem>
@@ -154,14 +170,18 @@ export default function Archives() {
         <CardHeader>
           <CardTitle>Documents archivés</CardTitle>
           <CardDescription>
-            Ces documents ont été archivés et peuvent être restaurés à tout moment
+            Ces documents ont été archivés et peuvent être restaurés à tout
+            moment
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
+                <div
+                  key={i}
+                  className="flex items-center gap-4 p-4 border rounded-lg"
+                >
                   <Skeleton className="h-10 w-10 rounded-lg" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-1/3" />
@@ -174,20 +194,22 @@ export default function Archives() {
           ) : archivedDocs && archivedDocs.length > 0 ? (
             <div className="space-y-3">
               {archivedDocs.map((doc: any) => (
-                <div 
-                  key={doc.id} 
+                <div
+                  key={doc.id}
                   className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
                 >
-                  <div 
+                  <div
                     className="p-2 rounded-lg shrink-0"
-                    style={{ backgroundColor: `${getCategoryColor(doc.categoryId)}20` }}
+                    style={{
+                      backgroundColor: `${getCategoryColor(doc.categoryId)}20`,
+                    }}
                   >
-                    <FileText 
-                      className="h-5 w-5" 
+                    <FileText
+                      className="h-5 w-5"
                       style={{ color: getCategoryColor(doc.categoryId) }}
                     />
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-medium">{doc.title}</h3>
@@ -248,29 +270,34 @@ export default function Archives() {
           ) : (
             <div className="text-center py-12 text-muted-foreground">
               <Archive className="h-16 w-16 mx-auto mb-4 opacity-30" />
-              <h3 className="text-lg font-medium mb-1">Aucun document archivé</h3>
-              <p className="text-sm">
-                Les documents archivés apparaîtront ici
-              </p>
+              <h3 className="text-lg font-medium mb-1">
+                Aucun document archivé
+              </h3>
+              <p className="text-sm">Les documents archivés apparaîtront ici</p>
             </div>
           )}
         </CardContent>
       </Card>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
+      <AlertDialog
+        open={deleteId !== null}
+        onOpenChange={() => setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer définitivement ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est irréversible. Le document sera supprimé définitivement
-              et ne pourra pas être récupéré.
+              Cette action est irréversible. Le document sera supprimé
+              définitivement et ne pourra pas être récupéré.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })}
+              onClick={() =>
+                deleteId && deleteMutation.mutate({ id: deleteId })
+              }
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Supprimer définitivement

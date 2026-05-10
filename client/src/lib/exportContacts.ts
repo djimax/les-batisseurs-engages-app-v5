@@ -18,7 +18,10 @@ export interface ContactExportData {
 /**
  * Exporte les contacts en CSV
  */
-export function exportContactsToCSV(contacts: ContactExportData[], filename: string = "contacts.csv") {
+export function exportContactsToCSV(
+  contacts: ContactExportData[],
+  filename: string = "contacts.csv"
+) {
   const headers = [
     "ID",
     "Prénom",
@@ -32,7 +35,7 @@ export function exportContactsToCSV(contacts: ContactExportData[], filename: str
     "Score d'engagement",
   ];
 
-  const rows = contacts.map((contact) => [
+  const rows = contacts.map(contact => [
     contact.id,
     contact.firstName,
     contact.lastName,
@@ -48,12 +51,16 @@ export function exportContactsToCSV(contacts: ContactExportData[], filename: str
   // Create CSV content
   const csvContent = [
     headers.join(","),
-    ...rows.map((row) =>
+    ...rows.map(row =>
       row
-        .map((cell) => {
+        .map(cell => {
           // Escape quotes and wrap in quotes if contains comma
           const cellStr = String(cell);
-          if (cellStr.includes(",") || cellStr.includes('"') || cellStr.includes("\n")) {
+          if (
+            cellStr.includes(",") ||
+            cellStr.includes('"') ||
+            cellStr.includes("\n")
+          ) {
             return `"${cellStr.replace(/"/g, '""')}"`;
           }
           return cellStr;
@@ -64,7 +71,9 @@ export function exportContactsToCSV(contacts: ContactExportData[], filename: str
 
   // Add BOM for proper UTF-8 encoding in Excel
   const BOM = "\uFEFF";
-  const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([BOM + csvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
 
   downloadFile(blob, filename);
 }
@@ -93,7 +102,7 @@ export async function exportContactsToExcel(
       "Score d'engagement",
     ];
 
-    const data = contacts.map((contact) => [
+    const data = contacts.map(contact => [
       contact.id,
       contact.firstName,
       contact.lastName,
@@ -111,7 +120,7 @@ export async function exportContactsToExcel(
 
     // Set column widths
     ws["!cols"] = [
-      { wch: 8 },  // ID
+      { wch: 8 }, // ID
       { wch: 15 }, // Prénom
       { wch: 15 }, // Nom
       { wch: 25 }, // Email

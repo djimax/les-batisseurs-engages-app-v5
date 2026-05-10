@@ -46,8 +46,8 @@ export function WidgetGrid({
     e.preventDefault();
     if (!draggedWidget || draggedWidget === targetId) return;
 
-    const draggedIndex = localWidgets.findIndex((w) => w.id === draggedWidget);
-    const targetIndex = localWidgets.findIndex((w) => w.id === targetId);
+    const draggedIndex = localWidgets.findIndex(w => w.id === draggedWidget);
+    const targetIndex = localWidgets.findIndex(w => w.id === targetId);
 
     const newWidgets = [...localWidgets];
     [newWidgets[draggedIndex], newWidgets[targetIndex]] = [
@@ -65,14 +65,18 @@ export function WidgetGrid({
     onWidgetsChange?.(localWidgets);
   };
 
-  const visibleWidgets = localWidgets.filter((w) => w.isVisible !== false);
+  const visibleWidgets = localWidgets.filter(w => w.isVisible !== false);
 
   return (
     <div className="space-y-4">
       {isEditable && (
         <div className="flex gap-2">
           {!isEditMode ? (
-            <Button onClick={() => setIsEditMode(true)} variant="outline" size="sm">
+            <Button
+              onClick={() => setIsEditMode(true)}
+              variant="outline"
+              size="sm"
+            >
               <Edit2 className="h-4 w-4 mr-2" />
               Personnaliser
             </Button>
@@ -82,7 +86,11 @@ export function WidgetGrid({
                 <Save className="h-4 w-4 mr-2" />
                 Enregistrer
               </Button>
-              <Button onClick={() => setIsEditMode(false)} variant="outline" size="sm">
+              <Button
+                onClick={() => setIsEditMode(false)}
+                variant="outline"
+                size="sm"
+              >
                 Annuler
               </Button>
             </>
@@ -91,16 +99,17 @@ export function WidgetGrid({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {visibleWidgets.map((widget) => (
+        {visibleWidgets.map(widget => (
           <div
             key={widget.id}
             draggable={isEditMode}
-            onDragStart={(e) => handleDragStart(e, widget.id)}
+            onDragStart={e => handleDragStart(e, widget.id)}
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, widget.id)}
+            onDrop={e => handleDrop(e, widget.id)}
             className={cn(
               "relative",
-              isEditMode && "cursor-move opacity-90 hover:opacity-100 transition-opacity"
+              isEditMode &&
+                "cursor-move opacity-90 hover:opacity-100 transition-opacity"
             )}
             style={{
               gridColumn: `span ${widget.width || 1}`,

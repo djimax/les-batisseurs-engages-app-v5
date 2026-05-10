@@ -54,16 +54,23 @@ export function WidgetActivity({ activities, limit = 5 }: WidgetActivityProps) {
       <CardContent>
         <div className="space-y-4">
           {displayedActivities.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Aucune activité récente</p>
+            <p className="text-gray-500 text-center py-8">
+              Aucune activité récente
+            </p>
           ) : (
-            displayedActivities.map((activity) => (
-              <div key={activity.id} className="flex items-start gap-4 pb-4 border-b last:border-b-0">
+            displayedActivities.map(activity => (
+              <div
+                key={activity.id}
+                className="flex items-start gap-4 pb-4 border-b last:border-b-0"
+              >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <Badge className={getActionColor(activity.action)}>
                       {getActionLabel(activity.action)}
                     </Badge>
-                    <span className="text-sm font-medium">{activity.entityType}</span>
+                    <span className="text-sm font-medium">
+                      {activity.entityType}
+                    </span>
                   </div>
                   <p className="text-sm text-gray-600">{activity.details}</p>
                   <p className="text-xs text-gray-400 mt-1">

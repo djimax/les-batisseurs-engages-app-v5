@@ -253,7 +253,7 @@ export default function Home() {
           <CardContent>
             {loadingDocs ? (
               <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3].map(i => (
                   <Skeleton key={i} className="h-12 w-full" />
                 ))}
               </div>
@@ -281,7 +281,7 @@ export default function Home() {
                     color: "bg-amber-500",
                     icon: AlertTriangle,
                   },
-                ].map((item) => {
+                ].map(item => {
                   const percentage =
                     item.total > 0
                       ? Math.round((item.value / item.total) * 100)
@@ -332,7 +332,7 @@ export default function Home() {
           <CardContent>
             {loadingActivity ? (
               <div className="space-y-3">
-                {[1, 2, 3, 4].map((i) => (
+                {[1, 2, 3, 4].map(i => (
                   <div key={i} className="flex items-start gap-3 py-2">
                     <Skeleton className="h-2 w-2 rounded-full mt-1.5" />
                     <div className="space-y-1.5 flex-1">
@@ -378,7 +378,7 @@ export default function Home() {
               { label: "Ajouter un membre", path: "/members", icon: Users },
               { label: "Comptabilité", path: "/finance", icon: DollarSign },
               { label: "Annonces", path: "/announcements", icon: Activity },
-            ].map((item) => (
+            ].map(item => (
               <Button
                 key={item.path}
                 variant="outline"

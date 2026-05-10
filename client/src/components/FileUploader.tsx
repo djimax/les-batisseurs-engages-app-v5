@@ -24,16 +24,16 @@ export function FileUploader({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const validateFiles = (files: File[]): { valid: File[]; errors: string[] } => {
+  const validateFiles = (
+    files: File[]
+  ): { valid: File[]; errors: string[] } => {
     const validFiles: File[] = [];
     const newErrors: string[] = [];
 
-    files.forEach((file) => {
+    files.forEach(file => {
       // Check file size
       if (file.size > maxSize * 1024 * 1024) {
-        newErrors.push(
-          `${file.name} dépasse la taille limite de ${maxSize}MB`
-        );
+        newErrors.push(`${file.name} dépasse la taille limite de ${maxSize}MB`);
         return;
       }
 
@@ -42,16 +42,14 @@ export function FileUploader({
         const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
         const mimeType = file.type;
         const isAccepted = acceptedTypes.some(
-          (type) =>
+          type =>
             type === mimeType ||
             type === `.${fileExtension}` ||
             type === fileExtension
         );
 
         if (!isAccepted) {
-          newErrors.push(
-            `${file.name} n'est pas un type de fichier accepté`
-          );
+          newErrors.push(`${file.name} n'est pas un type de fichier accepté`);
           return;
         }
       }
@@ -95,13 +93,13 @@ export function FileUploader({
 
     if (valid.length > 0) {
       setErrors([]);
-      setSelectedFiles((prev) => [...prev, ...valid]);
+      setSelectedFiles(prev => [...prev, ...valid]);
       onFilesSelected([...selectedFiles, ...valid]);
     }
   };
 
   const removeFile = (index: number) => {
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleClick = () => {
@@ -131,7 +129,9 @@ export function FileUploader({
           onChange={handleChange}
           className="hidden"
           disabled={disabled || isLoading}
-          accept={acceptedTypes.includes("*") ? undefined : acceptedTypes.join(",")}
+          accept={
+            acceptedTypes.includes("*") ? undefined : acceptedTypes.join(",")
+          }
         />
 
         <div

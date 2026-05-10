@@ -87,8 +87,8 @@ export const reportsRouter = router({
 
     const allMembers = await db.select().from(members);
 
-    const activeMembers = allMembers.filter((m) => m.status === "active");
-    const inactiveMembers = allMembers.filter((m) => m.status === "inactive");
+    const activeMembers = allMembers.filter(m => m.status === "active");
+    const inactiveMembers = allMembers.filter(m => m.status === "inactive");
 
     return {
       total: allMembers.length,
@@ -118,7 +118,9 @@ export const reportsRouter = router({
     const byCategory = allDepenses.reduce(
       (acc, e) => {
         const category = e.categorie || "Autre";
-        acc[category] = (acc[category] || 0) + (typeof e.montant === 'number' ? e.montant : 0);
+        acc[category] =
+          (acc[category] || 0) +
+          (typeof e.montant === "number" ? e.montant : 0);
         return acc;
       },
       {} as Record<string, number>
@@ -139,9 +141,9 @@ export const reportsRouter = router({
 
     const allCotisations = await db.select().from(cotisations);
 
-    return allCotisations.map((c) => ({
+    return allCotisations.map(c => ({
       name: `Cotisation ${c.id}`,
-      montant: typeof c.montant === 'number' ? c.montant : 0,
+      montant: typeof c.montant === "number" ? c.montant : 0,
       statut: c.statut || "pending",
     }));
   }),

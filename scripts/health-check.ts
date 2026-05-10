@@ -34,7 +34,11 @@ function log(color: string, text: string) {
 function addResult(result: HealthCheckResult) {
   results.push(result);
   log(
-    result.status === "✅" ? colors.green : result.status === "⚠️" ? colors.yellow : colors.red,
+    result.status === "✅"
+      ? colors.green
+      : result.status === "⚠️"
+        ? colors.yellow
+        : colors.red,
     `${result.status} ${result.name}: ${result.message}`
   );
 }
@@ -130,7 +134,7 @@ function checkImports() {
     const exports = dbFile.match(/^export (async )?function \w+/gm) || [];
     const unusedExports: string[] = [];
 
-    exports.forEach((exp) => {
+    exports.forEach(exp => {
       const funcName = exp.match(/function (\w+)/)?.[1];
       if (funcName) {
         const regex = new RegExp(`\\b${funcName}\\b`, "g");
@@ -173,7 +177,9 @@ function checkDatabase() {
 
     // Vérifier les tables critiques
     const criticalTables = ["members", "adhesions", "cotisationCriteria"];
-    const missingTables = criticalTables.filter((table) => !schemaFile.includes(`export const ${table}`));
+    const missingTables = criticalTables.filter(
+      table => !schemaFile.includes(`export const ${table}`)
+    );
 
     if (missingTables.length > 0) {
       addResult({
@@ -241,7 +247,7 @@ function checkConfiguration() {
     ".env.example",
   ];
 
-  const missingFiles = configFiles.filter((file) => !fs.existsSync(file));
+  const missingFiles = configFiles.filter(file => !fs.existsSync(file));
 
   if (missingFiles.length > 0) {
     addResult({
@@ -263,7 +269,9 @@ function checkConfiguration() {
 // 6. Vérifier les tests
 function checkTests() {
   try {
-    const testFiles = fs.readdirSync("server").filter((f) => f.endsWith(".test.ts"));
+    const testFiles = fs
+      .readdirSync("server")
+      .filter(f => f.endsWith(".test.ts"));
 
     if (testFiles.length === 0) {
       addResult({
@@ -293,7 +301,9 @@ function checkTests() {
 // 7. Vérifier les migrations
 function checkMigrations() {
   try {
-    const migrationFiles = fs.readdirSync("drizzle").filter((f) => f.endsWith(".sql"));
+    const migrationFiles = fs
+      .readdirSync("drizzle")
+      .filter(f => f.endsWith(".sql"));
 
     if (migrationFiles.length === 0) {
       addResult({
@@ -333,9 +343,9 @@ function runHealthChecks() {
   checkMigrations();
 
   // Résumé
-  const errors = results.filter((r) => r.severity === "error");
-  const warnings = results.filter((r) => r.severity === "warning");
-  const infos = results.filter((r) => r.severity === "info");
+  const errors = results.filter(r => r.severity === "error");
+  const warnings = results.filter(r => r.severity === "warning");
+  const infos = results.filter(r => r.severity === "info");
 
   log(colors.blue, "\n📊 Résumé:\n");
   log(colors.green, `✅ ${infos.length} vérifications réussies`);

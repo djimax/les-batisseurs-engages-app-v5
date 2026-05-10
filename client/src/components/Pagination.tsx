@@ -32,11 +32,16 @@ export function Pagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2">
       {/* Items per page selector */}
       <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground">Éléments par page:</span>
-        <Select value={itemsPerPage.toString()} onValueChange={(value) => {
-          onItemsPerPageChange(parseInt(value));
-          onPageChange(1); // Reset to first page
-        }}>
+        <span className="text-sm text-muted-foreground">
+          Éléments par page:
+        </span>
+        <Select
+          value={itemsPerPage.toString()}
+          onValueChange={value => {
+            onItemsPerPageChange(parseInt(value));
+            onPageChange(1); // Reset to first page
+          }}
+        >
           <SelectTrigger className="w-20">
             <SelectValue />
           </SelectTrigger>

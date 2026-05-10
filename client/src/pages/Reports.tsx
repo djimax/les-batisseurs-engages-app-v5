@@ -1,8 +1,28 @@
 import React, { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { Download, FileText, Sheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -11,14 +31,22 @@ export default function Reports() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   // Récupérer les données
-  const { data: financialStats, isLoading: statsLoading } = trpc.reports.getFinancialStats.useQuery({ startDate: undefined, endDate: undefined });
-  const { data: financialReport, isLoading: reportLoading } = trpc.reports.generateFinancialReport.useQuery({
-    month: selectedMonth,
-    year: selectedYear,
-  });
-  const { data: membersReport, isLoading: membersLoading } = trpc.reports.getMembersReport.useQuery(undefined, { enabled: true });
-  const { data: expensesChart, isLoading: expensesLoading } = trpc.reports.getExpensesChart.useQuery(undefined, { enabled: true });
-  const { data: cotisationsChart, isLoading: cotisationsLoading } = trpc.reports.getCotisationsChart.useQuery(undefined, { enabled: true });
+  const { data: financialStats, isLoading: statsLoading } =
+    trpc.reports.getFinancialStats.useQuery({
+      startDate: undefined,
+      endDate: undefined,
+    });
+  const { data: financialReport, isLoading: reportLoading } =
+    trpc.reports.generateFinancialReport.useQuery({
+      month: selectedMonth,
+      year: selectedYear,
+    });
+  const { data: membersReport, isLoading: membersLoading } =
+    trpc.reports.getMembersReport.useQuery(undefined, { enabled: true });
+  const { data: expensesChart, isLoading: expensesLoading } =
+    trpc.reports.getExpensesChart.useQuery(undefined, { enabled: true });
+  const { data: cotisationsChart, isLoading: cotisationsLoading } =
+    trpc.reports.getCotisationsChart.useQuery(undefined, { enabled: true });
 
   // Couleurs pour les graphiques
   const COLORS = ["#1a4d2e", "#2d7a4a", "#4a9d6f", "#6fb89f", "#a8d5ba"];
@@ -33,7 +61,12 @@ export default function Reports() {
     // TODO: Implémenter l'export Excel
   };
 
-  const isLoading = statsLoading || reportLoading || membersLoading || expensesLoading || cotisationsLoading;
+  const isLoading =
+    statsLoading ||
+    reportLoading ||
+    membersLoading ||
+    expensesLoading ||
+    cotisationsLoading;
 
   return (
     <div className="space-y-6">
@@ -41,7 +74,9 @@ export default function Reports() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Rapports & Exports</h1>
-          <p className="text-muted-foreground mt-2">Générez et exportez vos rapports financiers et statistiques</p>
+          <p className="text-muted-foreground mt-2">
+            Générez et exportez vos rapports financiers et statistiques
+          </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={handleExportPDF} variant="outline" size="sm">
@@ -65,12 +100,14 @@ export default function Reports() {
             <label className="text-sm font-medium">Mois</label>
             <select
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+              onChange={e => setSelectedMonth(Number(e.target.value))}
               className="mt-1 px-3 py-2 border rounded-md"
             >
-              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
                 <option key={month} value={month}>
-                  {new Date(2000, month - 1).toLocaleString("fr-FR", { month: "long" })}
+                  {new Date(2000, month - 1).toLocaleString("fr-FR", {
+                    month: "long",
+                  })}
                 </option>
               ))}
             </select>
@@ -79,10 +116,13 @@ export default function Reports() {
             <label className="text-sm font-medium">Année</label>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              onChange={e => setSelectedYear(Number(e.target.value))}
               className="mt-1 px-3 py-2 border rounded-md"
             >
-              {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+              {Array.from(
+                { length: 5 },
+                (_, i) => new Date().getFullYear() - i
+              ).map(year => (
                 <option key={year} value={year}>
                   {year}
                 </option>
@@ -96,31 +136,45 @@ export default function Reports() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Cotisations</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Cotisations
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{financialStats?.cotisations || 0}</div>
+            <div className="text-2xl font-bold">
+              {financialStats?.cotisations || 0}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">Enregistrées</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Dépenses</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Dépenses
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{financialStats?.depenses || 0}</div>
+            <div className="text-2xl font-bold">
+              {financialStats?.depenses || 0}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">Enregistrées</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Membres Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Membres Actifs
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{membersReport?.active || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Sur {membersReport?.total || 0} total</p>
+            <div className="text-2xl font-bold">
+              {membersReport?.active || 0}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Sur {membersReport?.total || 0} total
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -148,7 +202,10 @@ export default function Reports() {
                     dataKey="value"
                   >
                     {expensesChart.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -185,17 +242,23 @@ export default function Reports() {
         <Card>
           <CardHeader>
             <CardTitle>Rapport Financier - {financialReport.period}</CardTitle>
-            <CardDescription>Détails complets du mois sélectionné</CardDescription>
+            <CardDescription>
+              Détails complets du mois sélectionné
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm font-medium">Cotisations</p>
-                <p className="text-2xl font-bold mt-2">{financialReport.summary.totalCotisations}</p>
+                <p className="text-2xl font-bold mt-2">
+                  {financialReport.summary.totalCotisations}
+                </p>
               </div>
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm font-medium">Dépenses</p>
-                <p className="text-2xl font-bold mt-2">{financialReport.summary.totalDepenses}</p>
+                <p className="text-2xl font-bold mt-2">
+                  {financialReport.summary.totalDepenses}
+                </p>
               </div>
             </div>
           </CardContent>

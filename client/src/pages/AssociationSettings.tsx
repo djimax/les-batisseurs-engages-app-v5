@@ -1,37 +1,50 @@
-import { useState, useRef, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Upload, AlertCircle, CheckCircle2, Building2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useRef, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Loader2,
+  Upload,
+  AlertCircle,
+  CheckCircle2,
+  Building2,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function AssociationSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: settings, isLoading: isLoadingSettings } = trpc.globalSettings.get.useQuery();
-  
+  const { data: settings, isLoading: isLoadingSettings } =
+    trpc.globalSettings.get.useQuery();
+
   const [formData, setFormData] = useState({
-    associationName: settings?.associationName || '',
-    seatCity: settings?.seatCity || '',
-    folio: settings?.folio || '',
-    email: settings?.email || '',
-    website: settings?.website || '',
-    phone: settings?.phone || '',
-    description: settings?.description || '',
+    associationName: settings?.associationName || "",
+    seatCity: settings?.seatCity || "",
+    folio: settings?.folio || "",
+    email: settings?.email || "",
+    website: settings?.website || "",
+    phone: settings?.phone || "",
+    description: settings?.description || "",
     logo: settings?.logo || null,
   });
 
   const updateSettingsMutation = trpc.globalSettings.update.useMutation({
     onSuccess: () => {
       setIsLoading(false);
-      toast.success('✅ Paramètres mis à jour avec succès !');
+      toast.success("✅ Paramètres mis à jour avec succès !");
     },
-    onError: (error) => {
+    onError: error => {
       setIsLoading(false);
       toast.error(`❌ Erreur : ${error.message}`);
     },
@@ -41,13 +54,13 @@ export default function AssociationSettings() {
   useEffect(() => {
     if (settings) {
       setFormData({
-        associationName: settings.associationName || '',
-        seatCity: settings.seatCity || '',
-        folio: settings.folio || '',
-        email: settings.email || '',
-        website: settings.website || '',
-        phone: settings.phone || '',
-        description: settings.description || '',
+        associationName: settings.associationName || "",
+        seatCity: settings.seatCity || "",
+        folio: settings.folio || "",
+        email: settings.email || "",
+        website: settings.website || "",
+        phone: settings.phone || "",
+        description: settings.description || "",
         logo: settings.logo || null,
       });
       if (settings.logo) {
@@ -56,7 +69,9 @@ export default function AssociationSettings() {
     }
   }, [settings]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -69,37 +84,37 @@ export default function AssociationSettings() {
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('❌ Veuillez sélectionner une image valide');
+    if (!file.type.startsWith("image/")) {
+      toast.error("❌ Veuillez sélectionner une image valide");
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('❌ Le fichier doit faire moins de 5MB');
+      toast.error("❌ Le fichier doit faire moins de 5MB");
       return;
     }
 
     // Read file as base64
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = event => {
       const base64 = event.target?.result as string;
       setLogoPreview(base64);
       setFormData(prev => ({
         ...prev,
         logo: base64,
       }));
-      toast.success('✅ Logo chargé avec succès');
+      toast.success("✅ Logo chargé avec succès");
     };
     reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.associationName.trim()) {
-      toast.error('❌ Le nom de l\'association est requis');
+      toast.error("❌ Le nom de l'association est requis");
       return;
     }
 
@@ -131,10 +146,13 @@ export default function AssociationSettings() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Paramètres de l'Association</h1>
+            <h1 className="text-3xl font-bold text-slate-900">
+              Paramètres de l'Association
+            </h1>
           </div>
           <p className="text-slate-600">
-            Personnalisez les informations de votre association, organisation ou ONG
+            Personnalisez les informations de votre association, organisation ou
+            ONG
           </p>
         </div>
 
@@ -157,9 +175,9 @@ export default function AssociationSettings() {
                 <div className="flex-shrink-0">
                   <div className="w-32 h-32 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center bg-slate-50 overflow-hidden">
                     {logoPreview ? (
-                      <img 
-                        src={logoPreview} 
-                        alt="Logo preview" 
+                      <img
+                        src={logoPreview}
+                        alt="Logo preview"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -334,7 +352,8 @@ export default function AssociationSettings() {
           <Alert className="border-blue-200 bg-blue-50">
             <AlertCircle className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              <strong>Conseil :</strong> Ces informations seront affichées dans les en-têtes, rapports et communications de votre association.
+              <strong>Conseil :</strong> Ces informations seront affichées dans
+              les en-têtes, rapports et communications de votre association.
             </AlertDescription>
           </Alert>
 

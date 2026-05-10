@@ -16,9 +16,11 @@ export const exportsRouter = router({
    * Export members list to Excel
    */
   exportMembersExcel: protectedProcedure
-    .input(z.object({
-      format: z.enum(["xlsx", "csv"]).default("xlsx"),
-    }))
+    .input(
+      z.object({
+        format: z.enum(["xlsx", "csv"]).default("xlsx"),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         const db = await getDb();
@@ -30,15 +32,19 @@ export const exportsRouter = router({
         const membersData = await db.select().from(members).limit(1000);
 
         // Prepare data for export
-        const exportData = membersData.map((member) => ({
-          "ID": member.id,
-          "Nom": `${member.firstName} ${member.lastName}`,
-          "Email": member.email || "-",
-          "Téléphone": member.phone || "-",
-          "Rôle": member.role || "-",
-          "Statut": member.status || "Actif",
-          "Date d'adhésion": member.joinedAt ? new Date(member.joinedAt).toLocaleDateString("fr-FR") : "-",
-          "Dernière mise à jour": member.updatedAt ? new Date(member.updatedAt).toLocaleDateString("fr-FR") : "-",
+        const exportData = membersData.map(member => ({
+          ID: member.id,
+          Nom: `${member.firstName} ${member.lastName}`,
+          Email: member.email || "-",
+          Téléphone: member.phone || "-",
+          Rôle: member.role || "-",
+          Statut: member.status || "Actif",
+          "Date d'adhésion": member.joinedAt
+            ? new Date(member.joinedAt).toLocaleDateString("fr-FR")
+            : "-",
+          "Dernière mise à jour": member.updatedAt
+            ? new Date(member.updatedAt).toLocaleDateString("fr-FR")
+            : "-",
         }));
 
         // Create workbook
@@ -65,7 +71,8 @@ export const exportsRouter = router({
           success: true,
           data: buffer.toString("base64"),
           filename: `adhérents-${new Date().toISOString().split("T")[0]}.xlsx`,
-          contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          contentType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         };
       } catch (error) {
         console.error("[Export] Members Excel failed:", error);
@@ -97,7 +104,7 @@ export const exportsRouter = router({
       doc.text(`Généré le: ${new Date().toLocaleDateString("fr-FR")}`, 14, 25);
 
       // Prepare table data
-      const tableData = membersData.map((member) => [
+      const tableData = membersData.map(member => [
         `${member.firstName} ${member.lastName}`,
         member.email || "-",
         member.phone || "-",
@@ -112,7 +119,11 @@ export const exportsRouter = router({
         startY: 35,
         margin: { top: 35, right: 14, bottom: 14, left: 14 },
         styles: { fontSize: 9, cellPadding: 3 },
-        headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: "bold" },
+        headStyles: {
+          fillColor: [41, 128, 185],
+          textColor: 255,
+          fontStyle: "bold",
+        },
         alternateRowStyles: { fillColor: [240, 240, 240] },
       });
 

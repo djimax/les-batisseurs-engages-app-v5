@@ -1,10 +1,29 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, AlertCircle, Trash2, Edit } from "lucide-react";
 import { toast } from "sonner";
@@ -23,7 +42,8 @@ export default function Announcements() {
     {
       id: 1,
       title: "Réunion générale prévue",
-      content: "La réunion générale annuelle est prévue pour le 15 mars 2026 à 18h00.",
+      content:
+        "La réunion générale annuelle est prévue pour le 15 mars 2026 à 18h00.",
       priority: "high",
       publishedAt: new Date("2026-02-04"),
       expiresAt: new Date("2026-03-15"),
@@ -31,7 +51,8 @@ export default function Announcements() {
     {
       id: 2,
       title: "Mise à jour du système",
-      content: "Une maintenance est prévue dimanche de 22h à 23h. L'application sera indisponible pendant cette période.",
+      content:
+        "Une maintenance est prévue dimanche de 22h à 23h. L'application sera indisponible pendant cette période.",
       priority: "medium",
       publishedAt: new Date("2026-02-03"),
     },
@@ -58,16 +79,23 @@ export default function Announcements() {
       content: newAnnouncement.content,
       priority: newAnnouncement.priority,
       publishedAt: new Date(),
-      expiresAt: newAnnouncement.expiresAt ? new Date(newAnnouncement.expiresAt) : undefined,
+      expiresAt: newAnnouncement.expiresAt
+        ? new Date(newAnnouncement.expiresAt)
+        : undefined,
     };
 
     setAnnouncements([announcement, ...announcements]);
-    setNewAnnouncement({ title: "", content: "", priority: "medium", expiresAt: "" });
+    setNewAnnouncement({
+      title: "",
+      content: "",
+      priority: "medium",
+      expiresAt: "",
+    });
     toast.success("Annonce créée avec succès");
   };
 
   const handleDeleteAnnouncement = (id: number) => {
-    setAnnouncements(announcements.filter((a) => a.id !== id));
+    setAnnouncements(announcements.filter(a => a.id !== id));
     toast.success("Annonce supprimée");
   };
 
@@ -119,7 +147,9 @@ export default function Announcements() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Annonces</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Annonces
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -135,9 +165,11 @@ export default function Announcements() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {announcements.filter((a) => a.priority === "urgent").length}
+              {announcements.filter(a => a.priority === "urgent").length}
             </div>
-            <p className="text-xs text-muted-foreground">À traiter en priorité</p>
+            <p className="text-xs text-muted-foreground">
+              À traiter en priorité
+            </p>
           </CardContent>
         </Card>
 
@@ -148,7 +180,7 @@ export default function Announcements() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {announcements.filter((a) => isExpired(a.expiresAt)).length}
+              {announcements.filter(a => isExpired(a.expiresAt)).length}
             </div>
             <p className="text-xs text-muted-foreground">À archiver</p>
           </CardContent>
@@ -176,7 +208,12 @@ export default function Announcements() {
               <Input
                 id="title"
                 value={newAnnouncement.title}
-                onChange={(e) => setNewAnnouncement({ ...newAnnouncement, title: e.target.value })}
+                onChange={e =>
+                  setNewAnnouncement({
+                    ...newAnnouncement,
+                    title: e.target.value,
+                  })
+                }
                 placeholder="Titre de l'annonce"
               />
             </div>
@@ -185,14 +222,24 @@ export default function Announcements() {
               <Textarea
                 id="content"
                 value={newAnnouncement.content}
-                onChange={(e) => setNewAnnouncement({ ...newAnnouncement, content: e.target.value })}
+                onChange={e =>
+                  setNewAnnouncement({
+                    ...newAnnouncement,
+                    content: e.target.value,
+                  })
+                }
                 placeholder="Contenu de l'annonce"
                 rows={4}
               />
             </div>
             <div>
               <Label htmlFor="priority">Priorité</Label>
-              <Select value={newAnnouncement.priority} onValueChange={(value: any) => setNewAnnouncement({ ...newAnnouncement, priority: value })}>
+              <Select
+                value={newAnnouncement.priority}
+                onValueChange={(value: any) =>
+                  setNewAnnouncement({ ...newAnnouncement, priority: value })
+                }
+              >
                 <SelectTrigger id="priority">
                   <SelectValue />
                 </SelectTrigger>
@@ -210,7 +257,12 @@ export default function Announcements() {
                 id="expiresAt"
                 type="date"
                 value={newAnnouncement.expiresAt}
-                onChange={(e) => setNewAnnouncement({ ...newAnnouncement, expiresAt: e.target.value })}
+                onChange={e =>
+                  setNewAnnouncement({
+                    ...newAnnouncement,
+                    expiresAt: e.target.value,
+                  })
+                }
               />
             </div>
             <Button onClick={handleAddAnnouncement} className="w-full">
@@ -225,18 +277,25 @@ export default function Announcements() {
         {announcements.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">Aucune annonce pour le moment</p>
+              <p className="text-center text-muted-foreground">
+                Aucune annonce pour le moment
+              </p>
             </CardContent>
           </Card>
         ) : (
-          announcements.map((announcement) => (
-            <Card key={announcement.id} className={isExpired(announcement.expiresAt) ? "opacity-50" : ""}>
+          announcements.map(announcement => (
+            <Card
+              key={announcement.id}
+              className={isExpired(announcement.expiresAt) ? "opacity-50" : ""}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <CardTitle>{announcement.title}</CardTitle>
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(announcement.priority)}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(announcement.priority)}`}
+                      >
                         {getPriorityLabel(announcement.priority)}
                       </span>
                       {isExpired(announcement.expiresAt) && (
@@ -246,8 +305,10 @@ export default function Announcements() {
                       )}
                     </div>
                     <CardDescription className="mt-2">
-                      Publiée le {announcement.publishedAt.toLocaleDateString("fr-FR")}
-                      {announcement.expiresAt && ` • Expire le ${announcement.expiresAt.toLocaleDateString("fr-FR")}`}
+                      Publiée le{" "}
+                      {announcement.publishedAt.toLocaleDateString("fr-FR")}
+                      {announcement.expiresAt &&
+                        ` • Expire le ${announcement.expiresAt.toLocaleDateString("fr-FR")}`}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
@@ -265,7 +326,9 @@ export default function Announcements() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{announcement.content}</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {announcement.content}
+                </p>
               </CardContent>
             </Card>
           ))

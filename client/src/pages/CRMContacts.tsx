@@ -2,7 +2,13 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -41,7 +47,11 @@ import {
   Loader2,
   Download,
 } from "lucide-react";
-import { exportContactsToCSV, exportContactsToExcel, generateExportFilename } from "@/lib/exportContacts";
+import {
+  exportContactsToCSV,
+  exportContactsToExcel,
+  generateExportFilename,
+} from "@/lib/exportContacts";
 
 const SEGMENT_OPTIONS = [
   { value: "prospect", label: "Prospect" },
@@ -90,32 +100,49 @@ export default function CRMContacts() {
     notes: "",
   });
 
-  const { data: contacts, isLoading, refetch } = trpc.crm.contacts.list.useQuery();
+  const {
+    data: contacts,
+    isLoading,
+    refetch,
+  } = trpc.crm.contacts.list.useQuery();
   const createContactMutation = trpc.crm.contacts.create.useMutation();
   const updateContactMutation = trpc.crm.contacts.update.useMutation();
   const deleteContactMutation = trpc.crm.contacts.delete.useMutation();
 
   // Filter and sort contacts
-  const filteredContacts = (contacts?.filter((contact) => {
-    const matchesSearch =
-      contact.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
+  const filteredContacts = (
+    contacts?.filter(contact => {
+      const matchesSearch =
+        contact.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contact.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+          false);
 
-    const matchesSegment = !selectedSegment || contact.segment === selectedSegment;
-    const matchesStatus = !selectedStatus || contact.status === selectedStatus;
+      const matchesSegment =
+        !selectedSegment || contact.segment === selectedSegment;
+      const matchesStatus =
+        !selectedStatus || contact.status === selectedStatus;
 
-    return matchesSearch && matchesSegment && matchesStatus;
-  }) || []).sort((a, b) => {
+      return matchesSearch && matchesSegment && matchesStatus;
+    }) || []
+  ).sort((a, b) => {
     switch (sortBy) {
       case "name-asc":
-        return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
+        return `${a.firstName} ${a.lastName}`.localeCompare(
+          `${b.firstName} ${b.lastName}`
+        );
       case "name-desc":
-        return `${b.firstName} ${b.lastName}`.localeCompare(`${a.firstName} ${a.lastName}`);
+        return `${b.firstName} ${b.lastName}`.localeCompare(
+          `${a.firstName} ${a.lastName}`
+        );
       case "date-newest":
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       case "date-oldest":
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       case "engagement-high":
         return (b.engagementScore || 0) - (a.engagementScore || 0);
       case "engagement-low":
@@ -166,7 +193,11 @@ export default function CRMContacts() {
   };
 
   const handleUpdateContact = async () => {
-    if (!editingContact.firstName || !editingContact.lastName || !editingContact.email) {
+    if (
+      !editingContact.firstName ||
+      !editingContact.lastName ||
+      !editingContact.email
+    ) {
       setErrorMessage("Veuillez remplir les champs obligatoires");
       return;
     }
@@ -230,14 +261,18 @@ export default function CRMContacts() {
         {successMessage && (
           <Alert className="border-green-200 bg-green-50">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+            <AlertDescription className="text-green-800">
+              {successMessage}
+            </AlertDescription>
           </Alert>
         )}
 
         {errorMessage && (
           <Alert className="border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">{errorMessage}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {errorMessage}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -272,7 +307,9 @@ export default function CRMContacts() {
                     <Input
                       placeholder="Jean"
                       value={formData.firstName}
-                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      onChange={e =>
+                        setFormData({ ...formData, firstName: e.target.value })
+                      }
                     />
                   </div>
                   <div>
@@ -280,7 +317,9 @@ export default function CRMContacts() {
                     <Input
                       placeholder="Dupont"
                       value={formData.lastName}
-                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      onChange={e =>
+                        setFormData({ ...formData, lastName: e.target.value })
+                      }
                     />
                   </div>
                 </div>
@@ -291,7 +330,9 @@ export default function CRMContacts() {
                     type="email"
                     placeholder="jean@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                   />
                 </div>
 
@@ -300,7 +341,9 @@ export default function CRMContacts() {
                   <Input
                     placeholder="+33 6 12 34 56 78"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                   />
                 </div>
 
@@ -309,21 +352,26 @@ export default function CRMContacts() {
                   <Input
                     placeholder="Acme Corp"
                     value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, company: e.target.value })
+                    }
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium">Segment</label>
-                    <Select value={formData.segment} onValueChange={(value) =>
-                      setFormData({ ...formData, segment: value })
-                    }>
+                    <Select
+                      value={formData.segment}
+                      onValueChange={value =>
+                        setFormData({ ...formData, segment: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {SEGMENT_OPTIONS.map((option) => (
+                        {SEGMENT_OPTIONS.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -334,14 +382,24 @@ export default function CRMContacts() {
 
                   <div>
                     <label className="text-sm font-medium">Statut</label>
-                    <Select value={formData.status} onValueChange={(value) =>
-                      setFormData({ ...formData, status: value as "prospect" | "active" | "inactive" | "archived" })
-                    }>
+                    <Select
+                      value={formData.status}
+                      onValueChange={value =>
+                        setFormData({
+                          ...formData,
+                          status: value as
+                            | "prospect"
+                            | "active"
+                            | "inactive"
+                            | "archived",
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {STATUS_OPTIONS.map((option) => (
+                        {STATUS_OPTIONS.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -356,7 +414,9 @@ export default function CRMContacts() {
                   <Input
                     placeholder="Notes supplémentaires..."
                     value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, notes: e.target.value })
+                    }
                   />
                 </div>
 
@@ -384,27 +444,36 @@ export default function CRMContacts() {
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Rechercher</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Rechercher
+                </label>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Nom, email..."
                     className="pl-10"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Segment</label>
-                <Select value={selectedSegment || "all"} onValueChange={(value) => setSelectedSegment(value === "all" ? "" : value)}>
+                <label className="text-sm font-medium mb-2 block">
+                  Segment
+                </label>
+                <Select
+                  value={selectedSegment || "all"}
+                  onValueChange={value =>
+                    setSelectedSegment(value === "all" ? "" : value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les segments" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les segments</SelectItem>
-                    {SEGMENT_OPTIONS.map((option) => (
+                    {SEGMENT_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -415,13 +484,18 @@ export default function CRMContacts() {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Statut</label>
-                <Select value={selectedStatus || "all"} onValueChange={(value) => setSelectedStatus(value === "all" ? "" : value)}>
+                <Select
+                  value={selectedStatus || "all"}
+                  onValueChange={value =>
+                    setSelectedStatus(value === "all" ? "" : value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les statuts" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les statuts</SelectItem>
-                    {STATUS_OPTIONS.map((option) => (
+                    {STATUS_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -431,13 +505,15 @@ export default function CRMContacts() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Trier par</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Trier par
+                </label>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger>
                     <SelectValue placeholder="Trier par..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {SORT_OPTIONS.map((option) => (
+                    {SORT_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -502,7 +578,7 @@ export default function CRMContacts() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredContacts.map((contact) => (
+                    {filteredContacts.map(contact => (
                       <TableRow key={contact.id}>
                         <TableCell className="font-medium">
                           {contact.firstName} {contact.lastName}
@@ -598,8 +674,11 @@ export default function CRMContacts() {
                     <Input
                       placeholder="Jean"
                       value={editingContact.firstName}
-                      onChange={(e) =>
-                        setEditingContact({ ...editingContact, firstName: e.target.value })
+                      onChange={e =>
+                        setEditingContact({
+                          ...editingContact,
+                          firstName: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -608,8 +687,11 @@ export default function CRMContacts() {
                     <Input
                       placeholder="Dupont"
                       value={editingContact.lastName}
-                      onChange={(e) =>
-                        setEditingContact({ ...editingContact, lastName: e.target.value })
+                      onChange={e =>
+                        setEditingContact({
+                          ...editingContact,
+                          lastName: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -621,8 +703,11 @@ export default function CRMContacts() {
                     type="email"
                     placeholder="jean@example.com"
                     value={editingContact.email}
-                    onChange={(e) =>
-                      setEditingContact({ ...editingContact, email: e.target.value })
+                    onChange={e =>
+                      setEditingContact({
+                        ...editingContact,
+                        email: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -632,8 +717,11 @@ export default function CRMContacts() {
                   <Input
                     placeholder="+33 6 12 34 56 78"
                     value={editingContact.phone}
-                    onChange={(e) =>
-                      setEditingContact({ ...editingContact, phone: e.target.value })
+                    onChange={e =>
+                      setEditingContact({
+                        ...editingContact,
+                        phone: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -643,8 +731,11 @@ export default function CRMContacts() {
                   <Input
                     placeholder="Acme Corp"
                     value={editingContact.company}
-                    onChange={(e) =>
-                      setEditingContact({ ...editingContact, company: e.target.value })
+                    onChange={e =>
+                      setEditingContact({
+                        ...editingContact,
+                        company: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -654,7 +745,7 @@ export default function CRMContacts() {
                     <label className="text-sm font-medium">Segment</label>
                     <Select
                       value={editingContact.segment}
-                      onValueChange={(value) =>
+                      onValueChange={value =>
                         setEditingContact({ ...editingContact, segment: value })
                       }
                     >
@@ -662,7 +753,7 @@ export default function CRMContacts() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {SEGMENT_OPTIONS.map((option) => (
+                        {SEGMENT_OPTIONS.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -675,7 +766,7 @@ export default function CRMContacts() {
                     <label className="text-sm font-medium">Statut</label>
                     <Select
                       value={editingContact.status}
-                      onValueChange={(value) =>
+                      onValueChange={value =>
                         setEditingContact({ ...editingContact, status: value })
                       }
                     >
@@ -683,7 +774,7 @@ export default function CRMContacts() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {STATUS_OPTIONS.map((option) => (
+                        {STATUS_OPTIONS.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -698,8 +789,11 @@ export default function CRMContacts() {
                   <Input
                     placeholder="Notes supplémentaires..."
                     value={editingContact.notes}
-                    onChange={(e) =>
-                      setEditingContact({ ...editingContact, notes: e.target.value })
+                    onChange={e =>
+                      setEditingContact({
+                        ...editingContact,
+                        notes: e.target.value,
+                      })
                     }
                   />
                 </div>

@@ -48,7 +48,10 @@ class WebhookSetup {
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
     if (!webhookUrl) {
       log(colors.yellow, "⚠️ SLACK_WEBHOOK_URL non défini");
-      log(colors.yellow, "Définissez la variable d'environnement pour activer Slack");
+      log(
+        colors.yellow,
+        "Définissez la variable d'environnement pour activer Slack"
+      );
       return;
     }
 
@@ -115,7 +118,10 @@ class WebhookSetup {
       webhooks.forEach((webhook: WebhookConfig) => {
         this.webhooks.push(webhook);
       });
-      log(colors.green, `✅ ${webhooks.length} webhooks personnalisés configurés`);
+      log(
+        colors.green,
+        `✅ ${webhooks.length} webhooks personnalisés configurés`
+      );
     } catch (error) {
       log(colors.red, "❌ Erreur lors du parsing des webhooks personnalisés");
     }
@@ -139,7 +145,7 @@ class WebhookSetup {
   testWebhooks(): void {
     log(colors.blue, "\n🧪 Test des webhooks...\n");
 
-    this.webhooks.forEach((webhook) => {
+    this.webhooks.forEach(webhook => {
       if (webhook.active) {
         log(colors.green, `✅ ${webhook.name}: ${webhook.url}`);
         log(colors.yellow, `   Événements: ${webhook.events.join(", ")}`);
@@ -152,8 +158,8 @@ class WebhookSetup {
   displaySummary(): void {
     log(colors.blue, "\n📊 Résumé de la configuration des webhooks:\n");
 
-    const activeWebhooks = this.webhooks.filter((w) => w.active);
-    const inactiveWebhooks = this.webhooks.filter((w) => !w.active);
+    const activeWebhooks = this.webhooks.filter(w => w.active);
+    const inactiveWebhooks = this.webhooks.filter(w => !w.active);
 
     log(colors.green, `✅ Webhooks actifs: ${activeWebhooks.length}`);
     log(colors.yellow, `⚠️ Webhooks inactifs: ${inactiveWebhooks.length}`);
@@ -161,8 +167,8 @@ class WebhookSetup {
 
     log(colors.blue, "\n🔔 Événements configurés:");
     const allEvents = new Set<string>();
-    this.webhooks.forEach((w) => w.events.forEach((e) => allEvents.add(e)));
-    allEvents.forEach((event) => {
+    this.webhooks.forEach(w => w.events.forEach(e => allEvents.add(e)));
+    allEvents.forEach(event => {
       log(colors.green, `  • ${event}`);
     });
   }
@@ -177,7 +183,10 @@ class WebhookSetup {
 
     if (this.webhooks.length === 0) {
       log(colors.yellow, "\n⚠️ Aucun webhook configuré");
-      log(colors.yellow, "Définissez les variables d'environnement pour activer les webhooks");
+      log(
+        colors.yellow,
+        "Définissez les variables d'environnement pour activer les webhooks"
+      );
       process.exit(1);
     }
 

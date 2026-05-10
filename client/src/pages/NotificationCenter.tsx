@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -11,13 +17,20 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 export default function NotificationCenter() {
   const [unreadOnly, setUnreadOnly] = useState(false);
 
-  const { data: notifications = [], isLoading, error, refetch } = trpc.notifications.list.useQuery({ unreadOnly });
-  const { data: unreadCount = 0 } = trpc.notifications.getUnreadCount.useQuery();
+  const {
+    data: notifications = [],
+    isLoading,
+    error,
+    refetch,
+  } = trpc.notifications.list.useQuery({ unreadOnly });
+  const { data: unreadCount = 0 } =
+    trpc.notifications.getUnreadCount.useQuery();
   const { data: preferences } = trpc.notifications.getPreferences.useQuery();
-  
+
   const markAsReadMutation = trpc.notifications.markAsRead.useMutation();
   const markAllAsReadMutation = trpc.notifications.markAllAsRead.useMutation();
-  const updatePreferencesMutation = trpc.notifications.updatePreferences.useMutation();
+  const updatePreferencesMutation =
+    trpc.notifications.updatePreferences.useMutation();
 
   const handleMarkAsRead = async (id: number) => {
     try {
@@ -68,10 +81,16 @@ export default function NotificationCenter() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Centre de Notifications</h1>
-          <p className="text-muted-foreground">Gérez vos notifications et préférences</p>
+          <p className="text-muted-foreground">
+            Gérez vos notifications et préférences
+          </p>
         </div>
         {unreadCount > 0 && (
-          <Button onClick={handleMarkAllAsRead} variant="outline" className="gap-2">
+          <Button
+            onClick={handleMarkAllAsRead}
+            variant="outline"
+            className="gap-2"
+          >
             <Check className="h-4 w-4" />
             Marquer tout comme lu
           </Button>
@@ -82,7 +101,9 @@ export default function NotificationCenter() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Notifications Non Lues</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Notifications Non Lues
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{unreadCount}</div>
@@ -91,7 +112,9 @@ export default function NotificationCenter() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{notifications.length}</div>
@@ -111,7 +134,9 @@ export default function NotificationCenter() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>Erreur lors du chargement des notifications</AlertDescription>
+          <AlertDescription>
+            Erreur lors du chargement des notifications
+          </AlertDescription>
         </Alert>
       )}
 
@@ -126,21 +151,27 @@ export default function NotificationCenter() {
               <Label>Notifications par email</Label>
               <Switch
                 checked={(preferences as any).emailNotifications}
-                onCheckedChange={(v) => handlePreferenceChange("emailNotifications", v)}
+                onCheckedChange={v =>
+                  handlePreferenceChange("emailNotifications", v)
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <Label>Notifications SMS</Label>
               <Switch
                 checked={(preferences as any).smsNotifications}
-                onCheckedChange={(v) => handlePreferenceChange("smsNotifications", v)}
+                onCheckedChange={v =>
+                  handlePreferenceChange("smsNotifications", v)
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <Label>Notifications dans l'app</Label>
               <Switch
                 checked={(preferences as any).inAppNotifications}
-                onCheckedChange={(v) => handlePreferenceChange("inAppNotifications", v)}
+                onCheckedChange={v =>
+                  handlePreferenceChange("inAppNotifications", v)
+                }
               />
             </div>
           </CardContent>
@@ -151,7 +182,9 @@ export default function NotificationCenter() {
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Notifications</h2>
         {isLoading ? (
-          <div className="text-center py-8 text-muted-foreground">Chargement...</div>
+          <div className="text-center py-8 text-muted-foreground">
+            Chargement...
+          </div>
         ) : notifications.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center text-muted-foreground">
@@ -160,7 +193,10 @@ export default function NotificationCenter() {
           </Card>
         ) : (
           (notifications as any[]).map((notification: any) => (
-            <Card key={notification.id} className={`hover:shadow-md transition-shadow ${!notification.isRead ? "border-blue-200 bg-blue-50" : ""}`}>
+            <Card
+              key={notification.id}
+              className={`hover:shadow-md transition-shadow ${!notification.isRead ? "border-blue-200 bg-blue-50" : ""}`}
+            >
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -168,12 +204,22 @@ export default function NotificationCenter() {
                       <Bell className="h-4 w-4 text-muted-foreground" />
                       <p className="font-medium">{notification.title}</p>
                       {!notification.isRead && (
-                        <Badge variant="default" className="ml-auto">Nouveau</Badge>
+                        <Badge variant="default" className="ml-auto">
+                          Nouveau
+                        </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {notification.message}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(notification.createdAt).toLocaleDateString("fr-FR")} à {new Date(notification.createdAt).toLocaleTimeString("fr-FR")}
+                      {new Date(notification.createdAt).toLocaleDateString(
+                        "fr-FR"
+                      )}{" "}
+                      à{" "}
+                      {new Date(notification.createdAt).toLocaleTimeString(
+                        "fr-FR"
+                      )}
                     </p>
                   </div>
                   {!notification.isRead && (

@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +31,9 @@ function CRMDashboard() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Accès Refusé</CardTitle>
-            <CardDescription>Vous n'avez pas les permissions pour accéder au CRM.</CardDescription>
+            <CardDescription>
+              Vous n'avez pas les permissions pour accéder au CRM.
+            </CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -38,7 +46,9 @@ function CRMDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Système CRM</h1>
-          <p className="text-gray-600">Gestion des contacts et suivi des interactions</p>
+          <p className="text-gray-600">
+            Gestion des contacts et suivi des interactions
+          </p>
         </div>
         <Button className="gap-2">
           <Plus className="w-4 h-4" />
@@ -50,21 +60,28 @@ function CRMDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Contacts</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Contacts
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{contactsQuery.data?.length || 0}</div>
+            <div className="text-2xl font-bold">
+              {contactsQuery.data?.length || 0}
+            </div>
             <p className="text-xs text-gray-500 mt-1">Tous les contacts</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Contacts Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Contacts Actifs
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {contactsQuery.data?.filter((c: any) => c.status === "active").length || 0}
+              {contactsQuery.data?.filter((c: any) => c.status === "active")
+                .length || 0}
             </div>
             <p className="text-xs text-gray-500 mt-1">Membres actifs</p>
           </CardContent>
@@ -72,20 +89,30 @@ function CRMDashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Activités</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Activités
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activitiesQuery.data?.length || 0}</div>
-            <p className="text-xs text-gray-500 mt-1">Interactions enregistrées</p>
+            <div className="text-2xl font-bold">
+              {activitiesQuery.data?.length || 0}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Interactions enregistrées
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">En Pipeline</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">
+              En Pipeline
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pipelineQuery.data?.length || 0}</div>
+            <div className="text-2xl font-bold">
+              {pipelineQuery.data?.length || 0}
+            </div>
             <p className="text-xs text-gray-500 mt-1">Adhésions en cours</p>
           </CardContent>
         </Card>
@@ -117,37 +144,56 @@ function CRMDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Gestion des Contacts</CardTitle>
-              <CardDescription>Consultez et gérez tous vos contacts</CardDescription>
+              <CardDescription>
+                Consultez et gérez tous vos contacts
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
                 placeholder="Rechercher un contact..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="max-w-sm"
               />
 
               {contactsQuery.isLoading ? (
-                <div className="text-center py-8">Chargement des contacts...</div>
+                <div className="text-center py-8">
+                  Chargement des contacts...
+                </div>
               ) : contactsQuery.data && contactsQuery.data.length > 0 ? (
                 <div className="space-y-2">
                   {contactsQuery.data.map((contact: any) => (
-                    <div key={contact.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={contact.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
-                        <p className="font-medium">{contact.firstName} {contact.lastName}</p>
+                        <p className="font-medium">
+                          {contact.firstName} {contact.lastName}
+                        </p>
                         <p className="text-sm text-gray-600">{contact.email}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={contact.status === "active" ? "default" : "secondary"}>
+                        <Badge
+                          variant={
+                            contact.status === "active"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
                           {contact.status}
                         </Badge>
-                        <Button variant="outline" size="sm">Détails</Button>
+                        <Button variant="outline" size="sm">
+                          Détails
+                        </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">Aucun contact trouvé</div>
+                <div className="text-center py-8 text-gray-500">
+                  Aucun contact trouvé
+                </div>
               )}
             </CardContent>
           </Card>
@@ -158,22 +204,37 @@ function CRMDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Suivi des Activités</CardTitle>
-              <CardDescription>Historique des interactions avec les contacts</CardDescription>
+              <CardDescription>
+                Historique des interactions avec les contacts
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {activitiesQuery.isLoading ? (
-                <div className="text-center py-8">Chargement des activités...</div>
+                <div className="text-center py-8">
+                  Chargement des activités...
+                </div>
               ) : activitiesQuery.data && activitiesQuery.data.length > 0 ? (
                 <div className="space-y-2">
                   {activitiesQuery.data.map((activity: any) => (
-                    <div key={activity.id} className="flex items-start gap-3 p-3 border rounded-lg">
+                    <div
+                      key={activity.id}
+                      className="flex items-start gap-3 p-3 border rounded-lg"
+                    >
                       <Activity className="w-5 h-5 text-blue-600 mt-1" />
                       <div className="flex-1">
                         <p className="font-medium">{activity.title}</p>
-                        <p className="text-sm text-gray-600">{activity.description}</p>
+                        <p className="text-sm text-gray-600">
+                          {activity.description}
+                        </p>
                         <div className="flex gap-2 mt-2">
                           <Badge variant="outline">{activity.type}</Badge>
-                          <Badge variant={activity.status === "completed" ? "default" : "secondary"}>
+                          <Badge
+                            variant={
+                              activity.status === "completed"
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
                             {activity.status}
                           </Badge>
                         </div>
@@ -182,7 +243,9 @@ function CRMDashboard() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">Aucune activité enregistrée</div>
+                <div className="text-center py-8 text-gray-500">
+                  Aucune activité enregistrée
+                </div>
               )}
             </CardContent>
           </Card>
@@ -193,17 +256,26 @@ function CRMDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Pipeline d'Adhésion</CardTitle>
-              <CardDescription>Suivi du processus d'adhésion des nouveaux membres</CardDescription>
+              <CardDescription>
+                Suivi du processus d'adhésion des nouveaux membres
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {pipelineQuery.isLoading ? (
-                <div className="text-center py-8">Chargement du pipeline...</div>
+                <div className="text-center py-8">
+                  Chargement du pipeline...
+                </div>
               ) : pipelineQuery.data && pipelineQuery.data.length > 0 ? (
                 <div className="space-y-2">
                   {pipelineQuery.data.map((item: any) => (
-                    <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
-                        <p className="font-medium">Contact ID: {item.contactId}</p>
+                        <p className="font-medium">
+                          Contact ID: {item.contactId}
+                        </p>
                         <p className="text-sm text-gray-600">{item.notes}</p>
                       </div>
                       <Badge variant="outline">{item.stage}</Badge>
@@ -211,7 +283,9 @@ function CRMDashboard() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">Aucune adhésion en cours</div>
+                <div className="text-center py-8 text-gray-500">
+                  Aucune adhésion en cours
+                </div>
               )}
             </CardContent>
           </Card>
@@ -222,7 +296,9 @@ function CRMDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Rapports CRM</CardTitle>
-              <CardDescription>Analyses et métriques d'engagement</CardDescription>
+              <CardDescription>
+                Analyses et métriques d'engagement
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -241,21 +317,32 @@ function CRMDashboard() {
               </div>
 
               {reportsQuery.isLoading ? (
-                <div className="text-center py-8">Chargement des rapports...</div>
+                <div className="text-center py-8">
+                  Chargement des rapports...
+                </div>
               ) : reportsQuery.data && reportsQuery.data.length > 0 ? (
                 <div className="space-y-2">
                   {reportsQuery.data.map((report: any) => (
-                    <div key={report.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={report.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{report.name}</p>
-                        <p className="text-sm text-gray-600">{report.description}</p>
+                        <p className="text-sm text-gray-600">
+                          {report.description}
+                        </p>
                       </div>
-                      <Button variant="outline" size="sm">Voir</Button>
+                      <Button variant="outline" size="sm">
+                        Voir
+                      </Button>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">Aucun rapport disponible</div>
+                <div className="text-center py-8 text-gray-500">
+                  Aucun rapport disponible
+                </div>
               )}
             </CardContent>
           </Card>

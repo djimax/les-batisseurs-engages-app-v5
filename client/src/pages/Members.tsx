@@ -2,15 +2,22 @@ import { useState } from "react";
 import { ExportPDF } from "@/components/ExportPDF";
 import { HeroSection } from "@/components/HeroSection";
 import { Pagination } from "@/components/Pagination";
+import { CotisationStatusBadge } from "@/components/CotisationStatusBadge";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -41,9 +48,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-import { 
-  Users, 
-  Plus, 
+import {
+  Users,
+  Plus,
   Search,
   MoreVertical,
   Trash2,
@@ -53,17 +60,45 @@ import {
   UserCircle,
   Loader2,
   Shield,
-  Lock
+  Lock,
 } from "lucide-react";
 
 const MEMBER_ROLES = [
-  { value: "admin", label: "Admin", description: "Accès complet à tous les documents" },
-  { value: "president", label: "Président", description: "Président de l'association" },
-  { value: "secretary_general", label: "Secrétaire Général", description: "Secrétaire général" },
-  { value: "secretary_general_adjoint", label: "Secrétaire Général Adjoint", description: "Secrétaire général adjoint" },
-  { value: "treasurer_general", label: "Trésorier Général", description: "Trésorier général" },
-  { value: "treasurer_general_adjoint", label: "Trésorier Général Adjoint", description: "Trésorier général adjoint" },
-  { value: "secretary", label: "Secrétaire", description: "Peut créer et modifier les documents" },
+  {
+    value: "admin",
+    label: "Admin",
+    description: "Accès complet à tous les documents",
+  },
+  {
+    value: "president",
+    label: "Président",
+    description: "Président de l'association",
+  },
+  {
+    value: "secretary_general",
+    label: "Secrétaire Général",
+    description: "Secrétaire général",
+  },
+  {
+    value: "secretary_general_adjoint",
+    label: "Secrétaire Général Adjoint",
+    description: "Secrétaire général adjoint",
+  },
+  {
+    value: "treasurer_general",
+    label: "Trésorier Général",
+    description: "Trésorier général",
+  },
+  {
+    value: "treasurer_general_adjoint",
+    label: "Trésorier Général Adjoint",
+    description: "Trésorier général adjoint",
+  },
+  {
+    value: "secretary",
+    label: "Secrétaire",
+    description: "Peut créer et modifier les documents",
+  },
   { value: "member", label: "Membre", description: "Accès en lecture seule" },
 ];
 
@@ -107,7 +142,7 @@ export default function Members() {
       resetForm();
       toast.success("Membre ajouté avec succès");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur: " + error.message);
     },
   });
@@ -120,7 +155,7 @@ export default function Members() {
       resetForm();
       toast.success("Membre mis à jour");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur: " + error.message);
     },
   });
@@ -130,7 +165,7 @@ export default function Members() {
       utils.members.list.invalidate();
       toast.success("Membre supprimé");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur: " + error.message);
     },
   });
@@ -184,36 +219,57 @@ export default function Members() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">Actif</Badge>;
+        return (
+          <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
+            Actif
+          </Badge>
+        );
       case "inactive":
-        return <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">Inactif</Badge>;
+        return (
+          <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            Inactif
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">En attente</Badge>;
+        return (
+          <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+            En attente
+          </Badge>
+        );
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
-  const filteredMembers = (members?.filter(member => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      member.firstName.toLowerCase().includes(searchLower) ||
-      member.lastName.toLowerCase().includes(searchLower) ||
-      (member.email && member.email.toLowerCase().includes(searchLower)) ||
-      (member.role && member.role.toLowerCase().includes(searchLower))
-    );
-  }) || []).sort((a, b) => {
+  const filteredMembers = (
+    members?.filter(member => {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesSearch =
+        member.firstName.toLowerCase().includes(searchLower) ||
+        member.lastName.toLowerCase().includes(searchLower) ||
+        (member.email && member.email.toLowerCase().includes(searchLower)) ||
+        (member.role && member.role.toLowerCase().includes(searchLower)) ||
+        (member.memberId && member.memberId.includes(searchTerm));
+      return matchesSearch;
+    }) || []
+  ).sort((a, b) => {
     switch (sortBy) {
       case "name-asc":
-        return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
+        return `${a.firstName} ${a.lastName}`.localeCompare(
+          `${b.firstName} ${b.lastName}`
+        );
       case "name-desc":
-        return `${b.firstName} ${b.lastName}`.localeCompare(`${a.firstName} ${a.lastName}`);
+        return `${b.firstName} ${b.lastName}`.localeCompare(
+          `${a.firstName} ${a.lastName}`
+        );
       case "date-newest":
         return new Date(b.joinedAt).getTime() - new Date(a.joinedAt).getTime();
       case "date-oldest":
         return new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime();
       case "status-active":
-        return (a.status === "active" ? -1 : 1) - (b.status === "active" ? -1 : 1);
+        return (
+          (a.status === "active" ? -1 : 1) - (b.status === "active" ? -1 : 1)
+        );
       default:
         return 0;
     }
@@ -226,7 +282,7 @@ export default function Members() {
     pending: members?.filter(m => m.status === "pending").length || 0,
   };
 
-    return (
+  return (
     <div className="space-y-6">
       {/* Hero Section */}
       <HeroSection
@@ -242,17 +298,19 @@ export default function Members() {
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Liste des Membres</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Liste des Membres
+          </h1>
           <p className="text-muted-foreground">
             {stats.total} membre(s) au total
           </p>
         </div>
         <div className="flex gap-2">
           {exportData && (
-            <ExportPDF 
-              title="Liste des Membres" 
-              data={exportData} 
-              type="members" 
+            <ExportPDF
+              title="Liste des Membres"
+              data={exportData}
+              type="members"
             />
           )}
           <Button onClick={() => setIsCreateDialogOpen(true)} className="gap-2">
@@ -266,7 +324,9 @@ export default function Members() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -274,26 +334,38 @@ export default function Members() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Actifs
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-600">{stats.active}</div>
+            <div className="text-2xl font-bold text-emerald-600">
+              {stats.active}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Inactifs</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Inactifs
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-500">{stats.inactive}</div>
+            <div className="text-2xl font-bold text-slate-500">
+              {stats.inactive}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">En attente</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              En attente
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-amber-600">
+              {stats.pending}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -307,18 +379,20 @@ export default function Members() {
               <Input
                 placeholder="Rechercher un membre..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Trier par</label>
+              <label className="text-sm font-medium mb-2 block">
+                Trier par
+              </label>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger>
                   <SelectValue placeholder="Trier par..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {SORT_OPTIONS.map((option) => (
+                  {SORT_OPTIONS.map(option => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -334,7 +408,9 @@ export default function Members() {
       <Card>
         <CardHeader>
           <CardTitle>Liste des membres</CardTitle>
-          <CardDescription>{filteredMembers.length} membre(s) trouvé(s)</CardDescription>
+          <CardDescription>
+            {filteredMembers.length} membre(s) trouvé(s)
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -359,14 +435,18 @@ export default function Members() {
                     <TableHead>Rôle</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Statut</TableHead>
+                    <TableHead>Cotisation</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredMembers.map((member) => (
+                  {filteredMembers.map(member => (
                     <TableRow key={member.id}>
                       <TableCell>
-                        <Badge variant="secondary" className="font-mono text-xs">
+                        <Badge
+                          variant="secondary"
+                          className="font-mono text-xs"
+                        >
                           {member.memberId || "-"}
                         </Badge>
                       </TableCell>
@@ -374,19 +454,26 @@ export default function Members() {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9">
                             <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                              {member.firstName.charAt(0)}{member.lastName.charAt(0)}
+                              {member.firstName.charAt(0)}
+                              {member.lastName.charAt(0)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium">{member.firstName} {member.lastName}</p>
+                            <p className="font-medium">
+                              {member.firstName} {member.lastName}
+                            </p>
                             {member.function && (
-                              <p className="text-sm text-muted-foreground">{member.function}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {member.function}
+                              </p>
                             )}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{member.role || "Membre"}</Badge>
+                        <Badge variant="outline">
+                          {member.role || "Membre"}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
@@ -406,6 +493,9 @@ export default function Members() {
                       </TableCell>
                       <TableCell>{getStatusBadge(member.status)}</TableCell>
                       <TableCell>
+                        <CotisationStatusBadge status={member.cotisationStatus as any} />
+                      </TableCell>
+                      <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -413,15 +503,21 @@ export default function Members() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => openEditDialog(member)}>
+                            <DropdownMenuItem
+                              onClick={() => openEditDialog(member)}
+                            >
                               <Edit className="mr-2 h-4 w-4" />
                               Modifier
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               className="text-destructive"
                               onClick={() => {
-                                if (confirm("Êtes-vous sûr de vouloir supprimer ce membre ?")) {
+                                if (
+                                  confirm(
+                                    "Êtes-vous sûr de vouloir supprimer ce membre ?"
+                                  )
+                                ) {
                                   deleteMember.mutate({ id: member.id });
                                 }
                               }}
@@ -450,7 +546,9 @@ export default function Members() {
               <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <h3 className="text-lg font-medium mb-2">Aucun membre</h3>
               <p className="text-muted-foreground mb-4">
-                {searchTerm ? "Aucun membre ne correspond à votre recherche" : "Commencez par ajouter des membres"}
+                {searchTerm
+                  ? "Aucun membre ne correspond à votre recherche"
+                  : "Commencez par ajouter des membres"}
               </p>
               <Button onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -477,7 +575,9 @@ export default function Members() {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
                   placeholder="Prénom"
                 />
               </div>
@@ -486,7 +586,9 @@ export default function Members() {
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
                   placeholder="Nom"
                 />
               </div>
@@ -497,7 +599,9 @@ export default function Members() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="email@exemple.com"
               />
             </div>
@@ -506,16 +610,18 @@ export default function Members() {
               <Input
                 id="phone"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 placeholder="+33 6 00 00 00 00"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="role">Rôle</Label>
-                <Select 
-                  value={formData.role} 
-                  onValueChange={(v) => setFormData({ ...formData, role: v })}
+                <Select
+                  value={formData.role}
+                  onValueChange={v => setFormData({ ...formData, role: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -523,8 +629,12 @@ export default function Members() {
                   <SelectContent>
                     <SelectItem value="Membre">Membre</SelectItem>
                     <SelectItem value="Président">Président</SelectItem>
-                    <SelectItem value="Vice-Président">Vice-Président</SelectItem>
-                    <SelectItem value="Secrétaire Général">Secrétaire Général</SelectItem>
+                    <SelectItem value="Vice-Président">
+                      Vice-Président
+                    </SelectItem>
+                    <SelectItem value="Secrétaire Général">
+                      Secrétaire Général
+                    </SelectItem>
                     <SelectItem value="Trésorier">Trésorier</SelectItem>
                     <SelectItem value="Conseiller">Conseiller</SelectItem>
                     <SelectItem value="Bénévole">Bénévole</SelectItem>
@@ -533,9 +643,11 @@ export default function Members() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="status">Statut</Label>
-                <Select 
-                  value={formData.status} 
-                  onValueChange={(v: any) => setFormData({ ...formData, status: v })}
+                <Select
+                  value={formData.status}
+                  onValueChange={(v: any) =>
+                    setFormData({ ...formData, status: v })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -553,15 +665,19 @@ export default function Members() {
               <Input
                 id="function"
                 value={formData.function}
-                onChange={(e) => setFormData({ ...formData, function: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, function: e.target.value })
+                }
                 placeholder="Ex: Responsable communication"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="gender">Genre</Label>
-              <Select 
-                value={formData.gender} 
-                onValueChange={(v: any) => setFormData({ ...formData, gender: v })}
+              <Select
+                value={formData.gender}
+                onValueChange={(v: any) =>
+                  setFormData({ ...formData, gender: v })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -575,7 +691,10 @@ export default function Members() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsCreateDialogOpen(false)}
+            >
               Annuler
             </Button>
             <Button onClick={handleCreate} disabled={createMember.isPending}>
@@ -606,7 +725,9 @@ export default function Members() {
                 <Input
                   id="editFirstName"
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -614,7 +735,9 @@ export default function Members() {
                 <Input
                   id="editLastName"
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -624,7 +747,9 @@ export default function Members() {
                 id="editEmail"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -632,15 +757,17 @@ export default function Members() {
               <Input
                 id="editPhone"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="editRole">Rôle</Label>
-                <Select 
-                  value={formData.role} 
-                  onValueChange={(v) => setFormData({ ...formData, role: v })}
+                <Select
+                  value={formData.role}
+                  onValueChange={v => setFormData({ ...formData, role: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -648,8 +775,12 @@ export default function Members() {
                   <SelectContent>
                     <SelectItem value="Membre">Membre</SelectItem>
                     <SelectItem value="Président">Président</SelectItem>
-                    <SelectItem value="Vice-Président">Vice-Président</SelectItem>
-                    <SelectItem value="Secrétaire Général">Secrétaire Général</SelectItem>
+                    <SelectItem value="Vice-Président">
+                      Vice-Président
+                    </SelectItem>
+                    <SelectItem value="Secrétaire Général">
+                      Secrétaire Général
+                    </SelectItem>
                     <SelectItem value="Trésorier">Trésorier</SelectItem>
                     <SelectItem value="Conseiller">Conseiller</SelectItem>
                     <SelectItem value="Bénévole">Bénévole</SelectItem>
@@ -658,9 +789,11 @@ export default function Members() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="editStatus">Statut</Label>
-                <Select 
-                  value={formData.status} 
-                  onValueChange={(v: any) => setFormData({ ...formData, status: v })}
+                <Select
+                  value={formData.status}
+                  onValueChange={(v: any) =>
+                    setFormData({ ...formData, status: v })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -678,14 +811,18 @@ export default function Members() {
               <Input
                 id="editFunction"
                 value={formData.function}
-                onChange={(e) => setFormData({ ...formData, function: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, function: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="editGender">Genre</Label>
-              <Select 
-                value={formData.gender} 
-                onValueChange={(v: any) => setFormData({ ...formData, gender: v })}
+              <Select
+                value={formData.gender}
+                onValueChange={(v: any) =>
+                  setFormData({ ...formData, gender: v })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -699,7 +836,10 @@ export default function Members() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Annuler
             </Button>
             <Button onClick={handleEdit} disabled={updateMember.isPending}>

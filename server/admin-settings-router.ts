@@ -24,11 +24,13 @@ export const adminSettingsRouter = router({
 
   // Update a setting
   update: adminProcedure
-    .input(z.object({
-      key: z.string().min(1),
-      value: z.string().min(1),
-      description: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        key: z.string().min(1),
+        value: z.string().min(1),
+        description: z.string().optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.user) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -107,11 +109,15 @@ export const adminSettingsRouter = router({
 
   // Batch update settings
   updateBatch: adminProcedure
-    .input(z.array(z.object({
-      key: z.string(),
-      value: z.string(),
-      description: z.string().optional(),
-    })))
+    .input(
+      z.array(
+        z.object({
+          key: z.string(),
+          value: z.string(),
+          description: z.string().optional(),
+        })
+      )
+    )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.user) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -128,7 +134,11 @@ export const adminSettingsRouter = router({
           );
           results.push({ key: setting.key, success: true, result });
         } catch (error) {
-          results.push({ key: setting.key, success: false, error: String(error) });
+          results.push({
+            key: setting.key,
+            success: false,
+            error: String(error),
+          });
         }
       }
 

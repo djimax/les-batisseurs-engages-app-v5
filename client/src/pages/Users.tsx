@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -152,7 +158,7 @@ export default function UsersPage() {
                   type="email"
                   placeholder="utilisateur@example.com"
                   value={newUserEmail}
-                  onChange={(e) => setNewUserEmail(e.target.value)}
+                  onChange={e => setNewUserEmail(e.target.value)}
                 />
               </div>
               <div>
@@ -162,7 +168,7 @@ export default function UsersPage() {
                   type="password"
                   placeholder="••••••••"
                   value={newUserPassword}
-                  onChange={(e) => setNewUserPassword(e.target.value)}
+                  onChange={e => setNewUserPassword(e.target.value)}
                 />
               </div>
               <div>
@@ -201,7 +207,10 @@ export default function UsersPage() {
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
                   <Skeleton className="h-4 w-40" />
                   <Skeleton className="h-6 w-20" />
                 </div>
@@ -232,7 +241,8 @@ export default function UsersPage() {
                         </p>
                         <p className="text-sm text-muted-foreground flex items-center gap-2">
                           <Calendar className="h-3 w-3" />
-                          Créé le {new Date(user.createdAt).toLocaleDateString("fr-FR")}
+                          Créé le{" "}
+                          {new Date(user.createdAt).toLocaleDateString("fr-FR")}
                         </p>
                       </div>
                     </div>
@@ -242,9 +252,12 @@ export default function UsersPage() {
                     {getRoleBadge(user.role)}
 
                     {/* Edit Role Dialog */}
-                    <Dialog open={editingUserId === user.id} onOpenChange={(open) => {
-                      if (!open) setEditingUserId(null);
-                    }}>
+                    <Dialog
+                      open={editingUserId === user.id}
+                      onOpenChange={open => {
+                        if (!open) setEditingUserId(null);
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button
                           variant="outline"
@@ -267,7 +280,10 @@ export default function UsersPage() {
                         <div className="space-y-4">
                           <div>
                             <Label htmlFor="role-select">Nouveau rôle</Label>
-                            <Select value={editingRole} onValueChange={setEditingRole}>
+                            <Select
+                              value={editingRole}
+                              onValueChange={setEditingRole}
+                            >
                               <SelectTrigger id="role-select">
                                 <SelectValue />
                               </SelectTrigger>
@@ -282,7 +298,9 @@ export default function UsersPage() {
                             disabled={updateUserMutation.isPending}
                             className="w-full"
                           >
-                            {updateUserMutation.isPending ? "Mise à jour..." : "Mettre à jour"}
+                            {updateUserMutation.isPending
+                              ? "Mise à jour..."
+                              : "Mettre à jour"}
                           </Button>
                         </div>
                       </DialogContent>
@@ -291,15 +309,22 @@ export default function UsersPage() {
                     {/* Delete User */}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="text-red-600">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Supprimer l'utilisateur</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            Supprimer l'utilisateur
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Êtes-vous sûr de vouloir supprimer {user.email} ? Cette action ne peut pas être annulée.
+                            Êtes-vous sûr de vouloir supprimer {user.email} ?
+                            Cette action ne peut pas être annulée.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogAction
@@ -318,7 +343,9 @@ export default function UsersPage() {
           ) : (
             <div className="text-center py-8">
               <Users className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-              <p className="text-muted-foreground">Aucun utilisateur pour le moment</p>
+              <p className="text-muted-foreground">
+                Aucun utilisateur pour le moment
+              </p>
               <Button className="mt-4" onClick={() => {}}>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer le premier utilisateur
@@ -337,10 +364,12 @@ export default function UsersPage() {
             </h3>
             <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
               <li>
-                <strong>Admin :</strong> Accès complet à tous les modules et paramètres
+                <strong>Admin :</strong> Accès complet à tous les modules et
+                paramètres
               </li>
               <li>
-                <strong>Membre :</strong> Accès limité aux documents et informations de base
+                <strong>Membre :</strong> Accès limité aux documents et
+                informations de base
               </li>
             </ul>
           </div>

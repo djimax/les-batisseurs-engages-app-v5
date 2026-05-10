@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AlertCircle, Download, Filter, RefreshCw, Search } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -41,7 +53,7 @@ export default function AuditHistory() {
 
     if (searchTerm) {
       filtered = filtered.filter(
-        (log) =>
+        log =>
           log.entityName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           log.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           log.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -49,11 +61,11 @@ export default function AuditHistory() {
     }
 
     if (filterAction !== "all") {
-      filtered = filtered.filter((log) => log.action === filterAction);
+      filtered = filtered.filter(log => log.action === filterAction);
     }
 
     if (filterEntity !== "all") {
-      filtered = filtered.filter((log) => log.entityType === filterEntity);
+      filtered = filtered.filter(log => log.entityType === filterEntity);
     }
 
     setFilteredLogs(filtered);
@@ -107,7 +119,9 @@ export default function AuditHistory() {
           entityId: 2,
           entityName: "Ancien rapport",
           description: "Deleted document: Ancien rapport",
-          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date(
+            Date.now() - 1 * 24 * 60 * 60 * 1000
+          ).toISOString(),
           status: "success",
         },
       ];
@@ -166,7 +180,7 @@ export default function AuditHistory() {
   const handleExport = () => {
     const csv = [
       ["Date", "Utilisateur", "Action", "Type", "Entité", "Description"],
-      ...filteredLogs.map((log) => [
+      ...filteredLogs.map(log => [
         formatDate(log.createdAt),
         log.userEmail || "N/A",
         log.action,
@@ -175,7 +189,7 @@ export default function AuditHistory() {
         log.description || "",
       ]),
     ]
-      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .map(row => row.map(cell => `"${cell}"`).join(","))
       .join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
@@ -195,7 +209,8 @@ export default function AuditHistory() {
             Historique d'Audit
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            Suivi complet de toutes les modifications apportées par les administrateurs
+            Suivi complet de toutes les modifications apportées par les
+            administrateurs
           </p>
         </div>
 
@@ -216,7 +231,7 @@ export default function AuditHistory() {
                   <Input
                     placeholder="Chercher..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
@@ -268,7 +283,11 @@ export default function AuditHistory() {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Actualiser
                 </Button>
-                <Button onClick={handleExport} variant="outline" className="flex-1">
+                <Button
+                  onClick={handleExport}
+                  variant="outline"
+                  className="flex-1"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
@@ -285,36 +304,46 @@ export default function AuditHistory() {
                 <div className="animate-spin inline-block">
                   <RefreshCw className="h-6 w-6 text-blue-600" />
                 </div>
-                <p className="mt-2 text-slate-600 dark:text-slate-400">Chargement...</p>
+                <p className="mt-2 text-slate-600 dark:text-slate-400">
+                  Chargement...
+                </p>
               </CardContent>
             </Card>
           ) : filteredLogs.length === 0 ? (
             <Alert>
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>Aucun enregistrement d'audit trouvé.</AlertDescription>
+              <AlertDescription>
+                Aucun enregistrement d'audit trouvé.
+              </AlertDescription>
             </Alert>
           ) : (
             filteredLogs.map((log, index) => (
               <Card
                 key={log.id}
                 className="shadow-lg border-0 backdrop-blur-sm bg-white/95 dark:bg-slate-900/95 hover:shadow-xl transition-all duration-300"
-               
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
-                      <div className="text-2xl">{getEntityIcon(log.entityType)}</div>
+                      <div className="text-2xl">
+                        {getEntityIcon(log.entityType)}
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge className={getActionColor(log.action)}>{log.action}</Badge>
+                          <Badge className={getActionColor(log.action)}>
+                            {log.action}
+                          </Badge>
                           <Badge variant="outline">{log.entityType}</Badge>
                           {log.status === "failed" && (
                             <Badge variant="destructive">Échec</Badge>
                           )}
                         </div>
-                        <p className="font-semibold text-foreground">{log.entityName || log.description}</p>
+                        <p className="font-semibold text-foreground">
+                          {log.entityName || log.description}
+                        </p>
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                          Par: <span className="font-medium">{log.userEmail}</span>
+                          Par:{" "}
+                          <span className="font-medium">{log.userEmail}</span>
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
                           {formatDate(log.createdAt)}
@@ -328,15 +357,27 @@ export default function AuditHistory() {
                               </summary>
                               <div className="mt-2 space-y-2 bg-slate-50 dark:bg-slate-800/50 p-2 rounded">
                                 <div>
-                                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Avant:</p>
+                                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                    Avant:
+                                  </p>
                                   <pre className="text-xs bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 overflow-auto">
-                                    {JSON.stringify(JSON.parse(log.oldValue), null, 2)}
+                                    {JSON.stringify(
+                                      JSON.parse(log.oldValue),
+                                      null,
+                                      2
+                                    )}
                                   </pre>
                                 </div>
                                 <div>
-                                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Après:</p>
+                                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                    Après:
+                                  </p>
                                   <pre className="text-xs bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 overflow-auto">
-                                    {JSON.stringify(JSON.parse(log.newValue), null, 2)}
+                                    {JSON.stringify(
+                                      JSON.parse(log.newValue),
+                                      null,
+                                      2
+                                    )}
                                   </pre>
                                 </div>
                               </div>
@@ -361,25 +402,35 @@ export default function AuditHistory() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total</p>
-                  <p className="text-2xl font-bold text-blue-600">{filteredLogs.length}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Total
+                  </p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {filteredLogs.length}
+                  </p>
                 </div>
                 <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Créations</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Créations
+                  </p>
                   <p className="text-2xl font-bold text-green-600">
-                    {filteredLogs.filter((l) => l.action === "CREATE").length}
+                    {filteredLogs.filter(l => l.action === "CREATE").length}
                   </p>
                 </div>
                 <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Modifications</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Modifications
+                  </p>
                   <p className="text-2xl font-bold text-orange-600">
-                    {filteredLogs.filter((l) => l.action === "UPDATE").length}
+                    {filteredLogs.filter(l => l.action === "UPDATE").length}
                   </p>
                 </div>
                 <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Suppressions</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Suppressions
+                  </p>
                   <p className="text-2xl font-bold text-red-600">
-                    {filteredLogs.filter((l) => l.action === "DELETE").length}
+                    {filteredLogs.filter(l => l.action === "DELETE").length}
                   </p>
                 </div>
               </div>

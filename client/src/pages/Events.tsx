@@ -1,8 +1,22 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Calendar, MapPin, Users, Clock, Trash2, Edit2 } from "lucide-react";
+import {
+  Plus,
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Trash2,
+  Edit2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface Event {
@@ -27,7 +41,9 @@ const SAMPLE_EVENTS: Event[] = [
     location: "Salle de réunion",
     eventType: "reunion",
     startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    endDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000),
+    endDate: new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000
+    ),
     color: "#3b82f6",
     organizer: "Admin",
     attendees: 12,
@@ -51,7 +67,9 @@ const SAMPLE_EVENTS: Event[] = [
     location: "Parc central",
     eventType: "evenement",
     startDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-    endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000),
+    endDate: new Date(
+      Date.now() + 14 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000
+    ),
     color: "#f59e0b",
     organizer: "Trésorier",
     attendees: 25,
@@ -131,8 +149,10 @@ export default function Events() {
   };
 
   const getStatusColor = (event: Event) => {
-    if (event.endDate < now) return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
-    if (event.startDate > now) return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+    if (event.endDate < now)
+      return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+    if (event.startDate > now)
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
     return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
   };
 
@@ -152,7 +172,9 @@ export default function Events() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Calendrier d'Événements</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Calendrier d'Événements
+          </h1>
           <p className="text-muted-foreground">
             Gérez les événements passés, présents et futurs de l'association
           </p>
@@ -169,11 +191,11 @@ export default function Events() {
           <Input
             placeholder="Rechercher un evenement..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="flex-1"
           />
           <div className="flex gap-2">
-            {(["all", "past", "present", "future"] as FilterType[]).map((f) => (
+            {(["all", "past", "present", "future"] as FilterType[]).map(f => (
               <Button
                 key={f}
                 variant={filter === f ? "default" : "outline"}
@@ -191,7 +213,7 @@ export default function Events() {
         <div>
           <label className="text-sm font-medium mb-2 block">Trier par</label>
           <div className="flex gap-2 flex-wrap">
-            {SORT_OPTIONS.map((option) => (
+            {SORT_OPTIONS.map(option => (
               <Button
                 key={option.value}
                 variant={sortBy === option.value ? "default" : "outline"}
@@ -215,17 +237,19 @@ export default function Events() {
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.map((event) => (
-            <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div
-                className="h-2"
-                style={{ backgroundColor: event.color }}
-              />
+          {filteredEvents.map(event => (
+            <Card
+              key={event.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="h-2" style={{ backgroundColor: event.color }} />
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
                     <CardTitle className="text-lg">{event.title}</CardTitle>
-                    <span className={`inline-block text-xs px-2 py-1 rounded-full mt-2 ${getStatusColor(event)}`}>
+                    <span
+                      className={`inline-block text-xs px-2 py-1 rounded-full mt-2 ${getStatusColor(event)}`}
+                    >
                       {getEventStatus(event)}
                     </span>
                   </div>
@@ -234,7 +258,9 @@ export default function Events() {
 
               <CardContent className="space-y-3">
                 {event.description && (
-                  <p className="text-sm text-muted-foreground">{event.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {event.description}
+                  </p>
                 )}
 
                 <div className="space-y-2 text-sm">
@@ -265,11 +291,7 @@ export default function Events() {
                 </div>
 
                 <div className="flex gap-2 pt-3 border-t">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1 gap-2"
-                  >
+                  <Button variant="ghost" size="sm" className="flex-1 gap-2">
                     <Edit2 className="h-4 w-4" />
                     Modifier
                   </Button>
@@ -311,7 +333,10 @@ export default function Events() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {events.filter(e => !(e.endDate < now) && !(e.startDate > now)).length}
+              {
+                events.filter(e => !(e.endDate < now) && !(e.startDate > now))
+                  .length
+              }
             </div>
           </CardContent>
         </Card>

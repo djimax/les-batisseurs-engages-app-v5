@@ -5,11 +5,13 @@ Ce document documente les erreurs courantes rencontrées dans le projet et leurs
 ## 1. Erreur : "Cannot read properties of null (reading 'useState')"
 
 ### Cause
+
 - Versions incompatibles de React et React DOM
 - Plusieurs copies de React dans l'application
 - Hooks appelés en dehors d'un composant React
 
 ### Solution
+
 ```bash
 # Redémarrer le serveur de développement
 pnpm dev
@@ -20,6 +22,7 @@ pnpm install
 ```
 
 ### Prévention
+
 - Toujours appeler les hooks au niveau du composant
 - Vérifier que React est importé correctement
 - Utiliser `useCallback` pour les fonctions stables
@@ -29,18 +32,20 @@ pnpm install
 ## 2. Erreur : "[vite] failed to connect to websocket"
 
 ### Cause
+
 - Configuration HMR incorrecte
 - Proxy ou firewall bloquant les WebSockets
 - Port Vite mal configuré
 
 ### Solution
+
 ```typescript
 // vite.config.ts
 export default defineConfig({
   server: {
     hmr: {
-      protocol: 'wss',
-      host: 'your-domain.com',
+      protocol: "wss",
+      host: "your-domain.com",
       port: 443,
     },
   },
@@ -48,6 +53,7 @@ export default defineConfig({
 ```
 
 ### Prévention
+
 - Utiliser `window.location.origin` pour les URLs dynamiques
 - Tester la connexion WebSocket régulièrement
 - Vérifier la configuration HMR après chaque déploiement
@@ -57,11 +63,13 @@ export default defineConfig({
 ## 3. Erreur : "Invalid hook call"
 
 ### Cause
+
 - Appel de hooks conditionnellement
 - Appel de hooks en dehors d'un composant
 - Ordre des hooks différent entre rendus
 
 ### Solution
+
 ```typescript
 // ❌ Mauvais
 if (condition) {
@@ -76,6 +84,7 @@ if (condition) {
 ```
 
 ### Prévention
+
 - Linter ESLint avec `eslint-plugin-react-hooks`
 - Tester les composants avec Vitest
 - Respecter les Rules of Hooks
@@ -85,11 +94,13 @@ if (condition) {
 ## 4. Erreur : "Type 'number' is not assignable to type 'string'"
 
 ### Cause
+
 - Changement de type de colonne sans migration
 - Mismatch entre schéma TypeScript et base de données
 - Imports incorrects des types
 
 ### Solution
+
 ```bash
 # Générer migration
 pnpm drizzle-kit generate
@@ -99,6 +110,7 @@ pnpm drizzle-kit migrate
 ```
 
 ### Prévention
+
 - Toujours générer migrations après changement de schéma
 - Vérifier les types TypeScript avant le déploiement
 - Utiliser `as any` temporairement si nécessaire, puis corriger
@@ -108,11 +120,13 @@ pnpm drizzle-kit migrate
 ## 5. Erreur : "Duplicate export 'generateMemberId'"
 
 ### Cause
+
 - Fonction exportée deux fois dans le même fichier
 - Import/export dupliqué
 - Mauvaise fusion de code
 
 ### Solution
+
 ```bash
 # Chercher les doublons
 grep -n "export.*generateMemberId" server/db.ts
@@ -122,6 +136,7 @@ grep -n "export.*generateMemberId" server/db.ts
 ```
 
 ### Prévention
+
 - Utiliser `grep` pour chercher les doublons avant commit
 - Vérifier les merges de branches
 - Utiliser un linter pour détecter les exports dupliqués
@@ -131,11 +146,13 @@ grep -n "export.*generateMemberId" server/db.ts
 ## 6. Erreur : "Cannot find name 'cotisationCriteria'"
 
 ### Cause
+
 - Import manquant du schéma
 - Typo dans le nom de la table
 - Table non exportée du schéma
 
 ### Solution
+
 ```typescript
 // Vérifier l'import
 import { cotisationCriteria } from "../drizzle/schema";
@@ -145,6 +162,7 @@ export const cotisationCriteria = mysqlTable(...);
 ```
 
 ### Prévention
+
 - Utiliser l'autocomplétion IDE
 - Vérifier les imports après chaque changement de schéma
 - Exécuter TypeScript check avant commit
@@ -154,11 +172,13 @@ export const cotisationCriteria = mysqlTable(...);
 ## 7. Erreur : "Database connection failed"
 
 ### Cause
+
 - Variables d'environnement manquantes
 - Base de données non accessible
 - Migrations non appliquées
 
 ### Solution
+
 ```bash
 # Vérifier les variables d'environnement
 echo $DATABASE_URL
@@ -171,6 +191,7 @@ pnpm drizzle-kit migrate
 ```
 
 ### Prévention
+
 - Documenter toutes les variables d'environnement requises
 - Créer un script de vérification de santé
 - Tester la connexion au démarrage
@@ -180,11 +201,13 @@ pnpm drizzle-kit migrate
 ## 8. Erreur : "Uncaught SyntaxError: Unexpected token"
 
 ### Cause
+
 - Fichier mal formaté
 - Caractères spéciaux non échappés
 - Syntaxe TypeScript/JSX incorrecte
 
 ### Solution
+
 ```bash
 # Formater le code
 pnpm prettier --write .
@@ -194,6 +217,7 @@ pnpm tsc --noEmit
 ```
 
 ### Prévention
+
 - Utiliser Prettier pour le formatage automatique
 - Configurer pre-commit hooks
 - Vérifier TypeScript avant chaque commit
@@ -203,11 +227,13 @@ pnpm tsc --noEmit
 ## 9. Erreur : "Migration already applied"
 
 ### Cause
+
 - Tentative d'appliquer une migration déjà appliquée
 - Fichier de migration corrompu
 - Historique de migration incohérent
 
 ### Solution
+
 ```bash
 # Vérifier l'historique des migrations
 pnpm drizzle-kit introspect
@@ -218,6 +244,7 @@ pnpm drizzle-kit drop
 ```
 
 ### Prévention
+
 - Vérifier l'historique avant d'appliquer
 - Utiliser des transactions pour les migrations
 - Documenter chaque migration
@@ -227,11 +254,13 @@ pnpm drizzle-kit drop
 ## 10. Erreur : "Cannot read property 'memberId' of undefined"
 
 ### Cause
+
 - Objet null ou undefined
 - Accès à une propriété qui n'existe pas
 - Requête qui ne retourne rien
 
 ### Solution
+
 ```typescript
 // Vérifier null/undefined
 if (!member) {
@@ -246,6 +275,7 @@ const id = member?.memberId ?? "unknown";
 ```
 
 ### Prévention
+
 - Toujours vérifier null/undefined
 - Utiliser TypeScript strict mode
 - Ajouter des tests pour les cas limites

@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -11,32 +17,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Download, FileText, Table2, TrendingUp, DollarSign, Users, CheckCircle2 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  Download,
+  FileText,
+  Table2,
+  TrendingUp,
+  DollarSign,
+  Users,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdvancedReports() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
-  const [reportType, setReportType] = useState<"overview" | "financial" | "timeline" | "performance">("overview");
+  const [reportType, setReportType] = useState<
+    "overview" | "financial" | "timeline" | "performance"
+  >("overview");
 
   // Fetch projects
   const { data: projects = [] } = trpc.projects.list.useQuery({});
 
   // Fetch reports data
-  const { data: projectReport, isLoading: isLoadingProject } = trpc.reports.getProjectReport.useQuery(
-    { projectId: selectedProjectId ? parseInt(selectedProjectId) : 0 },
-    { enabled: !!selectedProjectId && reportType === "overview" }
-  );
+  const { data: projectReport, isLoading: isLoadingProject } =
+    trpc.reports.getProjectReport.useQuery(
+      { projectId: selectedProjectId ? parseInt(selectedProjectId) : 0 },
+      { enabled: !!selectedProjectId && reportType === "overview" }
+    );
 
-  const { data: financialReport, isLoading: isLoadingFinancial } = trpc.reports.getFinancialReportByProject.useQuery(
-    {},
-    { enabled: reportType === "financial" }
-  );
+  const { data: financialReport, isLoading: isLoadingFinancial } =
+    trpc.reports.getFinancialReportByProject.useQuery(
+      {},
+      { enabled: reportType === "financial" }
+    );
 
-  const { data: allProjectsSummary } = trpc.reports.getAllProjectsSummary.useQuery(
-    undefined,
-    { enabled: reportType === "overview" && !selectedProjectId }
-  );
+  const { data: allProjectsSummary } =
+    trpc.reports.getAllProjectsSummary.useQuery(undefined, {
+      enabled: reportType === "overview" && !selectedProjectId,
+    });
 
   const handleExportPDF = () => {
     toast.success("Export PDF en cours de préparation...");
@@ -64,10 +96,26 @@ export default function AdvancedReports() {
   const getTaskStatusData = (): any[] => {
     if (projectReport?.statistics) {
       return [
-        { name: "À faire", value: projectReport.statistics.tasksByStatus.todo, color: "#ef4444" },
-        { name: "En cours", value: projectReport.statistics.tasksByStatus.inProgress, color: "#f59e0b" },
-        { name: "Complétées", value: projectReport.statistics.tasksByStatus.completed, color: "#10b981" },
-        { name: "Bloquées", value: projectReport.statistics.tasksByStatus.blocked, color: "#8b5cf6" },
+        {
+          name: "À faire",
+          value: projectReport.statistics.tasksByStatus.todo,
+          color: "#ef4444",
+        },
+        {
+          name: "En cours",
+          value: projectReport.statistics.tasksByStatus.inProgress,
+          color: "#f59e0b",
+        },
+        {
+          name: "Complétées",
+          value: projectReport.statistics.tasksByStatus.completed,
+          color: "#10b981",
+        },
+        {
+          name: "Bloquées",
+          value: projectReport.statistics.tasksByStatus.blocked,
+          color: "#8b5cf6",
+        },
       ];
     }
     return [];
@@ -79,14 +127,20 @@ export default function AdvancedReports() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Rapports Avancés</h1>
-          <p className="text-muted-foreground">Générez des rapports détaillés avec graphiques et exports</p>
+          <p className="text-muted-foreground">
+            Générez des rapports détaillés avec graphiques et exports
+          </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={handleExportPDF} variant="outline" className="gap-2">
             <FileText className="h-4 w-4" />
             Export PDF
           </Button>
-          <Button onClick={handleExportExcel} variant="outline" className="gap-2">
+          <Button
+            onClick={handleExportExcel}
+            variant="outline"
+            className="gap-2"
+          >
             <Table2 className="h-4 w-4" />
             Export Excel
           </Button>
@@ -102,7 +156,10 @@ export default function AdvancedReports() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Type de Rapport</label>
-              <Select value={reportType} onValueChange={(value: any) => setReportType(value)}>
+              <Select
+                value={reportType}
+                onValueChange={(value: any) => setReportType(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -110,22 +167,32 @@ export default function AdvancedReports() {
                   <SelectItem value="overview">Vue d'ensemble</SelectItem>
                   <SelectItem value="financial">Rapport Financier</SelectItem>
                   <SelectItem value="timeline">Chronologie</SelectItem>
-                  <SelectItem value="performance">Performance de l'équipe</SelectItem>
+                  <SelectItem value="performance">
+                    Performance de l'équipe
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {reportType === "overview" && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Sélectionner un Projet</label>
-                <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                <label className="text-sm font-medium">
+                  Sélectionner un Projet
+                </label>
+                <Select
+                  value={selectedProjectId}
+                  onValueChange={setSelectedProjectId}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les projets" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Tous les projets</SelectItem>
                     {projects.map((project: any) => (
-                      <SelectItem key={project.id} value={project.id.toString()}>
+                      <SelectItem
+                        key={project.id}
+                        value={project.id.toString()}
+                      >
                         {project.name}
                       </SelectItem>
                     ))}
@@ -148,7 +215,9 @@ export default function AdvancedReports() {
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle>{projectReport.project.name}</CardTitle>
-                      <CardDescription>{projectReport.project.description}</CardDescription>
+                      <CardDescription>
+                        {projectReport.project.description}
+                      </CardDescription>
                     </div>
                     <Badge>{projectReport.project.status}</Badge>
                   </div>
@@ -160,8 +229,12 @@ export default function AdvancedReports() {
                       <CardContent className="pt-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm text-muted-foreground">Progression</p>
-                            <p className="text-2xl font-bold">{projectReport.statistics.progressPercentage}%</p>
+                            <p className="text-sm text-muted-foreground">
+                              Progression
+                            </p>
+                            <p className="text-2xl font-bold">
+                              {projectReport.statistics.progressPercentage}%
+                            </p>
                           </div>
                           <CheckCircle2 className="h-8 w-8 text-blue-500" />
                         </div>
@@ -172,8 +245,13 @@ export default function AdvancedReports() {
                       <CardContent className="pt-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm text-muted-foreground">Tâches</p>
-                            <p className="text-2xl font-bold">{projectReport.statistics.completedTasks}/{projectReport.statistics.totalTasks}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Tâches
+                            </p>
+                            <p className="text-2xl font-bold">
+                              {projectReport.statistics.completedTasks}/
+                              {projectReport.statistics.totalTasks}
+                            </p>
                           </div>
                           <CheckCircle2 className="h-8 w-8 text-green-500" />
                         </div>
@@ -184,8 +262,12 @@ export default function AdvancedReports() {
                       <CardContent className="pt-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm text-muted-foreground">Budget</p>
-                            <p className="text-2xl font-bold">{projectReport.statistics.budgetUsagePercentage}%</p>
+                            <p className="text-sm text-muted-foreground">
+                              Budget
+                            </p>
+                            <p className="text-2xl font-bold">
+                              {projectReport.statistics.budgetUsagePercentage}%
+                            </p>
                           </div>
                           <DollarSign className="h-8 w-8 text-purple-500" />
                         </div>
@@ -196,8 +278,12 @@ export default function AdvancedReports() {
                       <CardContent className="pt-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm text-muted-foreground">Équipe</p>
-                            <p className="text-2xl font-bold">{projectReport.statistics.teamSize}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Équipe
+                            </p>
+                            <p className="text-2xl font-bold">
+                              {projectReport.statistics.teamSize}
+                            </p>
                           </div>
                           <Users className="h-8 w-8 text-orange-500" />
                         </div>
@@ -209,18 +295,32 @@ export default function AdvancedReports() {
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">Progression du Projet</span>
-                        <span className="text-sm text-muted-foreground">{projectReport.statistics.progressPercentage}%</span>
+                        <span className="text-sm font-medium">
+                          Progression du Projet
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {projectReport.statistics.progressPercentage}%
+                        </span>
                       </div>
-                      <Progress value={projectReport.statistics.progressPercentage} className="h-2" />
+                      <Progress
+                        value={projectReport.statistics.progressPercentage}
+                        className="h-2"
+                      />
                     </div>
 
                     <div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">Utilisation du Budget</span>
-                        <span className="text-sm text-muted-foreground">{projectReport.statistics.budgetUsagePercentage}%</span>
+                        <span className="text-sm font-medium">
+                          Utilisation du Budget
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {projectReport.statistics.budgetUsagePercentage}%
+                        </span>
                       </div>
-                      <Progress value={projectReport.statistics.budgetUsagePercentage} className="h-2" />
+                      <Progress
+                        value={projectReport.statistics.budgetUsagePercentage}
+                        className="h-2"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -259,15 +359,28 @@ export default function AdvancedReports() {
                 {/* Priority Distribution */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Distribution par Priorité</CardTitle>
+                    <CardTitle className="text-lg">
+                      Distribution par Priorité
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
                       <BarChart
                         data={[
-                          { name: "Basse", value: projectReport.statistics.tasksByPriority.low },
-                          { name: "Moyenne", value: projectReport.statistics.tasksByPriority.medium },
-                          { name: "Haute", value: projectReport.statistics.tasksByPriority.high },
+                          {
+                            name: "Basse",
+                            value: projectReport.statistics.tasksByPriority.low,
+                          },
+                          {
+                            name: "Moyenne",
+                            value:
+                              projectReport.statistics.tasksByPriority.medium,
+                          },
+                          {
+                            name: "Haute",
+                            value:
+                              projectReport.statistics.tasksByPriority.high,
+                          },
                         ]}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
@@ -289,10 +402,15 @@ export default function AdvancedReports() {
                 <CardContent>
                   <div className="space-y-2">
                     {projectReport.members.map((member: any) => (
-                      <div key={member.id} className="flex items-center justify-between p-2 border rounded">
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between p-2 border rounded"
+                      >
                         <div>
                           <p className="font-medium">{member.user?.name}</p>
-                          <p className="text-sm text-muted-foreground">{member.role}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {member.role}
+                          </p>
                         </div>
                         <Badge variant="outline">{member.role}</Badge>
                       </div>
@@ -307,37 +425,56 @@ export default function AdvancedReports() {
               {allProjectsSummary && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {allProjectsSummary.map((project: any) => (
-                    <Card key={project.id} className="hover:shadow-lg transition-shadow">
+                    <Card
+                      key={project.id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
                       <CardHeader>
-                        <CardTitle className="text-base">{project.name}</CardTitle>
+                        <CardTitle className="text-base">
+                          {project.name}
+                        </CardTitle>
                         <Badge className="w-fit">{project.status}</Badge>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span>Progression</span>
-                            <span className="font-medium">{project.progressPercentage}%</span>
+                            <span className="font-medium">
+                              {project.progressPercentage}%
+                            </span>
                           </div>
-                          <Progress value={project.progressPercentage} className="h-2" />
+                          <Progress
+                            value={project.progressPercentage}
+                            className="h-2"
+                          />
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <p className="text-muted-foreground">Tâches</p>
-                            <p className="font-medium">{project.completedCount}/{project.taskCount}</p>
+                            <p className="font-medium">
+                              {project.completedCount}/{project.taskCount}
+                            </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Équipe</p>
-                            <p className="font-medium">{project.teamSize} membres</p>
+                            <p className="font-medium">
+                              {project.teamSize} membres
+                            </p>
                           </div>
                         </div>
 
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span>Budget</span>
-                            <span className="font-medium">{project.budgetUsagePercentage}%</span>
+                            <span className="font-medium">
+                              {project.budgetUsagePercentage}%
+                            </span>
                           </div>
-                          <Progress value={project.budgetUsagePercentage} className="h-2" />
+                          <Progress
+                            value={project.budgetUsagePercentage}
+                            className="h-2"
+                          />
                         </div>
                       </CardContent>
                     </Card>
@@ -358,7 +495,9 @@ export default function AdvancedReports() {
               <CardContent className="pt-6">
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Budget Total</p>
-                  <p className="text-2xl font-bold">{financialReport.summary.totalBudget.toLocaleString()}€</p>
+                  <p className="text-2xl font-bold">
+                    {financialReport.summary.totalBudget.toLocaleString()}€
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -367,7 +506,9 @@ export default function AdvancedReports() {
               <CardContent className="pt-6">
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Dépensé</p>
-                  <p className="text-2xl font-bold text-red-600">{financialReport.summary.totalSpent.toLocaleString()}€</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {financialReport.summary.totalSpent.toLocaleString()}€
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -376,7 +517,9 @@ export default function AdvancedReports() {
               <CardContent className="pt-6">
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Restant</p>
-                  <p className="text-2xl font-bold text-green-600">{financialReport.summary.totalRemaining.toLocaleString()}€</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {financialReport.summary.totalRemaining.toLocaleString()}€
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -385,7 +528,9 @@ export default function AdvancedReports() {
               <CardContent className="pt-6">
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Utilisation</p>
-                  <p className="text-2xl font-bold">{financialReport.summary.utilizationPercentage}%</p>
+                  <p className="text-2xl font-bold">
+                    {financialReport.summary.utilizationPercentage}%
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -418,7 +563,9 @@ export default function AdvancedReports() {
       {(reportType === "timeline" || reportType === "performance") && (
         <Card>
           <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">Ce type de rapport sera bientôt disponible</p>
+            <p className="text-center text-muted-foreground">
+              Ce type de rapport sera bientôt disponible
+            </p>
           </CardContent>
         </Card>
       )}

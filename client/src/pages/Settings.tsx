@@ -1,9 +1,28 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { SettingsIcon, LogOut, Moon, Sun, Globe, Wifi, Download, Upload, Save, DollarSign, Loader2, AlertCircle } from "lucide-react";
+import {
+  SettingsIcon,
+  LogOut,
+  Moon,
+  Sun,
+  Globe,
+  Wifi,
+  Download,
+  Upload,
+  Save,
+  DollarSign,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -16,8 +35,8 @@ export default function Settings() {
   const { logout } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(false);
-  const [currency, setCurrency] = useState<'EUR' | 'CFA'>('EUR');
-  const [exchangeRate, setExchangeRate] = useState('655.957');
+  const [currency, setCurrency] = useState<"EUR" | "CFA">("EUR");
+  const [exchangeRate, setExchangeRate] = useState("655.957");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoadingAssociation, setIsLoadingAssociation] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -40,33 +59,39 @@ export default function Settings() {
   });
 
   const { data: settings, isLoading } = trpc.globalSettings.get.useQuery();
-  const { data: associationSettings, isLoading: isLoadingAssociationSettings } = trpc.associationSettings.getSettings.useQuery();
+  const { data: associationSettings, isLoading: isLoadingAssociationSettings } =
+    trpc.associationSettings.getSettings.useQuery();
   const updateSettings = trpc.globalSettings.update.useMutation({
     onSuccess: () => {
-      toast.success('Paramètres sauvegardés');
+      toast.success("Paramètres sauvegardés");
     },
-    onError: (error) => {
-      toast.error('Erreur: ' + error.message);
+    onError: error => {
+      toast.error("Erreur: " + error.message);
     },
   });
-  const updateAssociationMutation = trpc.associationSettings.updateSettings.useMutation();
+  const updateAssociationMutation =
+    trpc.associationSettings.updateSettings.useMutation();
   const uploadLogoMutation = trpc.associationSettings.uploadLogo.useMutation();
 
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('currency') as 'EUR' | 'CFA' | null;
+    const savedCurrency = localStorage.getItem("currency") as
+      | "EUR"
+      | "CFA"
+      | null;
     if (savedCurrency) setCurrency(savedCurrency);
-    
-    const savedRate = localStorage.getItem('exchangeRate');
+
+    const savedRate = localStorage.getItem("exchangeRate");
     if (savedRate) setExchangeRate(savedRate);
   }, []);
 
   useEffect(() => {
     if (associationSettings) {
-      setAssociationFormData((prev) => ({
+      setAssociationFormData(prev => ({
         ...prev,
         name: associationSettings.name || prev.name,
         primaryColor: associationSettings.primaryColor || prev.primaryColor,
-        secondaryColor: associationSettings.secondaryColor || prev.secondaryColor,
+        secondaryColor:
+          associationSettings.secondaryColor || prev.secondaryColor,
         accentColor: associationSettings.accentColor || prev.accentColor,
         contactEmail: associationSettings.contactEmail || prev.contactEmail,
         contactPhone: associationSettings.contactPhone || prev.contactPhone,
@@ -86,18 +111,18 @@ export default function Settings() {
   }, [associationSettings]);
 
   const handleSaveSettings = () => {
-    localStorage.setItem('currency', currency);
-    localStorage.setItem('exchangeRate', exchangeRate);
-    toast.success('Paramètres sauvegardés localement');
+    localStorage.setItem("currency", currency);
+    localStorage.setItem("exchangeRate", exchangeRate);
+    toast.success("Paramètres sauvegardés localement");
   };
 
   const handleLogout = () => {
     logout();
-    toast.success('Déconnexion réussie');
+    toast.success("Déconnexion réussie");
   };
 
   const handleExportData = () => {
-    toast.info('Fonction d\'export en développement');
+    toast.info("Fonction d'export en développement");
   };
 
   const handleImportData = () => {
@@ -117,7 +142,7 @@ export default function Settings() {
   };
 
   const handleAssociationInputChange = (field: string, value: string) => {
-    setAssociationFormData((prev) => ({
+    setAssociationFormData(prev => ({
       ...prev,
       [field]: value,
     }));
@@ -161,7 +186,9 @@ export default function Settings() {
       toast.success("Paramètres de l'association sauvegardés avec succès");
       setLogoFile(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de la sauvegarde");
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de la sauvegarde"
+      );
     } finally {
       setIsLoadingAssociation(false);
     }
@@ -172,7 +199,8 @@ export default function Settings() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Paramètres</h1>
         <p className="text-muted-foreground mt-2">
-          Gérez vos préférences, paramètres personnels et paramètres de l'association
+          Gérez vos préférences, paramètres personnels et paramètres de
+          l'association
         </p>
       </div>
 
@@ -189,7 +217,9 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Logo de l'Association</CardTitle>
-              <CardDescription>Téléchargez un logo pour votre association</CardDescription>
+              <CardDescription>
+                Téléchargez un logo pour votre association
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-6">
@@ -197,7 +227,11 @@ export default function Settings() {
                 <div className="flex-shrink-0">
                   <div className="w-32 h-32 bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden">
                     {logoPreview ? (
-                      <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover" />
+                      <img
+                        src={logoPreview}
+                        alt="Logo preview"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="text-center">
                         <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
@@ -242,7 +276,9 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Informations Générales</CardTitle>
-              <CardDescription>Détails de base de votre association</CardDescription>
+              <CardDescription>
+                Détails de base de votre association
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
@@ -253,7 +289,9 @@ export default function Settings() {
                   <Input
                     id="assoc-name"
                     value={associationFormData.name}
-                    onChange={(e) => handleAssociationInputChange("name", e.target.value)}
+                    onChange={e =>
+                      handleAssociationInputChange("name", e.target.value)
+                    }
                     className="mt-2"
                   />
                 </div>
@@ -265,7 +303,9 @@ export default function Settings() {
                   <Input
                     id="assoc-website"
                     value={associationFormData.website}
-                    onChange={(e) => handleAssociationInputChange("website", e.target.value)}
+                    onChange={e =>
+                      handleAssociationInputChange("website", e.target.value)
+                    }
                     className="mt-2"
                   />
                 </div>
@@ -278,7 +318,12 @@ export default function Settings() {
                     id="assoc-email"
                     type="email"
                     value={associationFormData.contactEmail}
-                    onChange={(e) => handleAssociationInputChange("contactEmail", e.target.value)}
+                    onChange={e =>
+                      handleAssociationInputChange(
+                        "contactEmail",
+                        e.target.value
+                      )
+                    }
                     className="mt-2"
                   />
                 </div>
@@ -290,7 +335,12 @@ export default function Settings() {
                   <Input
                     id="assoc-phone"
                     value={associationFormData.contactPhone}
-                    onChange={(e) => handleAssociationInputChange("contactPhone", e.target.value)}
+                    onChange={e =>
+                      handleAssociationInputChange(
+                        "contactPhone",
+                        e.target.value
+                      )
+                    }
                     className="mt-2"
                   />
                 </div>
@@ -303,7 +353,9 @@ export default function Settings() {
                 <textarea
                   id="assoc-description"
                   value={associationFormData.description}
-                  onChange={(e) => handleAssociationInputChange("description", e.target.value)}
+                  onChange={e =>
+                    handleAssociationInputChange("description", e.target.value)
+                  }
                   className="w-full mt-2 px-3 py-2 border border-slate-300 rounded-md text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
                   rows={4}
                 />
@@ -315,7 +367,9 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Apparence</CardTitle>
-              <CardDescription>Personnalisez les couleurs et le thème</CardDescription>
+              <CardDescription>
+                Personnalisez les couleurs et le thème
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-3 gap-4">
@@ -328,13 +382,23 @@ export default function Settings() {
                       id="primary-color"
                       type="color"
                       value={associationFormData.primaryColor}
-                      onChange={(e) => handleAssociationInputChange("primaryColor", e.target.value)}
+                      onChange={e =>
+                        handleAssociationInputChange(
+                          "primaryColor",
+                          e.target.value
+                        )
+                      }
                       className="w-12 h-10 p-1 cursor-pointer"
                     />
                     <Input
                       type="text"
                       value={associationFormData.primaryColor}
-                      onChange={(e) => handleAssociationInputChange("primaryColor", e.target.value)}
+                      onChange={e =>
+                        handleAssociationInputChange(
+                          "primaryColor",
+                          e.target.value
+                        )
+                      }
                       className="flex-1"
                     />
                   </div>
@@ -349,13 +413,23 @@ export default function Settings() {
                       id="secondary-color"
                       type="color"
                       value={associationFormData.secondaryColor}
-                      onChange={(e) => handleAssociationInputChange("secondaryColor", e.target.value)}
+                      onChange={e =>
+                        handleAssociationInputChange(
+                          "secondaryColor",
+                          e.target.value
+                        )
+                      }
                       className="w-12 h-10 p-1 cursor-pointer"
                     />
                     <Input
                       type="text"
                       value={associationFormData.secondaryColor}
-                      onChange={(e) => handleAssociationInputChange("secondaryColor", e.target.value)}
+                      onChange={e =>
+                        handleAssociationInputChange(
+                          "secondaryColor",
+                          e.target.value
+                        )
+                      }
                       className="flex-1"
                     />
                   </div>
@@ -370,13 +444,23 @@ export default function Settings() {
                       id="accent-color"
                       type="color"
                       value={associationFormData.accentColor}
-                      onChange={(e) => handleAssociationInputChange("accentColor", e.target.value)}
+                      onChange={e =>
+                        handleAssociationInputChange(
+                          "accentColor",
+                          e.target.value
+                        )
+                      }
                       className="w-12 h-10 p-1 cursor-pointer"
                     />
                     <Input
                       type="text"
                       value={associationFormData.accentColor}
-                      onChange={(e) => handleAssociationInputChange("accentColor", e.target.value)}
+                      onChange={e =>
+                        handleAssociationInputChange(
+                          "accentColor",
+                          e.target.value
+                        )
+                      }
                       className="flex-1"
                     />
                   </div>
@@ -391,7 +475,9 @@ export default function Settings() {
                   <select
                     id="assoc-theme"
                     value={associationFormData.theme}
-                    onChange={(e) => handleAssociationInputChange("theme", e.target.value)}
+                    onChange={e =>
+                      handleAssociationInputChange("theme", e.target.value)
+                    }
                     className="w-full mt-2 px-3 py-2 border border-slate-300 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500"
                   >
                     <option value="light">Clair</option>
@@ -406,7 +492,9 @@ export default function Settings() {
                   <select
                     id="assoc-language"
                     value={associationFormData.language}
-                    onChange={(e) => handleAssociationInputChange("language", e.target.value)}
+                    onChange={e =>
+                      handleAssociationInputChange("language", e.target.value)
+                    }
                     className="w-full mt-2 px-3 py-2 border border-slate-300 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500"
                   >
                     <option value="fr">Français</option>
@@ -460,7 +548,7 @@ export default function Settings() {
               <select
                 id="currency"
                 value={currency}
-                onChange={(e) => setCurrency(e.target.value as 'EUR' | 'CFA')}
+                onChange={e => setCurrency(e.target.value as "EUR" | "CFA")}
                 className="w-full px-3 py-2 border border-input rounded-md bg-background"
               >
                 <option value="EUR">Euro (€)</option>
@@ -473,7 +561,7 @@ export default function Settings() {
                 id="exchangeRate"
                 type="number"
                 value={exchangeRate}
-                onChange={(e) => setExchangeRate(e.target.value)}
+                onChange={e => setExchangeRate(e.target.value)}
                 step="0.001"
                 className="w-full px-3 py-2 border border-input rounded-md bg-background"
               />
@@ -505,11 +593,7 @@ export default function Settings() {
                 Activer le thème sombre
               </p>
             </div>
-            <Switch
-              checked={darkMode}
-              onCheckedChange={setDarkMode}
-              disabled
-            />
+            <Switch checked={darkMode} onCheckedChange={setDarkMode} disabled />
           </div>
         </CardContent>
       </Card>
@@ -545,9 +629,7 @@ export default function Settings() {
             <Download className="h-5 w-4" />
             Données et Sauvegarde
           </CardTitle>
-          <CardDescription>
-            Gérez vos données et sauvegardes
-          </CardDescription>
+          <CardDescription>Gérez vos données et sauvegardes</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">

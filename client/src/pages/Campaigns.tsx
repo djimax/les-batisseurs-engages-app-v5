@@ -1,12 +1,37 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Target, TrendingUp, Calendar, Edit2, Trash2 } from "lucide-react";
+import {
+  Plus,
+  Target,
+  TrendingUp,
+  Calendar,
+  Edit2,
+  Trash2,
+} from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { useFormatAmount } from "@/hooks/useFormatAmount";
@@ -107,7 +132,9 @@ export default function Campaigns() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Campagnes de Collecte</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Campagnes de Collecte
+          </h1>
           <p className="text-muted-foreground mt-2">
             Gérez vos campagnes de financement et collecte de fonds
           </p>
@@ -122,30 +149,44 @@ export default function Campaigns() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Campagnes Actives</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Campagnes Actives
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground mt-1">En cours de collecte</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              En cours de collecte
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Collecté</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Collecté
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold"><AmountDisplay amount={5000} sourceCurrency="EUR" /></div>
-            <p className="text-xs text-muted-foreground mt-1">Toutes campagnes confondues</p>
+            <div className="text-2xl font-bold">
+              <AmountDisplay amount={5000} sourceCurrency="EUR" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Toutes campagnes confondues
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Objectif Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Objectif Total
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold"><AmountDisplay amount={7000} sourceCurrency="EUR" /></div>
+            <div className="text-2xl font-bold">
+              <AmountDisplay amount={7000} sourceCurrency="EUR" />
+            </div>
             <p className="text-xs text-muted-foreground mt-1">71% atteint</p>
           </CardContent>
         </Card>
@@ -153,7 +194,7 @@ export default function Campaigns() {
 
       {/* Campaigns List */}
       <div className="space-y-4">
-        {campaigns.map((campaign) => (
+        {campaigns.map(campaign => (
           <Card key={campaign.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -164,7 +205,9 @@ export default function Campaigns() {
                       {getStatusLabel(campaign.status)}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">{campaign.description}</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {campaign.description}
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -193,7 +236,9 @@ export default function Campaigns() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Progression</span>
-                  <span className="text-sm font-semibold">{campaign.progress}%</span>
+                  <span className="text-sm font-semibold">
+                    {campaign.progress}%
+                  </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
@@ -207,24 +252,38 @@ export default function Campaigns() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-xs text-muted-foreground">Collecté</p>
-                  <p className="text-lg font-bold text-green-600"><AmountDisplay amount={parseFloat(campaign.montantCollecte || "0")} sourceCurrency="EUR" /></p>
+                  <p className="text-lg font-bold text-green-600">
+                    <AmountDisplay
+                      amount={parseFloat(campaign.montantCollecte || "0")}
+                      sourceCurrency="EUR"
+                    />
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Objectif</p>
-                  <p className="text-lg font-bold"><AmountDisplay amount={parseFloat(campaign.objectif || "0")} sourceCurrency="EUR" /></p>
+                  <p className="text-lg font-bold">
+                    <AmountDisplay
+                      amount={parseFloat(campaign.objectif || "0")}
+                      sourceCurrency="EUR"
+                    />
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Début</p>
-                    <p className="text-sm font-medium">{campaign.dateDebut.toLocaleDateString('fr-FR')}</p>
+                    <p className="text-sm font-medium">
+                      {campaign.dateDebut.toLocaleDateString("fr-FR")}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Fin</p>
-                    <p className="text-sm font-medium">{campaign.dateFin.toLocaleDateString('fr-FR')}</p>
+                    <p className="text-sm font-medium">
+                      {campaign.dateFin.toLocaleDateString("fr-FR")}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -259,7 +318,7 @@ export default function Campaigns() {
               <Input
                 placeholder="Nom de la campagne"
                 value={formData.title}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({ ...formData, title: e.target.value })
                 }
               />
@@ -270,7 +329,7 @@ export default function Campaigns() {
               <Textarea
                 placeholder="Description de la campagne"
                 value={formData.description}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={3}
@@ -284,7 +343,7 @@ export default function Campaigns() {
                   type="number"
                   placeholder="5000"
                   value={formData.objectif}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, objectif: e.target.value })
                   }
                 />
@@ -292,9 +351,12 @@ export default function Campaigns() {
 
               <div>
                 <label className="text-sm font-medium">Statut</label>
-                <Select value={formData.status} onValueChange={(value: any) =>
-                  setFormData({ ...formData, status: value })
-                }>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value: any) =>
+                    setFormData({ ...formData, status: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -314,7 +376,7 @@ export default function Campaigns() {
                 <Input
                   type="date"
                   value={formData.dateDebut}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, dateDebut: e.target.value })
                   }
                 />
@@ -325,7 +387,7 @@ export default function Campaigns() {
                 <Input
                   type="date"
                   value={formData.dateFin}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, dateFin: e.target.value })
                   }
                 />

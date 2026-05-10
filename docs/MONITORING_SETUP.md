@@ -5,6 +5,7 @@ Ce guide explique comment configurer et utiliser le système de surveillance du 
 ## 📋 Vue d'ensemble
 
 Le système de monitoring comprend :
+
 - **Health Check** : Vérification rapide de l'état du projet
 - **Pre-commit Hook** : Vérifications avant chaque commit
 - **Continuous Monitor** : Surveillance en temps réel
@@ -48,6 +49,7 @@ npx tsx scripts/health-check.ts
 ```
 
 **Sortie exemple :**
+
 ```
 🏥 Démarrage des vérifications de santé du projet...
 
@@ -78,6 +80,7 @@ bash scripts/pre-commit.sh
 ```
 
 **Vérifications effectuées :**
+
 - TypeScript compilation
 - Imports dupliqués
 - Migrations
@@ -96,6 +99,7 @@ npx tsx scripts/monitor.ts --continuous
 ```
 
 **Sortie exemple :**
+
 ```
 [2026-05-09T20:40:00.000Z] 🔍 Démarrage des vérifications de monitoring...
 
@@ -131,6 +135,7 @@ Modifier `monitoring.config.json` :
 ```
 
 **Paramètres :**
+
 - `enabled` : Activer/désactiver le monitoring
 - `interval` : Intervalle entre les vérifications (ms)
 - `threshold` : Nombre d'erreurs tolérées
@@ -196,6 +201,7 @@ Le monitoring suit les métriques suivantes :
 ### Erreurs critiques
 
 Les erreurs suivantes déclenchent une alerte immédiate :
+
 - Erreurs TypeScript
 - Échecs de tests
 - Problèmes de base de données
@@ -204,6 +210,7 @@ Les erreurs suivantes déclenchent une alerte immédiate :
 ### Avertissements
 
 Les avertissements suivants sont enregistrés :
+
 - Exports inutilisés
 - Imports dupliqués
 - Code non formaté
@@ -268,21 +275,25 @@ pnpm test --reporter=verbose
 ## 💡 Bonnes pratiques
 
 1. **Exécuter le health check avant chaque commit**
+
    ```bash
    pnpm health-check
    ```
 
 2. **Configurer le pre-commit hook**
+
    ```bash
    cp scripts/pre-commit.sh .git/hooks/pre-commit
    ```
 
 3. **Surveiller les logs régulièrement**
+
    ```bash
    tail -f .manus-logs/monitoring.log
    ```
 
 4. **Mettre à jour la configuration selon les besoins**
+
    ```bash
    vim monitoring.config.json
    ```

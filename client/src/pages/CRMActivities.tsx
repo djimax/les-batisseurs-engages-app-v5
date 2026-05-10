@@ -2,7 +2,13 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -88,7 +94,11 @@ export default function CRMActivities() {
 
   // Fetch data
   const { data: contacts } = trpc.crm.contacts.list.useQuery();
-  const { data: activities, isLoading, refetch } = trpc.crm.activities.list.useQuery(
+  const {
+    data: activities,
+    isLoading,
+    refetch,
+  } = trpc.crm.activities.list.useQuery(
     selectedContactId ? parseInt(selectedContactId) : 0,
     { enabled: !!selectedContactId || !selectedContactId }
   );
@@ -98,17 +108,20 @@ export default function CRMActivities() {
   const deleteActivityMutation = trpc.crm.activities.delete.useMutation();
 
   // Filter activities
-  const filteredActivities = activities?.filter((activity) => {
+  const filteredActivities = activities?.filter(activity => {
     const matchesType = !selectedType || activity.type === selectedType;
     const matchesStatus = !selectedStatus || activity.status === selectedStatus;
-    const matchesPriority = !selectedPriority || activity.priority === selectedPriority;
+    const matchesPriority =
+      !selectedPriority || activity.priority === selectedPriority;
 
     return matchesType && matchesStatus && matchesPriority;
   });
 
   const handleAddActivity = async () => {
     if (!formData.contactId.trim() || !formData.title.trim()) {
-      setErrorMessage("Veuillez remplir les champs obligatoires (Contact, Titre)");
+      setErrorMessage(
+        "Veuillez remplir les champs obligatoires (Contact, Titre)"
+      );
       return;
     }
 
@@ -140,7 +153,9 @@ export default function CRMActivities() {
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Erreur lors de l'ajout de l'activité"
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de l'ajout de l'activité"
       );
     }
   };
@@ -169,7 +184,9 @@ export default function CRMActivities() {
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Erreur lors de la modification de l'activité"
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la modification de l'activité"
       );
     }
   };
@@ -185,7 +202,9 @@ export default function CRMActivities() {
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Erreur lors de la suppression de l'activité"
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la suppression de l'activité"
       );
     }
   };
@@ -199,13 +218,15 @@ export default function CRMActivities() {
       description: activity.description || "",
       status: activity.status,
       priority: activity.priority,
-      dueDate: activity.dueDate ? new Date(activity.dueDate).toISOString().split("T")[0] : "",
+      dueDate: activity.dueDate
+        ? new Date(activity.dueDate).toISOString().split("T")[0]
+        : "",
     });
     setIsEditDialogOpen(true);
   };
 
   const getActivityIcon = (type: string) => {
-    const option = ACTIVITY_TYPES.find((t) => t.value === type);
+    const option = ACTIVITY_TYPES.find(t => t.value === type);
     if (!option) return "📌";
     if (typeof option.icon === "string") return option.icon;
     const Icon = option.icon;
@@ -225,14 +246,18 @@ export default function CRMActivities() {
         {successMessage && (
           <Alert className="border-green-200 bg-green-50">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+            <AlertDescription className="text-green-800">
+              {successMessage}
+            </AlertDescription>
           </Alert>
         )}
 
         {errorMessage && (
           <Alert className="border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">{errorMessage}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {errorMessage}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -263,15 +288,21 @@ export default function CRMActivities() {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium">Contact *</label>
-                  <Select value={formData.contactId} onValueChange={(value) =>
-                    setFormData({ ...formData, contactId: value })
-                  }>
+                  <Select
+                    value={formData.contactId}
+                    onValueChange={value =>
+                      setFormData({ ...formData, contactId: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionnez un contact" />
                     </SelectTrigger>
                     <SelectContent>
-                      {contacts?.map((contact) => (
-                        <SelectItem key={contact.id} value={contact.id.toString()}>
+                      {contacts?.map(contact => (
+                        <SelectItem
+                          key={contact.id}
+                          value={contact.id.toString()}
+                        >
                           {contact.firstName} {contact.lastName}
                         </SelectItem>
                       ))}
@@ -281,14 +312,17 @@ export default function CRMActivities() {
 
                 <div>
                   <label className="text-sm font-medium">Type *</label>
-                  <Select value={formData.type} onValueChange={(value) =>
-                    setFormData({ ...formData, type: value as any })
-                  }>
+                  <Select
+                    value={formData.type}
+                    onValueChange={value =>
+                      setFormData({ ...formData, type: value as any })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {ACTIVITY_TYPES.map((option) => (
+                      {ACTIVITY_TYPES.map(option => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -302,7 +336,9 @@ export default function CRMActivities() {
                   <Input
                     placeholder="Titre de l'activité"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                   />
                 </div>
 
@@ -311,21 +347,26 @@ export default function CRMActivities() {
                   <Input
                     placeholder="Description détaillée"
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium">Priorité</label>
-                    <Select value={formData.priority} onValueChange={(value) =>
-                      setFormData({ ...formData, priority: value as any })
-                    }>
+                    <Select
+                      value={formData.priority}
+                      onValueChange={value =>
+                        setFormData({ ...formData, priority: value as any })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {PRIORITY_OPTIONS.map((option) => (
+                        {PRIORITY_OPTIONS.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -336,14 +377,17 @@ export default function CRMActivities() {
 
                   <div>
                     <label className="text-sm font-medium">Statut</label>
-                    <Select value={formData.status} onValueChange={(value) =>
-                      setFormData({ ...formData, status: value as any })
-                    }>
+                    <Select
+                      value={formData.status}
+                      onValueChange={value =>
+                        setFormData({ ...formData, status: value as any })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {STATUS_OPTIONS.map((option) => (
+                        {STATUS_OPTIONS.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -358,7 +402,9 @@ export default function CRMActivities() {
                   <Input
                     type="date"
                     value={formData.dueDate}
-                    onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, dueDate: e.target.value })
+                    }
                   />
                 </div>
 
@@ -386,15 +432,25 @@ export default function CRMActivities() {
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Contact</label>
-                <Select value={selectedContactId || "all"} onValueChange={(value) => setSelectedContactId(value === "all" ? "" : value)}>
+                <label className="text-sm font-medium mb-2 block">
+                  Contact
+                </label>
+                <Select
+                  value={selectedContactId || "all"}
+                  onValueChange={value =>
+                    setSelectedContactId(value === "all" ? "" : value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les contacts" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les contacts</SelectItem>
-                    {contacts?.map((contact) => (
-                      <SelectItem key={contact.id} value={contact.id.toString()}>
+                    {contacts?.map(contact => (
+                      <SelectItem
+                        key={contact.id}
+                        value={contact.id.toString()}
+                      >
                         {contact.firstName} {contact.lastName}
                       </SelectItem>
                     ))}
@@ -404,13 +460,18 @@ export default function CRMActivities() {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Type</label>
-                <Select value={selectedType || "all"} onValueChange={(value) => setSelectedType(value === "all" ? "" : value)}>
+                <Select
+                  value={selectedType || "all"}
+                  onValueChange={value =>
+                    setSelectedType(value === "all" ? "" : value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les types" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les types</SelectItem>
-                    {ACTIVITY_TYPES.map((option) => (
+                    {ACTIVITY_TYPES.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -421,13 +482,18 @@ export default function CRMActivities() {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Statut</label>
-                <Select value={selectedStatus || "all"} onValueChange={(value) => setSelectedStatus(value === "all" ? "" : value)}>
+                <Select
+                  value={selectedStatus || "all"}
+                  onValueChange={value =>
+                    setSelectedStatus(value === "all" ? "" : value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les statuts" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les statuts</SelectItem>
-                    {STATUS_OPTIONS.map((option) => (
+                    {STATUS_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -437,14 +503,21 @@ export default function CRMActivities() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Priorité</label>
-                <Select value={selectedPriority || "all"} onValueChange={(value) => setSelectedPriority(value === "all" ? "" : value)}>
+                <label className="text-sm font-medium mb-2 block">
+                  Priorité
+                </label>
+                <Select
+                  value={selectedPriority || "all"}
+                  onValueChange={value =>
+                    setSelectedPriority(value === "all" ? "" : value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes les priorités" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Toutes les priorités</SelectItem>
-                    {PRIORITY_OPTIONS.map((option) => (
+                    {PRIORITY_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -484,22 +557,44 @@ export default function CRMActivities() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredActivities.map((activity) => (
+                    {filteredActivities.map(activity => (
                       <TableRow key={activity.id}>
                         <TableCell>
                           <Badge variant="outline" className="gap-1">
                             {getActivityIcon(activity.type)}
-                            {ACTIVITY_TYPES.find((t) => t.value === activity.type)?.label}
+                            {
+                              ACTIVITY_TYPES.find(
+                                t => t.value === activity.type
+                              )?.label
+                            }
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-medium">{activity.title}</TableCell>
-                        <TableCell>
-                          {contacts?.find((c) => c.id === activity.contactId)?.firstName}{" "}
-                          {contacts?.find((c) => c.id === activity.contactId)?.lastName}
+                        <TableCell className="font-medium">
+                          {activity.title}
                         </TableCell>
                         <TableCell>
-                          <Badge className={PRIORITY_OPTIONS.find((p) => p.value === activity.priority)?.color}>
-                            {PRIORITY_OPTIONS.find((p) => p.value === activity.priority)?.label}
+                          {
+                            contacts?.find(c => c.id === activity.contactId)
+                              ?.firstName
+                          }{" "}
+                          {
+                            contacts?.find(c => c.id === activity.contactId)
+                              ?.lastName
+                          }
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            className={
+                              PRIORITY_OPTIONS.find(
+                                p => p.value === activity.priority
+                              )?.color
+                            }
+                          >
+                            {
+                              PRIORITY_OPTIONS.find(
+                                p => p.value === activity.priority
+                              )?.label
+                            }
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -512,12 +607,18 @@ export default function CRMActivities() {
                                   : "outline"
                             }
                           >
-                            {STATUS_OPTIONS.find((s) => s.value === activity.status)?.label}
+                            {
+                              STATUS_OPTIONS.find(
+                                s => s.value === activity.status
+                              )?.label
+                            }
                           </Badge>
                         </TableCell>
                         <TableCell>
                           {activity.dueDate
-                            ? new Date(activity.dueDate).toLocaleDateString("fr-FR")
+                            ? new Date(activity.dueDate).toLocaleDateString(
+                                "fr-FR"
+                              )
                             : "-"}
                         </TableCell>
                         <TableCell className="text-right">
@@ -567,7 +668,9 @@ export default function CRMActivities() {
               <label className="text-sm font-medium">Titre</label>
               <Input
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
               />
             </div>
 
@@ -575,21 +678,26 @@ export default function CRMActivities() {
               <label className="text-sm font-medium">Description</label>
               <Input
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium">Priorité</label>
-                <Select value={formData.priority} onValueChange={(value) =>
-                  setFormData({ ...formData, priority: value as any })
-                }>
+                <Select
+                  value={formData.priority}
+                  onValueChange={value =>
+                    setFormData({ ...formData, priority: value as any })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {PRIORITY_OPTIONS.map((option) => (
+                    {PRIORITY_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -600,14 +708,17 @@ export default function CRMActivities() {
 
               <div>
                 <label className="text-sm font-medium">Statut</label>
-                <Select value={formData.status} onValueChange={(value) =>
-                  setFormData({ ...formData, status: value as any })
-                }>
+                <Select
+                  value={formData.status}
+                  onValueChange={value =>
+                    setFormData({ ...formData, status: value as any })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {STATUS_OPTIONS.map((option) => (
+                    {STATUS_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -622,7 +733,9 @@ export default function CRMActivities() {
               <Input
                 type="date"
                 value={formData.dueDate}
-                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, dueDate: e.target.value })
+                }
               />
             </div>
 

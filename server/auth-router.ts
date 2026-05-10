@@ -1,7 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
-import { loginSchema, registerSchema, changePasswordSchema } from "@shared/auth-schemas";
+import {
+  loginSchema,
+  registerSchema,
+  changePasswordSchema,
+} from "@shared/auth-schemas";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getSessionCookieOptions } from "./_core/cookies";
 import {
@@ -46,68 +50,69 @@ export const authRouter = router({
   /**
    * Login avec email et mot de passe
    */
-  login: publicProcedure
-    .input(loginSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        // Trouver l'utilisateur par email
-        const user = await findUserByEmail(input.email);
-        if (!user) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Email ou mot de passe incorrect",
-          });
-        }
-
-        // Vérifier que l'utilisateur est actif
-        if (!user.isActive) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Cet utilisateur a été désactivé",
-          });
-        }
-
-        // Vérifier le mot de passe
-        const isPasswordValid = await verifyPassword(input.password, user.password);
-        if (!isPasswordValid) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Email ou mot de passe incorrect",
-          });
-        }
-
-        // Mettre à jour le dernier login
-        await updateLastLogin(user.id);
-
-        // Créer un token JWT
-        const token = createToken(user.id, user.email!);
-
-        // Définir le cookie de session
-        const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.cookie(COOKIE_NAME, token, {
-          ...cookieOptions,
-          maxAge: SESSION_DURATION,
-        });
-
-        return {
-          success: true,
-          user: {
-            id: user.id,
-            email: user.email,
-            fullName: user.fullName,
-            role: user.role,
-          },
-        };
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw error;
-        }
+  login: publicProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
+    try {
+      // Trouver l'utilisateur par email
+      const user = await findUserByEmail(input.email);
+      if (!user) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Erreur lors de la connexion",
+          code: "UNAUTHORIZED",
+          message: "Email ou mot de passe incorrect",
         });
       }
-    }),
+
+      // Vérifier que l'utilisateur est actif
+      if (!user.isActive) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cet utilisateur a été désactivé",
+        });
+      }
+
+      // Vérifier le mot de passe
+      const isPasswordValid = await verifyPassword(
+        input.password,
+        user.password
+      );
+      if (!isPasswordValid) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Email ou mot de passe incorrect",
+        });
+      }
+
+      // Mettre à jour le dernier login
+      await updateLastLogin(user.id);
+
+      // Créer un token JWT
+      const token = createToken(user.id, user.email!);
+
+      // Définir le cookie de session
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.cookie(COOKIE_NAME, token, {
+        ...cookieOptions,
+        maxAge: SESSION_DURATION,
+      });
+
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          role: user.role,
+        },
+      };
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Erreur lors de la connexion",
+      });
+    }
+  }),
 
   /**
    * Register avec email, mot de passe et nom complet
@@ -154,7 +159,10 @@ export const authRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        const message = error instanceof Error ? error.message : "Erreur lors de l'inscription";
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Erreur lors de l'inscription";
         throw new TRPCError({
           code: "BAD_REQUEST",
           message,
@@ -176,7 +184,11 @@ export const authRouter = router({
           });
         }
 
-        await changeUserPassword(ctx.user.id, input.oldPassword, input.newPassword);
+        await changeUserPassword(
+          ctx.user.id,
+          input.oldPassword,
+          input.newPassword
+        );
 
         return {
           success: true,
@@ -186,7 +198,10 @@ export const authRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        const message = error instanceof Error ? error.message : "Erreur lors du changement de mot de passe";
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Erreur lors du changement de mot de passe";
         throw new TRPCError({
           code: "BAD_REQUEST",
           message,

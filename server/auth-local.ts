@@ -12,7 +12,10 @@ export async function hashPassword(password: string): Promise<string> {
 /**
  * Compare a password with its hash
  */
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 
@@ -34,7 +37,10 @@ export function validateEmail(email: string): boolean {
 /**
  * Validate password strength
  */
-export function validatePassword(password: string): { isValid: boolean; errors: string[] } {
+export function validatePassword(password: string): {
+  isValid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (password.length < 8) {
@@ -54,7 +60,9 @@ export function validatePassword(password: string): { isValid: boolean; errors: 
   }
 
   if (!/[!@#$%^&*]/.test(password)) {
-    errors.push("Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*)");
+    errors.push(
+      "Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*)"
+    );
   }
 
   return {
@@ -67,7 +75,9 @@ export function validatePassword(password: string): { isValid: boolean; errors: 
  * Create a session token (JWT-like format)
  */
 export function createSessionToken(userId: number, email: string): string {
-  const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64");
+  const header = Buffer.from(
+    JSON.stringify({ alg: "HS256", typ: "JWT" })
+  ).toString("base64");
   const payload = Buffer.from(
     JSON.stringify({
       userId,
@@ -88,7 +98,9 @@ export function createSessionToken(userId: number, email: string): string {
 /**
  * Verify a session token
  */
-export function verifySessionToken(token: string): { userId: number; email: string } | null {
+export function verifySessionToken(
+  token: string
+): { userId: number; email: string } | null {
   try {
     const [header, payload, signature] = token.split(".");
 

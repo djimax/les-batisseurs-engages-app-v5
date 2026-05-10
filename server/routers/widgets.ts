@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { userWidgetPreferences, dashboardWidgets, widgetTemplates } from "../../drizzle/schema";
+import {
+  userWidgetPreferences,
+  dashboardWidgets,
+  widgetTemplates,
+} from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 
 export const widgetsRouter = router({
@@ -12,7 +16,10 @@ export const widgetsRouter = router({
     const db = await getDb();
     if (!db) return [];
 
-    const templates = await db.select().from(widgetTemplates).where(eq(widgetTemplates.isActive, true));
+    const templates = await db
+      .select()
+      .from(widgetTemplates)
+      .where(eq(widgetTemplates.isActive, true));
     return templates;
   }),
 
@@ -26,7 +33,12 @@ export const widgetsRouter = router({
     const widgets = await db
       .select()
       .from(dashboardWidgets)
-      .where(and(eq(dashboardWidgets.userId, ctx.user.id), eq(dashboardWidgets.isVisible, true)))
+      .where(
+        and(
+          eq(dashboardWidgets.userId, ctx.user.id),
+          eq(dashboardWidgets.isVisible, true)
+        )
+      )
       .orderBy(dashboardWidgets.position);
 
     return widgets;
@@ -48,7 +60,7 @@ export const widgetsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      
+
       // Get the next position
       const lastWidget = await db
         .select({ position: dashboardWidgets.position })
@@ -56,7 +68,10 @@ export const widgetsRouter = router({
         .where(eq(dashboardWidgets.userId, ctx.user.id))
         .limit(1);
 
-      const nextPosition = lastWidget.length > 0 ? Math.max(...lastWidget.map((w: any) => w.position)) + 1 : 0;
+      const nextPosition =
+        lastWidget.length > 0
+          ? Math.max(...lastWidget.map((w: any) => w.position)) + 1
+          : 0;
 
       await db.insert(dashboardWidgets).values({
         userId: ctx.user.id,
@@ -88,10 +103,11 @@ export const widgetsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      
+
       const updateData: Record<string, any> = {};
       if (input.title !== undefined) updateData.title = input.title;
-      if (input.description !== undefined) updateData.description = input.description;
+      if (input.description !== undefined)
+        updateData.description = input.description;
       if (input.size !== undefined) updateData.size = input.size;
       if (input.config !== undefined) updateData.config = input.config;
       if (input.isVisible !== undefined) updateData.isVisible = input.isVisible;
@@ -99,8 +115,13 @@ export const widgetsRouter = router({
       await db
         .update(dashboardWidgets)
         .set(updateData)
-        .where(and(eq(dashboardWidgets.id, input.id), eq(dashboardWidgets.userId, ctx.user.id)));
-      
+        .where(
+          and(
+            eq(dashboardWidgets.id, input.id),
+            eq(dashboardWidgets.userId, ctx.user.id)
+          )
+        );
+
       return { success: true };
     }),
 
@@ -121,13 +142,18 @@ export const widgetsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      
+
       // Update all widgets positions
       for (const widget of input.widgets) {
         await db
           .update(dashboardWidgets)
           .set({ position: widget.position })
-          .where(and(eq(dashboardWidgets.id, widget.id), eq(dashboardWidgets.userId, ctx.user.id)))
+          .where(
+            and(
+              eq(dashboardWidgets.id, widget.id),
+              eq(dashboardWidgets.userId, ctx.user.id)
+            )
+          )
           .limit(1);
       }
 
@@ -142,10 +168,15 @@ export const widgetsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      
+
       await db
         .delete(dashboardWidgets)
-        .where(and(eq(dashboardWidgets.id, input.id), eq(dashboardWidgets.userId, ctx.user.id)));
+        .where(
+          and(
+            eq(dashboardWidgets.id, input.id),
+            eq(dashboardWidgets.userId, ctx.user.id)
+          )
+        );
 
       return { success: true };
     }),
@@ -156,9 +187,11 @@ export const widgetsRouter = router({
   resetDashboard: protectedProcedure.mutation(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
-    
+
     // Delete all user's widgets
-    await db.delete(dashboardWidgets).where(eq(dashboardWidgets.userId, ctx.user.id));
+    await db
+      .delete(dashboardWidgets)
+      .where(eq(dashboardWidgets.userId, ctx.user.id));
 
     // Add default widgets
     const defaultWidgets = [
@@ -200,7 +233,7 @@ export const widgetsRouter = router({
     try {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      
+
       const preferences = await db
         .select()
         .from(userWidgetPreferences)
@@ -238,7 +271,7 @@ export const widgetsRouter = router({
       try {
         const db = await getDb();
         if (!db) throw new Error("Database not available");
-        
+
         // Delete existing preferences
         await db
           .delete(userWidgetPreferences)
@@ -246,7 +279,7 @@ export const widgetsRouter = router({
 
         // Insert new preferences
         const newPreferences = await Promise.all(
-          input.map((pref) =>
+          input.map(pref =>
             db.insert(userWidgetPreferences).values({
               userId: ctx.user.id,
               widgetId: pref.widgetId,
@@ -283,7 +316,7 @@ export const widgetsRouter = router({
       try {
         const db = await getDb();
         if (!db) throw new Error("Database not available");
-        
+
         const result = await db
           .update(userWidgetPreferences)
           .set({ isVisible: input.isVisible })
@@ -310,7 +343,7 @@ export const widgetsRouter = router({
       try {
         const db = await getDb();
         if (!db) throw new Error("Database not available");
-        
+
         await db
           .delete(userWidgetPreferences)
           .where(
@@ -334,7 +367,7 @@ export const widgetsRouter = router({
     try {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      
+
       // Delete existing preferences
       await db
         .delete(userWidgetPreferences)
@@ -372,9 +405,7 @@ export const widgetsRouter = router({
 /**
  * Get default widgets based on user role
  */
-function getDefaultWidgetsForRole(
-  role: string
-): Array<{
+function getDefaultWidgetsForRole(role: string): Array<{
   widgetId: string;
   widgetType: string;
   title: string;

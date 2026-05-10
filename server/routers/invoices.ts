@@ -4,13 +4,19 @@ import { getDb } from "../db";
 
 export const invoicesRouter = router({
   list: protectedProcedure
-    .input(z.object({ status: z.string().optional(), limit: z.number().optional() }).optional())
+    .input(
+      z
+        .object({ status: z.string().optional(), limit: z.number().optional() })
+        .optional()
+    )
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
 
       try {
-        const statusFilter = input?.status ? `AND status = '${input.status}'` : "";
+        const statusFilter = input?.status
+          ? `AND status = '${input.status}'`
+          : "";
         const limit = input?.limit || 50;
         const result = await (db as any).$client.promise().query(`
           SELECT id, invoiceNumber, invoiceDate, dueDate, totalAmount, paidAmount, status, createdAt
@@ -55,13 +61,20 @@ export const invoicesRouter = router({
     }),
 
   updateStatus: protectedProcedure
-    .input(z.object({ id: z.number(), status: z.enum(["draft", "sent", "paid", "overdue", "cancelled"]) }))
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.enum(["draft", "sent", "paid", "overdue", "cancelled"]),
+      })
+    )
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
       try {
-        await (db as any).$client.query(`UPDATE invoices SET status = '${input.status}' WHERE id = ${input.id}`);
+        await (db as any).$client.query(
+          `UPDATE invoices SET status = '${input.status}' WHERE id = ${input.id}`
+        );
         return { success: true };
       } catch (error) {
         console.error("[Invoices] Error updating status:", error);

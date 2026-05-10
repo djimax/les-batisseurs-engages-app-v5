@@ -1,11 +1,36 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, User, Calendar, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import {
+  Plus,
+  User,
+  Calendar,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useFormatAmount } from "@/hooks/useFormatAmount";
 import { AmountDisplay } from "@/components/AmountDisplay";
@@ -13,13 +38,17 @@ import { AmountDisplay } from "@/components/AmountDisplay";
 export default function Adhesions() {
   const { formatAmountWithConversion } = useFormatAmount();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
   const [formData, setFormData] = useState({
     memberId: "",
     annee: new Date().getFullYear().toString(),
     montant: "50",
-    dateAdhesion: new Date().toISOString().split('T')[0],
-    dateExpiration: new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split('T')[0],
+    dateAdhesion: new Date().toISOString().split("T")[0],
+    dateExpiration: new Date(new Date().getFullYear() + 1, 11, 31)
+      .toISOString()
+      .split("T")[0],
   });
 
   // Placeholder data
@@ -66,8 +95,10 @@ export default function Adhesions() {
       memberId: "",
       annee: new Date().getFullYear().toString(),
       montant: "50",
-      dateAdhesion: new Date().toISOString().split('T')[0],
-      dateExpiration: new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split('T')[0],
+      dateAdhesion: new Date().toISOString().split("T")[0],
+      dateExpiration: new Date(new Date().getFullYear() + 1, 11, 31)
+        .toISOString()
+        .split("T")[0],
     });
     setIsOpen(false);
   };
@@ -122,7 +153,9 @@ export default function Adhesions() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Adhésions Annuelles</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Adhésions Annuelles
+          </h1>
           <p className="text-muted-foreground mt-2">
             Gérez les adhésions des membres de l'association
           </p>
@@ -137,40 +170,59 @@ export default function Adhesions() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Adhésions</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Adhésions
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground mt-1">Tous les membres</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Tous les membres
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Actives</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Actives
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.active}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">En cours</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Expirées</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Expirées
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.expired}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.expired}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">À renouveler</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Collecté</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Collecté
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold"><AmountDisplay amount={stats.totalCollected} sourceCurrency="EUR" /></div>
+            <div className="text-2xl font-bold">
+              <AmountDisplay
+                amount={stats.totalCollected}
+                sourceCurrency="EUR"
+              />
+            </div>
             <p className="text-xs text-muted-foreground mt-1">Adhésions</p>
           </CardContent>
         </Card>
@@ -192,61 +244,77 @@ export default function Adhesions() {
 
       {/* Adhesions List */}
       <div className="space-y-3">
-        {adhesions.filter(a => a.annee.toString() === selectedYear).map((adhesion) => (
-          <Card key={adhesion.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 flex-1">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                    <User className="h-5 w-5 text-primary" />
+        {adhesions
+          .filter(a => a.annee.toString() === selectedYear)
+          .map(adhesion => (
+            <Card
+              key={adhesion.id}
+              className="hover:shadow-md transition-shadow"
+            >
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                      <User className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold">{adhesion.memberName}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Adhésion {adhesion.annee}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{adhesion.memberName}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Adhésion {adhesion.annee}
-                    </p>
+
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <p className="font-semibold text-lg">
+                        <AmountDisplay
+                          amount={parseFloat(adhesion.montant || "0")}
+                          sourceCurrency="EUR"
+                        />
+                      </p>
+                      <p className="text-xs text-muted-foreground">Montant</p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="font-semibold">
+                        {Math.max(0, adhesion.daysLeft)} jours
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {adhesion.status === "expired"
+                          ? "Expirée"
+                          : "Avant expiration"}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        className={`${getStatusColor(adhesion.status)} flex items-center gap-1`}
+                      >
+                        {getStatusIcon(adhesion.status)}
+                        {getStatusLabel(adhesion.status)}
+                      </Badge>
+                    </div>
+
+                    <Button variant="outline" size="sm">
+                      Détails
+                    </Button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
-                  <div className="text-right">
-                    <p className="font-semibold text-lg"><AmountDisplay amount={parseFloat(adhesion.montant || "0")} sourceCurrency="EUR" /></p>
-                    <p className="text-xs text-muted-foreground">Montant</p>
+                <div className="mt-4 pt-4 border-t flex gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    Début: {adhesion.dateAdhesion.toLocaleDateString("fr-FR")}
                   </div>
-
-                  <div className="text-right">
-                    <p className="font-semibold">{Math.max(0, adhesion.daysLeft)} jours</p>
-                    <p className="text-xs text-muted-foreground">
-                      {adhesion.status === "expired" ? "Expirée" : "Avant expiration"}
-                    </p>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    Fin: {adhesion.dateExpiration.toLocaleDateString("fr-FR")}
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <Badge className={`${getStatusColor(adhesion.status)} flex items-center gap-1`}>
-                      {getStatusIcon(adhesion.status)}
-                      {getStatusLabel(adhesion.status)}
-                    </Badge>
-                  </div>
-
-                  <Button variant="outline" size="sm">
-                    Détails
-                  </Button>
                 </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t flex gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Début: {adhesion.dateAdhesion.toLocaleDateString('fr-FR')}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Fin: {adhesion.dateExpiration.toLocaleDateString('fr-FR')}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
       </div>
 
       {/* Dialog for Creating Adhesion */}
@@ -262,9 +330,12 @@ export default function Adhesions() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">Membre *</label>
-              <Select value={formData.memberId} onValueChange={(value) =>
-                setFormData({ ...formData, memberId: value })
-              }>
+              <Select
+                value={formData.memberId}
+                onValueChange={value =>
+                  setFormData({ ...formData, memberId: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un membre" />
                 </SelectTrigger>
@@ -282,7 +353,7 @@ export default function Adhesions() {
                 <Input
                   type="number"
                   value={formData.annee}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, annee: e.target.value })
                   }
                 />
@@ -293,7 +364,7 @@ export default function Adhesions() {
                 <Input
                   type="number"
                   value={formData.montant}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, montant: e.target.value })
                   }
                 />
@@ -306,7 +377,7 @@ export default function Adhesions() {
                 <Input
                   type="date"
                   value={formData.dateAdhesion}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, dateAdhesion: e.target.value })
                   }
                 />
@@ -317,7 +388,7 @@ export default function Adhesions() {
                 <Input
                   type="date"
                   value={formData.dateExpiration}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, dateExpiration: e.target.value })
                   }
                 />

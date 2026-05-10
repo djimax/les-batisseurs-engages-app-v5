@@ -31,7 +31,9 @@ export const budgetsRouter = router({
       if (!db) return null;
 
       try {
-        const result = await (db as any).$client.promise().query(`SELECT * FROM budgets WHERE id = ${input.id}`);
+        const result = await (db as any).$client
+          .promise()
+          .query(`SELECT * FROM budgets WHERE id = ${input.id}`);
         if (!result?.[0] || result[0].length === 0) return null;
 
         const linesResult = await (db as any).$client.promise().query(`
@@ -88,12 +90,15 @@ export const budgetsRouter = router({
       try {
         const updates = [];
         if (input.name) updates.push(`name = '${input.name}'`);
-        if (input.totalAmount) updates.push(`totalAmount = ${input.totalAmount}`);
+        if (input.totalAmount)
+          updates.push(`totalAmount = ${input.totalAmount}`);
         if (input.status) updates.push(`status = '${input.status}'`);
 
         if (updates.length === 0) return { success: false };
 
-        await (db as any).$client.query(`UPDATE budgets SET ${updates.join(", ")} WHERE id = ${input.id}`);
+        await (db as any).$client.query(
+          `UPDATE budgets SET ${updates.join(", ")} WHERE id = ${input.id}`
+        );
         return { success: true };
       } catch (error) {
         console.error("[Budgets] Error updating:", error);
@@ -108,7 +113,9 @@ export const budgetsRouter = router({
       if (!db) throw new Error("Database not available");
 
       try {
-        await (db as any).$client.query(`DELETE FROM budgets WHERE id = ${input.id}`);
+        await (db as any).$client.query(
+          `DELETE FROM budgets WHERE id = ${input.id}`
+        );
         return { success: true };
       } catch (error) {
         console.error("[Budgets] Error deleting:", error);

@@ -98,11 +98,13 @@ SQLite est déjà configuré par défaut. Aucune installation supplémentaire n'
    - Linux : `sudo apt-get install mysql-server`
 
 2. **Créer une base de données** :
+
    ```sql
    CREATE DATABASE batisseurs_db;
    ```
 
 3. **Mettre à jour `.env.local`** :
+
    ```env
    DATABASE_URL=mysql://root:password@localhost:3306/batisseurs_db
    ```
@@ -204,6 +206,7 @@ npm install
 ### L'authentification ne fonctionne pas
 
 Vérifiez que :
+
 - `VITE_APP_ID` est correct
 - `OAUTH_SERVER_URL` est correct
 - Vous êtes connecté à internet

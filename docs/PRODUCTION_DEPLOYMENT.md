@@ -37,6 +37,7 @@ bash scripts/deploy.sh
 ```
 
 **Le script effectue :**
+
 - ✅ Vérification des prérequis
 - ✅ Vérification de l'état du repository
 - ✅ Exécution des tests
@@ -54,6 +55,7 @@ npx tsx scripts/setup-webhooks.ts
 ```
 
 **Variables d'environnement requises :**
+
 ```bash
 # Slack
 export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/..."
@@ -157,6 +159,7 @@ pnpm test --coverage
 ### Email
 
 1. Configurer les destinataires :
+
    ```bash
    export EMAIL_RECIPIENTS="admin@example.com,dev@example.com"
    npx tsx scripts/setup-webhooks.ts

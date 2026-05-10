@@ -69,20 +69,25 @@ export const associationSettingsRouter = router({
 
       // Execute update
       const updateQuery = Object.keys(updates)
-        .map((key) => `${key} = ?`)
+        .map(key => `${key} = ?`)
         .join(", ");
 
       const values = Object.values(updates);
       values.push(1); // associationId
 
       // Simple update without raw SQL
-      const updateParts = Object.entries(updates).map(([key, value]) => ({ key, value }));
-      
+      const updateParts = Object.entries(updates).map(([key, value]) => ({
+        key,
+        value,
+      }));
+
       // Build a simple update query
       let updateStr = "UPDATE association_settings SET ";
-      updateStr += Object.keys(updates).map(k => `${k} = '${String(updates[k]).replace(/'/g, "''")}' `).join(", ");
+      updateStr += Object.keys(updates)
+        .map(k => `${k} = '${String(updates[k]).replace(/'/g, "''")}' `)
+        .join(", ");
       updateStr += ", updatedAt = CURRENT_TIMESTAMP WHERE associationId = 1";
-      
+
       await db.execute(sql.raw(updateStr));
 
       return { success: true, message: "Settings updated successfully" };

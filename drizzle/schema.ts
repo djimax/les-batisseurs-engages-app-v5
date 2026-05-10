@@ -1,4 +1,15 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, decimal, date, json } from "drizzle-orm/mysql-core";
+import {
+  int,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+  decimal,
+  date,
+  json,
+} from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -9,7 +20,9 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["admin", "gestionnaire", "lecteur"]).default("lecteur").notNull(),
+  role: mysqlEnum("role", ["admin", "gestionnaire", "lecteur"])
+    .default("lecteur")
+    .notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -43,16 +56,20 @@ export const documents = mysqlTable("documents", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   categoryId: int("categoryId").notNull(),
-  status: mysqlEnum("status", ["pending", "in-progress", "completed"]).default("pending").notNull(),
-  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
-  
+  status: mysqlEnum("status", ["pending", "in-progress", "completed"])
+    .default("pending")
+    .notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"])
+    .default("medium")
+    .notNull(),
+
   // File storage info
   fileUrl: text("fileUrl"),
   fileKey: varchar("fileKey", { length: 500 }),
   fileName: varchar("fileName", { length: 255 }),
   fileType: varchar("fileType", { length: 100 }),
   fileSize: int("fileSize"),
-  
+
   // Metadata
   createdBy: int("createdBy"),
   updatedBy: int("updatedBy"),
@@ -91,11 +108,22 @@ export const members = mysqlTable("members", {
   lastName: varchar("lastName", { length: 100 }).notNull(),
   email: varchar("email", { length: 320 }),
   phone: varchar("phone", { length: 20 }),
-  gender: mysqlEnum("gender", ["homme", "femme", "autre"]).default("autre").notNull(), // 1=homme, 2=femme, 3=autre
+  gender: mysqlEnum("gender", ["homme", "femme", "autre"])
+    .default("autre")
+    .notNull(), // 1=homme, 2=femme, 3=autre
   role: varchar("role", { length: 100 }).default("Membre"), // Peut être: Président, Secrétaire Général, Secrétaire Général Adjoint, Trésorier Général, Trésorier Général Adjoint, Membre
   function: varchar("function", { length: 100 }),
-  status: mysqlEnum("status", ["active", "inactive", "pending"]).default("active").notNull(),
-  cotisationStatus: mysqlEnum("cotisationStatus", ["à_jour", "en_retard", "impayé", "exempté"]).default("à_jour").notNull(),
+  status: mysqlEnum("status", ["active", "inactive", "pending"])
+    .default("active")
+    .notNull(),
+  cotisationStatus: mysqlEnum("cotisationStatus", [
+    "à_jour",
+    "en_retard",
+    "impayé",
+    "exempté",
+  ])
+    .default("à_jour")
+    .notNull(),
   joinedAt: timestamp("joinedAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -136,7 +164,6 @@ export const activityLogs = mysqlTable("activity_logs", {
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = typeof activityLogs.$inferInsert;
 
-
 /**
  * Cotisations table - membership fees
  */
@@ -146,7 +173,9 @@ export const cotisations = mysqlTable("cotisations", {
   montant: decimal("montant", { precision: 10, scale: 2 }).notNull(),
   dateDebut: timestamp("dateDebut").notNull(),
   dateFin: timestamp("dateFin").notNull(),
-  statut: mysqlEnum("statut", ["payée", "en attente", "en retard"]).default("en attente").notNull(),
+  statut: mysqlEnum("statut", ["payée", "en attente", "en retard"])
+    .default("en attente")
+    .notNull(),
   datePayment: timestamp("datePayment"),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -217,10 +246,14 @@ export const campaigns = mysqlTable("campaigns", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   objectif: decimal("objectif", { precision: 10, scale: 2 }).notNull(),
-  montantCollecte: decimal("montantCollecte", { precision: 10, scale: 2 }).default("0").notNull(),
+  montantCollecte: decimal("montantCollecte", { precision: 10, scale: 2 })
+    .default("0")
+    .notNull(),
   dateDebut: timestamp("dateDebut").notNull(),
   dateFin: timestamp("dateFin").notNull(),
-  status: mysqlEnum("status", ["draft", "active", "completed", "cancelled"]).default("draft").notNull(),
+  status: mysqlEnum("status", ["draft", "active", "completed", "cancelled"])
+    .default("draft")
+    .notNull(),
   image: text("image"),
   createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -240,12 +273,16 @@ export const adhesions = mysqlTable("adhesions", {
   lastName: varchar("lastName", { length: 100 }).notNull(),
   email: varchar("email", { length: 320 }),
   phone: varchar("phone", { length: 20 }),
-  gender: mysqlEnum("gender", ["homme", "femme", "autre"]).default("autre").notNull(),
+  gender: mysqlEnum("gender", ["homme", "femme", "autre"])
+    .default("autre")
+    .notNull(),
   annee: int("annee").notNull(),
   montant: decimal("montant", { precision: 10, scale: 2 }).notNull(),
   dateAdhesion: timestamp("dateAdhesion").notNull(),
   dateExpiration: timestamp("dateExpiration").notNull(),
-  status: mysqlEnum("status", ["active", "expired", "pending"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["active", "expired", "pending"])
+    .default("pending")
+    .notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -261,7 +298,9 @@ export const notifications = mysqlTable("notifications", {
   userId: int("userId").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   message: text("message").notNull(),
-  type: mysqlEnum("type", ["info", "warning", "error", "success"]).default("info").notNull(),
+  type: mysqlEnum("type", ["info", "warning", "error", "success"])
+    .default("info")
+    .notNull(),
   isRead: boolean("isRead").default(false),
   actionUrl: text("actionUrl"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -292,7 +331,6 @@ export const associationInfo = mysqlTable("association_info", {
 export type AssociationInfo = typeof associationInfo.$inferSelect;
 export type InsertAssociationInfo = typeof associationInfo.$inferInsert;
 
-
 /**
  * Events table - calendar events for the association
  */
@@ -301,7 +339,15 @@ export const events = mysqlTable("events", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   location: varchar("location", { length: 255 }),
-  eventType: mysqlEnum("eventType", ["reunion", "formation", "activite", "evenement", "autre"]).default("autre").notNull(),
+  eventType: mysqlEnum("eventType", [
+    "reunion",
+    "formation",
+    "activite",
+    "evenement",
+    "autre",
+  ])
+    .default("autre")
+    .notNull(),
   startDate: timestamp("startDate").notNull(),
   endDate: timestamp("endDate").notNull(),
   color: varchar("color", { length: 7 }).default("#1a4d2e"),
@@ -315,7 +361,6 @@ export const events = mysqlTable("events", {
 
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = typeof events.$inferInsert;
-
 
 /**
  * Application users table - for managing email/password authentication
@@ -336,7 +381,6 @@ export const appUsers = mysqlTable("app_users", {
 export type AppUser = typeof appUsers.$inferSelect;
 export type InsertAppUser = typeof appUsers.$inferInsert;
 
-
 /**
  * Audit log table - tracks all modifications
  */
@@ -354,7 +398,9 @@ export const auditLogs = mysqlTable("auditLogs", {
   description: text("description"), // Human-readable description
   ipAddress: varchar("ipAddress", { length: 45 }),
   userAgent: text("userAgent"),
-  status: mysqlEnum("status", ["success", "failed"]).default("success").notNull(),
+  status: mysqlEnum("status", ["success", "failed"])
+    .default("success")
+    .notNull(),
   errorMessage: text("errorMessage"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
@@ -368,7 +414,13 @@ export type InsertAuditLog = typeof auditLogs.$inferInsert;
 export const memberStatuses = mysqlTable("member_statuses", {
   id: int("id").autoincrement().primaryKey(),
   memberId: int("memberId").notNull(),
-  status: mysqlEnum("status", ["active", "inactive", "suspended", "resigned", "deceased"]).notNull(),
+  status: mysqlEnum("status", [
+    "active",
+    "inactive",
+    "suspended",
+    "resigned",
+    "deceased",
+  ]).notNull(),
   reason: text("reason"),
   changedBy: int("changedBy"),
   changedAt: timestamp("changedAt").defaultNow().notNull(),
@@ -460,8 +512,12 @@ export const announcements = mysqlTable("announcements", {
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(),
   authorId: int("authorId").notNull(),
-  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
-  status: mysqlEnum("status", ["draft", "published", "archived"]).default("draft").notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"])
+    .default("medium")
+    .notNull(),
+  status: mysqlEnum("status", ["draft", "published", "archived"])
+    .default("draft")
+    .notNull(),
   publishedAt: timestamp("publishedAt"),
   expiresAt: timestamp("expiresAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -480,7 +536,9 @@ export const news = mysqlTable("news", {
   excerpt: varchar("excerpt", { length: 500 }),
   authorId: int("authorId").notNull(),
   category: varchar("category", { length: 100 }).default("general"),
-  status: mysqlEnum("status", ["draft", "published", "archived"]).default("draft").notNull(),
+  status: mysqlEnum("status", ["draft", "published", "archived"])
+    .default("draft")
+    .notNull(),
   publishedAt: timestamp("publishedAt"),
   viewCount: int("viewCount").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -532,7 +590,9 @@ export const emailHistory = mysqlTable("email_history", {
   content: text("content").notNull(),
   recipientCount: int("recipientCount").notNull(),
   sentBy: int("sentBy").notNull(),
-  status: mysqlEnum("status", ["pending", "sending", "sent", "failed"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "sending", "sent", "failed"])
+    .default("pending")
+    .notNull(),
   successCount: int("successCount").default(0),
   failureCount: int("failureCount").default(0),
   errorMessage: text("errorMessage"),
@@ -550,7 +610,9 @@ export const emailRecipients = mysqlTable("email_recipients", {
   emailHistoryId: int("emailHistoryId").notNull(),
   recipientId: int("recipientId").notNull(),
   recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
-  status: mysqlEnum("status", ["pending", "sent", "failed", "bounced"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "sent", "failed", "bounced"])
+    .default("pending")
+    .notNull(),
   errorMessage: text("errorMessage"),
   sentAt: timestamp("sentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -566,14 +628,15 @@ export const appSettings = mysqlTable("app_settings", {
   key: varchar("key", { length: 100 }).notNull().unique(),
   value: text("value").notNull(),
   description: text("description"),
-  type: mysqlEnum("type", ["string", "number", "boolean", "json"]).default("string").notNull(),
+  type: mysqlEnum("type", ["string", "number", "boolean", "json"])
+    .default("string")
+    .notNull(),
   updatedBy: int("updatedBy").notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 export type AppSetting = typeof appSettings.$inferSelect;
 export type InsertAppSetting = typeof appSettings.$inferInsert;
-
 
 /**
  * CRM Contacts - detailed member profiles
@@ -594,7 +657,9 @@ export const crmContacts = mysqlTable("crm_contacts", {
   birthDate: date("birthDate"),
   joinDate: date("joinDate"),
   segment: varchar("segment", { length: 50 }).default("general"),
-  status: mysqlEnum("status", ["prospect", "active", "inactive", "archived"]).default("prospect").notNull(),
+  status: mysqlEnum("status", ["prospect", "active", "inactive", "archived"])
+    .default("prospect")
+    .notNull(),
   notes: text("notes"),
   tags: varchar("tags", { length: 500 }),
   lastInteraction: timestamp("lastInteraction"),
@@ -612,11 +677,22 @@ export type InsertCrmContact = typeof crmContacts.$inferInsert;
 export const crmActivities = mysqlTable("crm_activities", {
   id: int("id").autoincrement().primaryKey(),
   contactId: int("contactId").notNull(),
-  type: mysqlEnum("type", ["call", "email", "meeting", "task", "note", "event"]).notNull(),
+  type: mysqlEnum("type", [
+    "call",
+    "email",
+    "meeting",
+    "task",
+    "note",
+    "event",
+  ]).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  status: mysqlEnum("status", ["pending", "completed", "cancelled"]).default("pending").notNull(),
-  priority: mysqlEnum("priority", ["low", "medium", "high"]).default("medium").notNull(),
+  status: mysqlEnum("status", ["pending", "completed", "cancelled"])
+    .default("pending")
+    .notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high"])
+    .default("medium")
+    .notNull(),
   dueDate: timestamp("dueDate"),
   completedDate: timestamp("completedDate"),
   assignedTo: int("assignedTo"),
@@ -633,7 +709,16 @@ export type InsertCrmActivity = typeof crmActivities.$inferInsert;
 export const adhesionPipeline = mysqlTable("adhesion_pipeline", {
   id: int("id").autoincrement().primaryKey(),
   contactId: int("contactId").notNull(),
-  stage: mysqlEnum("stage", ["inquiry", "application", "review", "approved", "rejected", "member"]).default("inquiry").notNull(),
+  stage: mysqlEnum("stage", [
+    "inquiry",
+    "application",
+    "review",
+    "approved",
+    "rejected",
+    "member",
+  ])
+    .default("inquiry")
+    .notNull(),
   applicationDate: date("applicationDate"),
   approvalDate: date("approvalDate"),
   rejectionReason: text("rejectionReason"),
@@ -651,7 +736,13 @@ export type InsertAdhesionPipeline = typeof adhesionPipeline.$inferInsert;
 export const crmReports = mysqlTable("crm_reports", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-  type: mysqlEnum("type", ["engagement", "pipeline", "activity", "segment", "custom"]).notNull(),
+  type: mysqlEnum("type", [
+    "engagement",
+    "pipeline",
+    "activity",
+    "segment",
+    "custom",
+  ]).notNull(),
   description: text("description"),
   data: json("data"),
   filters: json("filters"),
@@ -674,7 +765,15 @@ export const crmEmailIntegration = mysqlTable("crm_email_integration", {
   subject: varchar("subject", { length: 255 }).notNull(),
   content: text("content"),
   direction: mysqlEnum("direction", ["sent", "received"]).notNull(),
-  status: mysqlEnum("status", ["sent", "failed", "bounced", "opened", "clicked"]).default("sent").notNull(),
+  status: mysqlEnum("status", [
+    "sent",
+    "failed",
+    "bounced",
+    "opened",
+    "clicked",
+  ])
+    .default("sent")
+    .notNull(),
   sentBy: int("sentBy"),
   sentAt: timestamp("sentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -682,17 +781,24 @@ export const crmEmailIntegration = mysqlTable("crm_email_integration", {
 export type CrmEmailIntegration = typeof crmEmailIntegration.$inferSelect;
 export type InsertCrmEmailIntegration = typeof crmEmailIntegration.$inferInsert;
 
-
 /**
  * Global Settings - store association information
  */
 export const globalSettings = mysqlTable("global_settings", {
   id: int("id").autoincrement().primaryKey(),
-  associationName: varchar("associationName", { length: 255 }).default("Les Bâtisseurs Engagés").notNull(),
-  seatCity: varchar("seatCity", { length: 255 }).default("N'djaména-tchad").notNull(),
+  associationName: varchar("associationName", { length: 255 })
+    .default("Les Bâtisseurs Engagés")
+    .notNull(),
+  seatCity: varchar("seatCity", { length: 255 })
+    .default("N'djaména-tchad")
+    .notNull(),
   folio: varchar("folio", { length: 100 }).default("10512").notNull(),
-  email: varchar("email", { length: 320 }).default("contact.lesbatisseursengages@gmail.com").notNull(),
-  website: varchar("website", { length: 500 }).default("www.lesbatisseursengage.com").notNull(),
+  email: varchar("email", { length: 320 })
+    .default("contact.lesbatisseursengages@gmail.com")
+    .notNull(),
+  website: varchar("website", { length: 500 })
+    .default("www.lesbatisseursengage.com")
+    .notNull(),
   phone: varchar("phone", { length: 20 }),
   logo: text("logo"), // Base64 encoded logo
   description: text("description"),
@@ -703,7 +809,6 @@ export const globalSettings = mysqlTable("global_settings", {
 
 export type GlobalSettings = typeof globalSettings.$inferSelect;
 export type InsertGlobalSettings = typeof globalSettings.$inferInsert;
-
 
 /**
  * Association settings for multi-association support
@@ -727,7 +832,9 @@ export const associationSettings = mysqlTable("association_settings", {
   description: text("description"),
   theme: mysqlEnum("theme", ["light", "dark"]).default("light").notNull(),
   language: varchar("language", { length: 10 }).default("fr").notNull(),
-  timezone: varchar("timezone", { length: 50 }).default("Africa/Ndjamena").notNull(),
+  timezone: varchar("timezone", { length: 50 })
+    .default("Africa/Ndjamena")
+    .notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -746,7 +853,9 @@ export const offlineSyncQueue = mysqlTable("offline_sync_queue", {
   action: mysqlEnum("action", ["create", "update", "delete"]).notNull(),
   recordId: int("recordId"),
   data: json("data"), // JSON payload of the change
-  status: mysqlEnum("status", ["pending", "synced", "failed"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "synced", "failed"])
+    .default("pending")
+    .notNull(),
   errorMessage: text("errorMessage"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   syncedAt: timestamp("syncedAt"),
@@ -755,7 +864,6 @@ export const offlineSyncQueue = mysqlTable("offline_sync_queue", {
 
 export type OfflineSyncQueue = typeof offlineSyncQueue.$inferSelect;
 export type InsertOfflineSyncQueue = typeof offlineSyncQueue.$inferInsert;
-
 
 /**
  * Local authentication table for email/password login
@@ -794,7 +902,6 @@ export const userSessions = mysqlTable("user_sessions", {
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = typeof userSessions.$inferInsert;
 
-
 /**
  * Dashboard widgets configuration - allows users to customize their dashboard
  */
@@ -805,7 +912,9 @@ export const dashboardWidgets = mysqlTable("dashboard_widgets", {
   title: varchar("title", { length: 100 }).notNull(),
   description: text("description"),
   position: int("position").notNull(), // Order in dashboard
-  size: mysqlEnum("size", ["small", "medium", "large"]).default("medium").notNull(), // Grid size
+  size: mysqlEnum("size", ["small", "medium", "large"])
+    .default("medium")
+    .notNull(), // Grid size
   config: json("config"), // Widget-specific configuration
   isVisible: boolean("isVisible").default(true),
   refreshInterval: int("refreshInterval").default(300), // Seconds
@@ -826,7 +935,9 @@ export const widgetTemplates = mysqlTable("widget_templates", {
   description: text("description"),
   icon: varchar("icon", { length: 50 }),
   defaultConfig: json("defaultConfig"),
-  defaultSize: mysqlEnum("defaultSize", ["small", "medium", "large"]).default("medium"),
+  defaultSize: mysqlEnum("defaultSize", ["small", "medium", "large"]).default(
+    "medium"
+  ),
   category: varchar("category", { length: 50 }), // "finance", "members", "activity", "documents"
   isActive: boolean("isActive").default(true),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -835,7 +946,6 @@ export const widgetTemplates = mysqlTable("widget_templates", {
 export type WidgetTemplate = typeof widgetTemplates.$inferSelect;
 export type InsertWidgetTemplate = typeof widgetTemplates.$inferInsert;
 
-
 /**
  * Projects table for project management
  */
@@ -843,7 +953,15 @@ export const projects = mysqlTable("projects", {
   id: int("id").autoincrement().primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  status: mysqlEnum("status", ["planning", "in-progress", "on-hold", "completed", "cancelled"]).default("planning").notNull(),
+  status: mysqlEnum("status", [
+    "planning",
+    "in-progress",
+    "on-hold",
+    "completed",
+    "cancelled",
+  ])
+    .default("planning")
+    .notNull(),
   startDate: timestamp("startDate"),
   endDate: timestamp("endDate"),
   budget: decimal("budget", { precision: 10, scale: 2 }),
@@ -865,8 +983,18 @@ export const tasks = mysqlTable("tasks", {
   projectId: int("projectId").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  status: mysqlEnum("status", ["todo", "in-progress", "review", "done", "cancelled"]).default("todo").notNull(),
-  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
+  status: mysqlEnum("status", [
+    "todo",
+    "in-progress",
+    "review",
+    "done",
+    "cancelled",
+  ])
+    .default("todo")
+    .notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"])
+    .default("medium")
+    .notNull(),
   assignedTo: int("assignedTo"),
   dueDate: timestamp("dueDate"),
   completedAt: timestamp("completedAt"),
@@ -912,17 +1040,20 @@ export const projectExpenses = mysqlTable("project_expenses", {
 export type ProjectExpense = typeof projectExpenses.$inferSelect;
 export type InsertProjectExpense = typeof projectExpenses.$inferInsert;
 
-
 // Task Attachments Table
 export const taskAttachments = mysqlTable("task_attachments", {
   id: int("id").primaryKey().autoincrement(),
-  taskId: int("task_id").notNull().references(() => tasks.id, { onDelete: "cascade" }),
+  taskId: int("task_id")
+    .notNull()
+    .references(() => tasks.id, { onDelete: "cascade" }),
   fileName: varchar("file_name", { length: 255 }).notNull(),
   fileKey: varchar("file_key", { length: 500 }).notNull(), // S3 key
   fileUrl: text("file_url").notNull(), // S3 URL
   fileSize: int("file_size").notNull(), // in bytes
   mimeType: varchar("mime_type", { length: 100 }).notNull(),
-  uploadedBy: int("uploaded_by").notNull().references(() => users.id, { onDelete: "set null" }),
+  uploadedBy: int("uploaded_by")
+    .notNull()
+    .references(() => users.id, { onDelete: "set null" }),
   uploadedAt: timestamp("uploaded_at").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -935,7 +1066,9 @@ export type InsertTaskAttachment = typeof taskAttachments.$inferInsert;
  */
 export const userWidgetPreferences = mysqlTable("user_widget_preferences", {
   id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: int("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   widgetId: varchar("widgetId", { length: 100 }).notNull(),
   widgetType: varchar("widgetType", { length: 50 }).notNull(), // 'stats', 'chart', 'list', 'alerts'
   title: varchar("title", { length: 255 }).notNull(),
@@ -950,9 +1083,8 @@ export const userWidgetPreferences = mysqlTable("user_widget_preferences", {
 });
 
 export type UserWidgetPreference = typeof userWidgetPreferences.$inferSelect;
-export type InsertUserWidgetPreference = typeof userWidgetPreferences.$inferInsert;
-
-
+export type InsertUserWidgetPreference =
+  typeof userWidgetPreferences.$inferInsert;
 
 /**
  * Cotisation criteria table - defines cotisation rules and status calculation
@@ -961,7 +1093,10 @@ export const cotisationCriteria = mysqlTable("cotisation_criteria", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   description: text("description"),
-  montantAnnuel: decimal("montantAnnuel", { precision: 10, scale: 2 }).notNull(),
+  montantAnnuel: decimal("montantAnnuel", {
+    precision: 10,
+    scale: 2,
+  }).notNull(),
   dateDebut: timestamp("dateDebut").notNull(),
   dateFin: timestamp("dateFin").notNull(),
   joursRetardMax: int("joursRetardMax").default(30).notNull(),

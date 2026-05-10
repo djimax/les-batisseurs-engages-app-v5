@@ -1,5 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 interface WidgetChartProps {
   title: string;
@@ -10,7 +22,12 @@ interface WidgetChartProps {
 
 const DEFAULT_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
-export function WidgetChart({ title, type, data, colors = DEFAULT_COLORS }: WidgetChartProps) {
+export function WidgetChart({
+  title,
+  type,
+  data,
+  colors = DEFAULT_COLORS,
+}: WidgetChartProps) {
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
@@ -40,7 +57,10 @@ export function WidgetChart({ title, type, data, colors = DEFAULT_COLORS }: Widg
                 dataKey="value"
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={colors[index % colors.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />

@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AlertCircle, Plus, Briefcase, Edit2, Trash2, Eye } from "lucide-react";
@@ -40,7 +46,11 @@ export default function Projects() {
     priority: "medium",
   });
 
-  const { data: projects = [], isLoading, error } = trpc.projects.list.useQuery({ status });
+  const {
+    data: projects = [],
+    isLoading,
+    error,
+  } = trpc.projects.list.useQuery({ status });
   const createMutation = trpc.projects.create.useMutation();
   const updateMutation = trpc.projects.update.useMutation();
   const deleteMutation = trpc.projects.delete.useMutation();
@@ -98,7 +108,9 @@ export default function Projects() {
           id: editingProject.id,
           title: formData.name,
           description: formData.description,
-          startDate: formData.startDate ? new Date(formData.startDate) : undefined,
+          startDate: formData.startDate
+            ? new Date(formData.startDate)
+            : undefined,
           endDate: formData.endDate ? new Date(formData.endDate) : undefined,
           budget: formData.budget ? formData.budget.toString() : undefined,
         });
@@ -107,7 +119,9 @@ export default function Projects() {
         await createMutation.mutateAsync({
           title: formData.name,
           description: formData.description,
-          startDate: formData.startDate ? new Date(formData.startDate) : undefined,
+          startDate: formData.startDate
+            ? new Date(formData.startDate)
+            : undefined,
           endDate: formData.endDate ? new Date(formData.endDate) : undefined,
           budget: formData.budget ? formData.budget.toString() : undefined,
         });
@@ -117,7 +131,11 @@ export default function Projects() {
       utils.projects.list.invalidate();
     } catch (err) {
       console.error("Erreur:", err);
-      toast.error(editingProject ? "Erreur lors de la modification" : "Erreur lors de la création");
+      toast.error(
+        editingProject
+          ? "Erreur lors de la modification"
+          : "Erreur lors de la création"
+      );
     }
   };
 
@@ -166,8 +184,13 @@ export default function Projects() {
     }
   };
 
-  const activeProjects = (projects as any[]).filter((p: any) => p.status === "active").length;
-  const totalBudget = (projects as any[]).reduce((sum: number, p: any) => sum + (p.budget || 0), 0);
+  const activeProjects = (projects as any[]).filter(
+    (p: any) => p.status === "active"
+  ).length;
+  const totalBudget = (projects as any[]).reduce(
+    (sum: number, p: any) => sum + (p.budget || 0),
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -175,12 +198,17 @@ export default function Projects() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Projets</h1>
-          <p className="text-muted-foreground">Gestion des projets et initiatives</p>
+          <p className="text-muted-foreground">
+            Gestion des projets et initiatives
+          </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          if (!open) handleCloseDialog();
-          else handleOpenDialog();
-        }}>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={open => {
+            if (!open) handleCloseDialog();
+            else handleOpenDialog();
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
@@ -189,9 +217,15 @@ export default function Projects() {
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{editingProject ? "Modifier le projet" : "Créer un nouveau projet"}</DialogTitle>
+              <DialogTitle>
+                {editingProject
+                  ? "Modifier le projet"
+                  : "Créer un nouveau projet"}
+              </DialogTitle>
               <DialogDescription>
-                {editingProject ? "Modifiez les informations du projet" : "Remplissez les informations du projet"}
+                {editingProject
+                  ? "Modifiez les informations du projet"
+                  : "Remplissez les informations du projet"}
               </DialogDescription>
             </DialogHeader>
 
@@ -200,7 +234,9 @@ export default function Projects() {
                 <label className="text-sm font-medium">Nom du projet *</label>
                 <Input
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="Ex: Rénovation du bâtiment"
                   required
                 />
@@ -210,7 +246,9 @@ export default function Projects() {
                 <label className="text-sm font-medium">Description</label>
                 <Textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Décrivez le projet..."
                   rows={3}
                 />
@@ -222,7 +260,9 @@ export default function Projects() {
                   <Input
                     type="date"
                     value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, startDate: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -231,7 +271,9 @@ export default function Projects() {
                   <Input
                     type="date"
                     value={formData.endDate}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, endDate: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -242,14 +284,21 @@ export default function Projects() {
                   <Input
                     type="number"
                     value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, budget: e.target.value })
+                    }
                     placeholder="0"
                     min="0"
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium">Priorité</label>
-                  <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+                  <Select
+                    value={formData.priority}
+                    onValueChange={value =>
+                      setFormData({ ...formData, priority: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -264,10 +313,19 @@ export default function Projects() {
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCloseDialog}
+                >
                   Annuler
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                <Button
+                  type="submit"
+                  disabled={
+                    createMutation.isPending || updateMutation.isPending
+                  }
+                >
                   {editingProject ? "Modifier" : "Créer"}
                 </Button>
               </div>
@@ -280,7 +338,9 @@ export default function Projects() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Projets Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Projets Actifs
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeProjects}</div>
@@ -289,16 +349,22 @@ export default function Projects() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Budget Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Budget Total
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalBudget.toLocaleString()} €</div>
+            <div className="text-2xl font-bold">
+              {totalBudget.toLocaleString()} €
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{projects.length}</div>
@@ -349,14 +415,18 @@ export default function Projects() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>Erreur lors du chargement des projets</AlertDescription>
+          <AlertDescription>
+            Erreur lors du chargement des projets
+          </AlertDescription>
         </Alert>
       )}
 
       {/* Liste des projets */}
       <div className="space-y-4">
         {isLoading ? (
-          <div className="text-center py-8 text-muted-foreground">Chargement...</div>
+          <div className="text-center py-8 text-muted-foreground">
+            Chargement...
+          </div>
         ) : projects.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center text-muted-foreground">
@@ -365,7 +435,10 @@ export default function Projects() {
           </Card>
         ) : (
           (projects as any[]).map((project: any) => (
-            <Card key={project.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={project.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -382,7 +455,9 @@ export default function Projects() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => window.location.href = `/projects/${project.id}`}
+                      onClick={() =>
+                        (window.location.href = `/projects/${project.id}`)
+                      }
                       aria-label="Voir les détails"
                     >
                       <Eye className="h-4 w-4" />
@@ -410,7 +485,9 @@ export default function Projects() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Progression</span>
-                    <span className="font-medium">{project.progress || 0}%</span>
+                    <span className="font-medium">
+                      {project.progress || 0}%
+                    </span>
                   </div>
                   <Progress value={project.progress || 0} className="h-2" />
                 </div>
@@ -418,21 +495,29 @@ export default function Projects() {
                 <div className="grid grid-cols-4 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Budget</p>
-                    <p className="font-bold">{project.budget?.toLocaleString()} €</p>
+                    <p className="font-bold">
+                      {project.budget?.toLocaleString()} €
+                    </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Début</p>
-                    <p className="font-bold">{new Date(project.startDate).toLocaleDateString("fr-FR")}</p>
+                    <p className="font-bold">
+                      {new Date(project.startDate).toLocaleDateString("fr-FR")}
+                    </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Fin</p>
                     <p className="font-bold">
-                      {project.endDate ? new Date(project.endDate).toLocaleDateString("fr-FR") : "N/A"}
+                      {project.endDate
+                        ? new Date(project.endDate).toLocaleDateString("fr-FR")
+                        : "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Priorité</p>
-                    <p className={`font-bold ${getPriorityColor(project.priority)}`}>
+                    <p
+                      className={`font-bold ${getPriorityColor(project.priority)}`}
+                    >
                       {project.priority}
                     </p>
                   </div>

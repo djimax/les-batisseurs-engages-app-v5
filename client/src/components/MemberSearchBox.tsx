@@ -11,10 +11,10 @@ interface MemberSearchBoxProps {
   placeholder?: string;
 }
 
-export function MemberSearchBox({ 
-  onMemberSelect, 
+export function MemberSearchBox({
+  onMemberSelect,
   onAdhesionSelect,
-  placeholder = "Rechercher par ID (MEM-...) ou nom..."
+  placeholder = "Rechercher par ID (MEM-...) ou nom...",
 }: MemberSearchBoxProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -55,7 +55,7 @@ export function MemberSearchBox({
           <Input
             placeholder={placeholder}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setIsOpen(true)}
             className="pl-10"
           />
@@ -76,13 +76,15 @@ export function MemberSearchBox({
         <Card className="absolute top-full left-0 right-0 mt-2 z-50 shadow-lg">
           <CardContent className="p-0">
             <div className="max-h-64 overflow-y-auto">
-              {results.map((member) => (
+              {results.map(member => (
                 <button
                   key={member.id}
                   onClick={() => handleSelect(member)}
                   className="w-full text-left px-4 py-3 hover:bg-accent transition-colors border-b last:border-b-0"
                 >
-                  <div className="font-medium">{member.firstName} {member.lastName}</div>
+                  <div className="font-medium">
+                    {member.firstName} {member.lastName}
+                  </div>
                   <div className="text-sm text-muted-foreground">
                     ID: {member.memberId}
                   </div>
@@ -98,13 +100,16 @@ export function MemberSearchBox({
         </Card>
       )}
 
-      {isOpen && results.length === 0 && query.length > 0 && !searchQuery.isLoading && (
-        <Card className="absolute top-full left-0 right-0 mt-2 z-50 shadow-lg">
-          <CardContent className="p-4 text-center text-muted-foreground">
-            Aucun résultat trouvé pour "{query}"
-          </CardContent>
-        </Card>
-      )}
+      {isOpen &&
+        results.length === 0 &&
+        query.length > 0 &&
+        !searchQuery.isLoading && (
+          <Card className="absolute top-full left-0 right-0 mt-2 z-50 shadow-lg">
+            <CardContent className="p-4 text-center text-muted-foreground">
+              Aucun résultat trouvé pour "{query}"
+            </CardContent>
+          </Card>
+        )}
 
       {searchQuery.isLoading && (
         <Card className="absolute top-full left-0 right-0 mt-2 z-50 shadow-lg">

@@ -68,7 +68,7 @@ export default function UserManagement() {
       setSelectedUserId(null);
       setSelectedRole("");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(`❌ ${error.message}`);
     },
   });
@@ -80,7 +80,7 @@ export default function UserManagement() {
       setShowDeleteDialog(false);
       setUserToDelete(null);
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(`❌ ${error.message}`);
     },
   });
@@ -144,7 +144,9 @@ export default function UserManagement() {
           <Users className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestion des Utilisateurs</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Gestion des Utilisateurs
+          </h1>
           <p className="text-muted-foreground mt-1">
             Gérez les rôles et les permissions des utilisateurs
           </p>
@@ -155,13 +157,14 @@ export default function UserManagement() {
       <Alert className="bg-blue-50 border-blue-200">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          Votre rôle : <strong>{permissions?.roleDisplay}</strong> - {permissions?.description}
+          Votre rôle : <strong>{permissions?.roleDisplay}</strong> -{" "}
+          {permissions?.description}
         </AlertDescription>
       </Alert>
 
       {/* Role Descriptions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {roles?.map((role) => (
+        {roles?.map(role => (
           <Card key={role.value}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
@@ -181,7 +184,8 @@ export default function UserManagement() {
         <CardHeader>
           <CardTitle>Liste des Utilisateurs</CardTitle>
           <CardDescription>
-            {users?.length} utilisateur{users && users.length > 1 ? "s" : ""} enregistré{users && users.length > 1 ? "s" : ""}
+            {users?.length} utilisateur{users && users.length > 1 ? "s" : ""}{" "}
+            enregistré{users && users.length > 1 ? "s" : ""}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -197,9 +201,11 @@ export default function UserManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users?.map((user) => (
+                {users?.map(user => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name || "N/A"}</TableCell>
+                    <TableCell className="font-medium">
+                      {user.name || "N/A"}
+                    </TableCell>
                     <TableCell>{user.email || "N/A"}</TableCell>
                     <TableCell>
                       <Badge className={getRoleColor(user.role)}>
@@ -208,8 +214,8 @@ export default function UserManagement() {
                           {user.role === "admin"
                             ? "Admin"
                             : user.role === "gestionnaire"
-                            ? "Gestionnaire"
-                            : "Lecteur"}
+                              ? "Gestionnaire"
+                              : "Lecteur"}
                         </span>
                       </Badge>
                     </TableCell>
@@ -263,7 +269,7 @@ export default function UserManagement() {
               Modifier le Rôle
             </CardTitle>
             <CardDescription>
-              Utilisateur : {users?.find((u) => u.id === selectedUserId)?.name}
+              Utilisateur : {users?.find(u => u.id === selectedUserId)?.name}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -274,7 +280,7 @@ export default function UserManagement() {
                   <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roles?.map((role) => (
+                  {roles?.map(role => (
                     <SelectItem key={role.value} value={role.value}>
                       {role.label}
                     </SelectItem>
@@ -321,7 +327,8 @@ export default function UserManagement() {
             <AlertDialogTitle>Supprimer l'utilisateur ?</AlertDialogTitle>
             <AlertDialogDescription>
               Cette action supprimera l'utilisateur{" "}
-              <strong>{users?.find((u) => u.id === userToDelete)?.name}</strong>. Cette action ne peut pas être annulée.
+              <strong>{users?.find(u => u.id === userToDelete)?.name}</strong>.
+              Cette action ne peut pas être annulée.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-3">

@@ -49,10 +49,13 @@ export function useErrorHandler() {
     setError(null);
   }, []);
 
-  const handleSuccess = useCallback((message: string) => {
-    clearError();
-    toast.success(message);
-  }, [clearError]);
+  const handleSuccess = useCallback(
+    (message: string) => {
+      clearError();
+      toast.success(message);
+    },
+    [clearError]
+  );
 
   return {
     error,
@@ -69,9 +72,9 @@ export function useAsync<T, E = string>(
   asyncFunction: () => Promise<T>,
   immediate = true
 ) {
-  const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">(
-    immediate ? "pending" : "idle"
-  );
+  const [status, setStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >(immediate ? "pending" : "idle");
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<E | null>(null);
 
@@ -115,14 +118,14 @@ export function useFormErrors() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const setFieldError = useCallback((field: string, message: string) => {
-    setErrors((prev) => ({
+    setErrors(prev => ({
       ...prev,
       [field]: message,
     }));
   }, []);
 
   const clearFieldError = useCallback((field: string) => {
-    setErrors((prev) => {
+    setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors[field];
       return newErrors;
@@ -151,13 +154,13 @@ export function useRetry(maxRetries = 3, delay = 1000) {
   const [retries, setRetries] = useState(0);
 
   const retry = useCallback(
-    async <T,>(fn: () => Promise<T>): Promise<T> => {
+    async <T>(fn: () => Promise<T>): Promise<T> => {
       try {
         return await fn();
       } catch (err) {
         if (retries < maxRetries) {
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          setRetries((prev) => prev + 1);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          setRetries(prev => prev + 1);
           return retry(fn);
         }
         throw err;

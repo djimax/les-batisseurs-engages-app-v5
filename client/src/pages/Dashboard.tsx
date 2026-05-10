@@ -3,7 +3,18 @@ import { MainLayout } from "@/components/MainLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Briefcase, DollarSign, FileText, Calendar } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const dashboardStats = [
   {
@@ -62,7 +73,9 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Tableau de bord</h1>
-            <p className="text-muted-foreground mt-1">Bienvenue dans votre espace de gestion</p>
+            <p className="text-muted-foreground mt-1">
+              Bienvenue dans votre espace de gestion
+            </p>
           </div>
           <Button className="gap-2">
             <Calendar size={20} />
@@ -72,15 +85,19 @@ export default function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {dashboardStats.map((stat) => {
+          {dashboardStats.map(stat => {
             const Icon = stat.icon;
             return (
               <Card key={stat.title} className="p-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {stat.title}
+                    </p>
                     <p className="text-3xl font-bold mt-2">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground mt-2">{stat.change}</p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {stat.change}
+                    </p>
                   </div>
                   <div className={`p-3 rounded-lg ${stat.bgColor}`}>
                     <Icon className={`${stat.color}`} size={24} />
@@ -95,24 +112,26 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Line Chart */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Évolution des membres</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Évolution des membres
+            </h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="month" stroke="var(--muted-foreground)" />
                 <YAxis stroke="var(--muted-foreground)" />
-                <Tooltip 
-                  contentStyle={{ 
+                <Tooltip
+                  contentStyle={{
                     backgroundColor: "var(--card)",
                     border: "1px solid var(--border)",
-                    borderRadius: "8px"
+                    borderRadius: "8px",
                   }}
                 />
                 <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="members" 
-                  stroke="var(--primary)" 
+                <Line
+                  type="monotone"
+                  dataKey="members"
+                  stroke="var(--primary)"
                   strokeWidth={2}
                   name="Membres"
                 />
@@ -128,11 +147,11 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="month" stroke="var(--muted-foreground)" />
                 <YAxis stroke="var(--muted-foreground)" />
-                <Tooltip 
-                  contentStyle={{ 
+                <Tooltip
+                  contentStyle={{
                     backgroundColor: "var(--card)",
                     border: "1px solid var(--border)",
-                    borderRadius: "8px"
+                    borderRadius: "8px",
                   }}
                 />
                 <Legend />
@@ -146,16 +165,21 @@ export default function Dashboard() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Activités récentes</h3>
           <div className="space-y-4">
-            {recentActivities.map((activity) => {
+            {recentActivities.map(activity => {
               const Icon = activity.icon;
               return (
-                <div key={activity.id} className="flex items-center gap-4 pb-4 border-b border-border last:border-b-0 last:pb-0">
+                <div
+                  key={activity.id}
+                  className="flex items-center gap-4 pb-4 border-b border-border last:border-b-0 last:pb-0"
+                >
                   <div className="p-2 bg-muted rounded-lg">
                     <Icon size={20} className="text-muted-foreground" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">{activity.title}</p>
-                    <p className="text-xs text-muted-foreground">{activity.date}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {activity.date}
+                    </p>
                   </div>
                   <Button variant="ghost" size="sm">
                     Voir

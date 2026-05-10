@@ -14,7 +14,7 @@ export function ExportPDF({ title, data, type }: ExportPDFProps) {
 
   const generatePDF = async () => {
     setIsExporting(true);
-    
+
     try {
       // Create printable HTML content
       let htmlContent = `
@@ -161,26 +161,30 @@ export function ExportPDF({ title, data, type }: ExportPDFProps) {
               </tr>
             </thead>
             <tbody>
-              ${data.documents.map((doc: any) => `
+              ${data.documents
+                .map(
+                  (doc: any) => `
                 <tr>
                   <td>
                     <strong>${doc.title}</strong>
-                    ${doc.description ? `<br><small style="color:#666">${doc.description.substring(0, 50)}${doc.description.length > 50 ? '...' : ''}</small>` : ''}
+                    ${doc.description ? `<br><small style="color:#666">${doc.description.substring(0, 50)}${doc.description.length > 50 ? "..." : ""}</small>` : ""}
                   </td>
                   <td>${doc.category}</td>
                   <td>
-                    <span class="badge badge-${doc.status === 'Complété' ? 'completed' : doc.status === 'En cours' ? 'in-progress' : 'pending'}">
+                    <span class="badge badge-${doc.status === "Complété" ? "completed" : doc.status === "En cours" ? "in-progress" : "pending"}">
                       ${doc.status}
                     </span>
                   </td>
                   <td>
-                    <span class="badge badge-${doc.priority === 'Urgent' ? 'urgent' : doc.priority === 'Haute' ? 'high' : doc.priority === 'Moyenne' ? 'medium' : 'low'}">
+                    <span class="badge badge-${doc.priority === "Urgent" ? "urgent" : doc.priority === "Haute" ? "high" : doc.priority === "Moyenne" ? "medium" : "low"}">
                       ${doc.priority}
                     </span>
                   </td>
-                  <td>${doc.hasFile ? '✓' : '-'}</td>
+                  <td>${doc.hasFile ? "✓" : "-"}</td>
                 </tr>
-              `).join('')}
+              `
+                )
+                .join("")}
             </tbody>
           </table>
         `;
@@ -210,20 +214,24 @@ export function ExportPDF({ title, data, type }: ExportPDFProps) {
               </tr>
             </thead>
             <tbody>
-              ${data.members.map((member: any) => `
+              ${data.members
+                .map(
+                  (member: any) => `
                 <tr>
                   <td><strong>${member.fullName}</strong></td>
                   <td>${member.role}</td>
-                  <td>${member.function || '-'}</td>
-                  <td>${member.email || '-'}</td>
-                  <td>${member.phone || '-'}</td>
+                  <td>${member.function || "-"}</td>
+                  <td>${member.email || "-"}</td>
+                  <td>${member.phone || "-"}</td>
                   <td>
-                    <span class="badge badge-${member.status === 'Actif' ? 'active' : 'inactive'}">
+                    <span class="badge badge-${member.status === "Actif" ? "active" : "inactive"}">
                       ${member.status}
                     </span>
                   </td>
                 </tr>
-              `).join('')}
+              `
+                )
+                .join("")}
             </tbody>
           </table>
         `;
@@ -243,12 +251,12 @@ export function ExportPDF({ title, data, type }: ExportPDFProps) {
       if (printWindow) {
         printWindow.document.write(htmlContent);
         printWindow.document.close();
-        
+
         // Wait for content to load then print
         printWindow.onload = () => {
           printWindow.print();
         };
-        
+
         toast.success("Rapport généré avec succès");
       } else {
         toast.error("Impossible d'ouvrir la fenêtre d'impression");
@@ -262,8 +270,8 @@ export function ExportPDF({ title, data, type }: ExportPDFProps) {
   };
 
   return (
-    <Button 
-      variant="outline" 
+    <Button
+      variant="outline"
       onClick={generatePDF}
       disabled={isExporting}
       className="gap-2"

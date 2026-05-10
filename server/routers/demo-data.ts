@@ -30,10 +30,7 @@ export const demoDataRouter = router({
       }
 
       // Read the SQL file
-      const sqlPath = path.join(
-        process.cwd(),
-        "seed-demo-data-tchad.sql"
-      );
+      const sqlPath = path.join(process.cwd(), "seed-demo-data-tchad.sql");
 
       if (!fs.existsSync(sqlPath)) {
         throw new Error("Demo data SQL file not found");
@@ -44,8 +41,8 @@ export const demoDataRouter = router({
       // Split by statement and execute
       const statements = sqlContent
         .split(";")
-        .map((s) => s.trim())
-        .filter((s) => s && !s.startsWith("--"));
+        .map(s => s.trim())
+        .filter(s => s && !s.startsWith("--"));
 
       let executedCount = 0;
       for (const statement of statements) {

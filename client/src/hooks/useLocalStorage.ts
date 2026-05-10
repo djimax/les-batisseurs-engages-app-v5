@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const DB_NAME = 'BatisseursEngagesDB';
+const DB_NAME = "BatisseursEngagesDB";
 const DB_VERSION = 1;
 
 export interface Document {
@@ -8,8 +8,8 @@ export interface Document {
   title: string;
   description?: string;
   categoryId: number;
-  status: 'pending' | 'in-progress' | 'completed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: "pending" | "in-progress" | "completed";
+  priority: "low" | "medium" | "high" | "urgent";
   fileUrl?: string;
   fileName?: string;
   fileType?: string;
@@ -35,8 +35,8 @@ export interface Member {
   phone?: string;
   role: string;
   function?: string;
-  status: 'active' | 'inactive' | 'pending';
-  memberRole: 'admin' | 'secretary' | 'member';
+  status: "active" | "inactive" | "pending";
+  memberRole: "admin" | "secretary" | "member";
   createdAt: Date;
 }
 
@@ -62,35 +62,51 @@ async function initDB(): Promise<IDBDatabase> {
       resolve(db);
     };
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = event => {
       const database = (event.target as IDBOpenDBRequest).result;
 
       // Create object stores
-      if (!database.objectStoreNames.contains('documents')) {
-        database.createObjectStore('documents', { keyPath: 'id', autoIncrement: true });
+      if (!database.objectStoreNames.contains("documents")) {
+        database.createObjectStore("documents", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
       }
-      if (!database.objectStoreNames.contains('categories')) {
-        database.createObjectStore('categories', { keyPath: 'id', autoIncrement: true });
+      if (!database.objectStoreNames.contains("categories")) {
+        database.createObjectStore("categories", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
       }
-      if (!database.objectStoreNames.contains('members')) {
-        database.createObjectStore('members', { keyPath: 'id', autoIncrement: true });
+      if (!database.objectStoreNames.contains("members")) {
+        database.createObjectStore("members", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
       }
-      if (!database.objectStoreNames.contains('notes')) {
-        database.createObjectStore('notes', { keyPath: 'id', autoIncrement: true });
+      if (!database.objectStoreNames.contains("notes")) {
+        database.createObjectStore("notes", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
       }
     };
   });
 }
 
-export async function addDocument(doc: Omit<Document, 'id'>): Promise<Document> {
+export async function addDocument(
+  doc: Omit<Document, "id">
+): Promise<Document> {
   const database = await initDB();
-  const store = database.transaction('documents', 'readwrite').objectStore('documents');
-  
+  const store = database
+    .transaction("documents", "readwrite")
+    .objectStore("documents");
+
   const newDoc: Document = {
     ...doc,
     id: Date.now(),
   };
-  
+
   return new Promise((resolve, reject) => {
     const request = store.add(newDoc);
     request.onsuccess = () => resolve(newDoc);
@@ -100,8 +116,10 @@ export async function addDocument(doc: Omit<Document, 'id'>): Promise<Document> 
 
 export async function getDocuments(): Promise<Document[]> {
   const database = await initDB();
-  const store = database.transaction('documents', 'readonly').objectStore('documents');
-  
+  const store = database
+    .transaction("documents", "readonly")
+    .objectStore("documents");
+
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
@@ -109,12 +127,17 @@ export async function getDocuments(): Promise<Document[]> {
   });
 }
 
-export async function updateDocument(id: number, updates: Partial<Document>): Promise<void> {
+export async function updateDocument(
+  id: number,
+  updates: Partial<Document>
+): Promise<void> {
   const database = await initDB();
-  const store = database.transaction('documents', 'readwrite').objectStore('documents');
-  
+  const store = database
+    .transaction("documents", "readwrite")
+    .objectStore("documents");
+
   const getRequest = store.get(id);
-  
+
   return new Promise((resolve, reject) => {
     getRequest.onsuccess = () => {
       const doc = getRequest.result;
@@ -124,7 +147,7 @@ export async function updateDocument(id: number, updates: Partial<Document>): Pr
         updateRequest.onsuccess = () => resolve();
         updateRequest.onerror = () => reject(updateRequest.error);
       } else {
-        reject(new Error('Document not found'));
+        reject(new Error("Document not found"));
       }
     };
     getRequest.onerror = () => reject(getRequest.error);
@@ -133,8 +156,10 @@ export async function updateDocument(id: number, updates: Partial<Document>): Pr
 
 export async function deleteDocument(id: number): Promise<void> {
   const database = await initDB();
-  const store = database.transaction('documents', 'readwrite').objectStore('documents');
-  
+  const store = database
+    .transaction("documents", "readwrite")
+    .objectStore("documents");
+
   return new Promise((resolve, reject) => {
     const request = store.delete(id);
     request.onsuccess = () => resolve();
@@ -142,15 +167,19 @@ export async function deleteDocument(id: number): Promise<void> {
   });
 }
 
-export async function addCategory(cat: Omit<Category, 'id'>): Promise<Category> {
+export async function addCategory(
+  cat: Omit<Category, "id">
+): Promise<Category> {
   const database = await initDB();
-  const store = database.transaction('categories', 'readwrite').objectStore('categories');
-  
+  const store = database
+    .transaction("categories", "readwrite")
+    .objectStore("categories");
+
   const newCat: Category = {
     ...cat,
     id: Date.now(),
   };
-  
+
   return new Promise((resolve, reject) => {
     const request = store.add(newCat);
     request.onsuccess = () => resolve(newCat);
@@ -160,8 +189,10 @@ export async function addCategory(cat: Omit<Category, 'id'>): Promise<Category> 
 
 export async function getCategories(): Promise<Category[]> {
   const database = await initDB();
-  const store = database.transaction('categories', 'readonly').objectStore('categories');
-  
+  const store = database
+    .transaction("categories", "readonly")
+    .objectStore("categories");
+
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
@@ -169,15 +200,17 @@ export async function getCategories(): Promise<Category[]> {
   });
 }
 
-export async function addMember(member: Omit<Member, 'id'>): Promise<Member> {
+export async function addMember(member: Omit<Member, "id">): Promise<Member> {
   const database = await initDB();
-  const store = database.transaction('members', 'readwrite').objectStore('members');
-  
+  const store = database
+    .transaction("members", "readwrite")
+    .objectStore("members");
+
   const newMember: Member = {
     ...member,
     id: Date.now(),
   };
-  
+
   return new Promise((resolve, reject) => {
     const request = store.add(newMember);
     request.onsuccess = () => resolve(newMember);
@@ -187,8 +220,10 @@ export async function addMember(member: Omit<Member, 'id'>): Promise<Member> {
 
 export async function getMembers(): Promise<Member[]> {
   const database = await initDB();
-  const store = database.transaction('members', 'readonly').objectStore('members');
-  
+  const store = database
+    .transaction("members", "readonly")
+    .objectStore("members");
+
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
@@ -196,12 +231,17 @@ export async function getMembers(): Promise<Member[]> {
   });
 }
 
-export async function updateMember(id: number, updates: Partial<Member>): Promise<void> {
+export async function updateMember(
+  id: number,
+  updates: Partial<Member>
+): Promise<void> {
   const database = await initDB();
-  const store = database.transaction('members', 'readwrite').objectStore('members');
-  
+  const store = database
+    .transaction("members", "readwrite")
+    .objectStore("members");
+
   const getRequest = store.get(id);
-  
+
   return new Promise((resolve, reject) => {
     getRequest.onsuccess = () => {
       const member = getRequest.result;
@@ -211,7 +251,7 @@ export async function updateMember(id: number, updates: Partial<Member>): Promis
         updateRequest.onsuccess = () => resolve();
         updateRequest.onerror = () => reject(updateRequest.error);
       } else {
-        reject(new Error('Member not found'));
+        reject(new Error("Member not found"));
       }
     };
     getRequest.onerror = () => reject(getRequest.error);
@@ -220,8 +260,10 @@ export async function updateMember(id: number, updates: Partial<Member>): Promis
 
 export async function deleteMember(id: number): Promise<void> {
   const database = await initDB();
-  const store = database.transaction('members', 'readwrite').objectStore('members');
-  
+  const store = database
+    .transaction("members", "readwrite")
+    .objectStore("members");
+
   return new Promise((resolve, reject) => {
     const request = store.delete(id);
     request.onsuccess = () => resolve();
@@ -229,15 +271,15 @@ export async function deleteMember(id: number): Promise<void> {
   });
 }
 
-export async function addNote(note: Omit<Note, 'id'>): Promise<Note> {
+export async function addNote(note: Omit<Note, "id">): Promise<Note> {
   const database = await initDB();
-  const store = database.transaction('notes', 'readwrite').objectStore('notes');
-  
+  const store = database.transaction("notes", "readwrite").objectStore("notes");
+
   const newNote: Note = {
     ...note,
     id: Date.now(),
   };
-  
+
   return new Promise((resolve, reject) => {
     const request = store.add(newNote);
     request.onsuccess = () => resolve(newNote);
@@ -247,8 +289,8 @@ export async function addNote(note: Omit<Note, 'id'>): Promise<Note> {
 
 export async function getNotesByDocument(documentId: number): Promise<Note[]> {
   const database = await initDB();
-  const store = database.transaction('notes', 'readonly').objectStore('notes');
-  
+  const store = database.transaction("notes", "readonly").objectStore("notes");
+
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => {
@@ -261,8 +303,8 @@ export async function getNotesByDocument(documentId: number): Promise<Note[]> {
 
 export async function deleteNote(id: number): Promise<void> {
   const database = await initDB();
-  const store = database.transaction('notes', 'readwrite').objectStore('notes');
-  
+  const store = database.transaction("notes", "readwrite").objectStore("notes");
+
   return new Promise((resolve, reject) => {
     const request = store.delete(id);
     request.onsuccess = () => resolve();

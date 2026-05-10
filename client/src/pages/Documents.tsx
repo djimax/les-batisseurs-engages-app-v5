@@ -3,14 +3,20 @@ import { ExportPDF } from "@/components/ExportPDF";
 import { HeroSection } from "@/components/HeroSection";
 import { Pagination } from "@/components/Pagination";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -35,13 +41,13 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { 
-  FileText, 
-  Search, 
-  Plus, 
-  Upload, 
-  Download, 
-  Printer, 
+import {
+  FileText,
+  Search,
+  Plus,
+  Upload,
+  Download,
+  Printer,
   MoreVertical,
   Trash2,
   Edit,
@@ -55,7 +61,7 @@ import {
   FileSpreadsheet,
   FileImage,
   Loader2,
-  Archive
+  Archive,
 } from "lucide-react";
 
 const SORT_OPTIONS = [
@@ -100,10 +106,11 @@ export default function Documents() {
     priority: priorityFilter !== "all" ? priorityFilter : undefined,
     search: searchTerm || undefined,
   });
-  const { data: notes, refetch: refetchNotes } = trpc.notes.listByDocument.useQuery(
-    { documentId: selectedDocument?.id || 0 },
-    { enabled: !!selectedDocument }
-  );
+  const { data: notes, refetch: refetchNotes } =
+    trpc.notes.listByDocument.useQuery(
+      { documentId: selectedDocument?.id || 0 },
+      { enabled: !!selectedDocument }
+    );
 
   const createDocument = trpc.documents.create.useMutation({
     onSuccess: () => {
@@ -113,7 +120,7 @@ export default function Documents() {
       resetForm();
       toast.success("Document créé avec succès");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur lors de la création: " + error.message);
     },
   });
@@ -124,7 +131,7 @@ export default function Documents() {
       utils.documents.stats.invalidate();
       toast.success("Document mis à jour");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur: " + error.message);
     },
   });
@@ -137,7 +144,7 @@ export default function Documents() {
       setSelectedDocument(null);
       toast.success("Document supprimé");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur: " + error.message);
     },
   });
@@ -148,7 +155,7 @@ export default function Documents() {
       setIsUploadingFile(false);
       toast.success("Fichier uploadé avec succès");
     },
-    onError: (error) => {
+    onError: error => {
       setIsUploadingFile(false);
       toast.error("Erreur lors de l'upload: " + error.message);
     },
@@ -160,7 +167,7 @@ export default function Documents() {
       setNewNote("");
       toast.success("Note ajoutée");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Erreur: " + error.message);
     },
   });
@@ -214,7 +221,7 @@ export default function Documents() {
     }
 
     setIsUploadingFile(true);
-    
+
     const reader = new FileReader();
     reader.onload = async () => {
       const base64 = (reader.result as string).split(",")[1];
@@ -306,10 +313,14 @@ export default function Documents() {
 
   const getFileIcon = (fileType: string | null) => {
     if (!fileType) return <FileText className="h-5 w-5" />;
-    if (fileType.includes("word") || fileType.includes("document")) return <File className="h-5 w-5 text-blue-600" />;
-    if (fileType.includes("sheet") || fileType.includes("excel")) return <FileSpreadsheet className="h-5 w-5 text-green-600" />;
-    if (fileType.includes("image")) return <FileImage className="h-5 w-5 text-purple-600" />;
-    if (fileType.includes("pdf")) return <FileIcon className="h-5 w-5 text-red-600" />;
+    if (fileType.includes("word") || fileType.includes("document"))
+      return <File className="h-5 w-5 text-blue-600" />;
+    if (fileType.includes("sheet") || fileType.includes("excel"))
+      return <FileSpreadsheet className="h-5 w-5 text-green-600" />;
+    if (fileType.includes("image"))
+      return <FileImage className="h-5 w-5 text-purple-600" />;
+    if (fileType.includes("pdf"))
+      return <FileIcon className="h-5 w-5 text-red-600" />;
     return <FileText className="h-5 w-5" />;
   };
 
@@ -329,15 +340,26 @@ export default function Documents() {
         case "title-desc":
           return b.title.localeCompare(a.title);
         case "date-newest":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         case "date-oldest":
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         case "priority-high":
           const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
-          return (priorityOrder[a.priority as keyof typeof priorityOrder] || 4) - (priorityOrder[b.priority as keyof typeof priorityOrder] || 4);
+          return (
+            (priorityOrder[a.priority as keyof typeof priorityOrder] || 4) -
+            (priorityOrder[b.priority as keyof typeof priorityOrder] || 4)
+          );
         case "priority-low":
           const priorityOrderLow = { low: 0, medium: 1, high: 2, urgent: 3 };
-          return (priorityOrderLow[a.priority as keyof typeof priorityOrderLow] || 4) - (priorityOrderLow[b.priority as keyof typeof priorityOrderLow] || 4);
+          return (
+            (priorityOrderLow[a.priority as keyof typeof priorityOrderLow] ||
+              4) -
+            (priorityOrderLow[b.priority as keyof typeof priorityOrderLow] || 4)
+          );
         default:
           return 0;
       }
@@ -368,10 +390,10 @@ export default function Documents() {
         </div>
         <div className="flex gap-2">
           {exportData && (
-            <ExportPDF 
-              title="Rapport des Documents" 
-              data={exportData} 
-              type="documents" 
+            <ExportPDF
+              title="Rapport des Documents"
+              data={exportData}
+              type="documents"
             />
           )}
           <Button onClick={() => setIsCreateDialogOpen(true)} className="gap-2">
@@ -391,7 +413,7 @@ export default function Documents() {
                 <Input
                   placeholder="Rechercher un document..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -404,14 +426,14 @@ export default function Documents() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Toutes les categories</SelectItem>
-                  {categories?.map((cat) => (
+                  {categories?.map(cat => (
                     <SelectItem key={cat.id} value={cat.id.toString()}>
                       {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[150px]">
                   <Filter className="h-4 w-4 mr-2" />
@@ -443,7 +465,7 @@ export default function Documents() {
                   <SelectValue placeholder="Trier par" />
                 </SelectTrigger>
                 <SelectContent>
-                  {SORT_OPTIONS.map((option) => (
+                  {SORT_OPTIONS.map(option => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -473,111 +495,141 @@ export default function Documents() {
         </div>
       ) : filteredDocuments.length > 0 ? (
         <>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredDocuments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc) => (
-            <Card 
-              key={doc.id} 
-              className="hover:shadow-md transition-all cursor-pointer group"
-              onClick={() => {
-                setSelectedDocument(doc);
-                setIsDetailDialogOpen(true);
-              }}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="p-2 rounded-lg"
-                      style={{ backgroundColor: `${getCategoryColor(doc.categoryId)}20` }}
-                    >
-                      {doc.fileUrl ? getFileIcon(doc.fileType) : (
-                        <FileText 
-                          className="h-5 w-5" 
-                          style={{ color: getCategoryColor(doc.categoryId) }}
-                        />
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredDocuments
+              .slice(
+                (currentPage - 1) * itemsPerPage,
+                currentPage * itemsPerPage
+              )
+              .map(doc => (
+                <Card
+                  key={doc.id}
+                  className="hover:shadow-md transition-all cursor-pointer group"
+                  onClick={() => {
+                    setSelectedDocument(doc);
+                    setIsDetailDialogOpen(true);
+                  }}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="p-2 rounded-lg"
+                          style={{
+                            backgroundColor: `${getCategoryColor(doc.categoryId)}20`,
+                          }}
+                        >
+                          {doc.fileUrl ? (
+                            getFileIcon(doc.fileType)
+                          ) : (
+                            <FileText
+                              className="h-5 w-5"
+                              style={{
+                                color: getCategoryColor(doc.categoryId),
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="text-base truncate">
+                            {doc.title}
+                          </CardTitle>
+                          <CardDescription className="truncate">
+                            {getCategoryName(doc.categoryId)}
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          asChild
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={e => {
+                              e.stopPropagation();
+                              setSelectedDocument(doc);
+                              setIsDetailDialogOpen(true);
+                            }}
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Voir détails
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleDownload(doc);
+                            }}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Télécharger
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={e => {
+                              e.stopPropagation();
+                              handlePrint(doc);
+                            }}
+                          >
+                            <Printer className="mr-2 h-4 w-4" />
+                            Imprimer
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (
+                                confirm(
+                                  "Êtes-vous sûr de vouloir supprimer ce document ?"
+                                )
+                              ) {
+                                deleteDocument.mutate({ id: doc.id });
+                              }
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      {doc.description || "Aucune description"}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        {getStatusBadge(doc.status)}
+                        {getPriorityBadge(doc.priority)}
+                      </div>
+                      {doc.fileUrl && (
+                        <Badge variant="outline" className="gap-1">
+                          <FileIcon className="h-3 w-3" />
+                          Fichier
+                        </Badge>
                       )}
                     </div>
-                    <div className="min-w-0">
-                      <CardTitle className="text-base truncate">{doc.title}</CardTitle>
-                      <CardDescription className="truncate">
-                        {getCategoryName(doc.categoryId)}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedDocument(doc);
-                        setIsDetailDialogOpen(true);
-                      }}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Voir détails
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        handleDownload(doc);
-                      }}>
-                        <Download className="mr-2 h-4 w-4" />
-                        Télécharger
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        handlePrint(doc);
-                      }}>
-                        <Printer className="mr-2 h-4 w-4" />
-                        Imprimer
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        className="text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
-                            deleteDocument.mutate({ id: doc.id });
-                          }
-                        }}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Supprimer
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                  {doc.description || "Aucune description"}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    {getStatusBadge(doc.status)}
-                    {getPriorityBadge(doc.priority)}
-                  </div>
-                  {doc.fileUrl && (
-                    <Badge variant="outline" className="gap-1">
-                      <FileIcon className="h-3 w-3" />
-                      Fichier
-                    </Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(filteredDocuments.length / itemsPerPage)}
-          itemsPerPage={itemsPerPage}
-          totalItems={filteredDocuments.length}
-          onPageChange={setCurrentPage}
-          onItemsPerPageChange={setItemsPerPage}
-        />
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredDocuments.length / itemsPerPage)}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredDocuments.length}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </>
       ) : (
         <Card>
@@ -585,7 +637,10 @@ export default function Documents() {
             <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
             <h3 className="text-lg font-medium mb-2">Aucun document trouvé</h3>
             <p className="text-muted-foreground mb-4">
-              {searchTerm || categoryFilter !== "all" || statusFilter !== "all" || priorityFilter !== "all"
+              {searchTerm ||
+              categoryFilter !== "all" ||
+              statusFilter !== "all" ||
+              priorityFilter !== "all"
                 ? "Essayez de modifier vos filtres de recherche"
                 : "Commencez par créer votre premier document"}
             </p>
@@ -612,7 +667,9 @@ export default function Documents() {
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="Nom du document"
               />
             </div>
@@ -621,22 +678,26 @@ export default function Documents() {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Description du document"
                 rows={3}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="category">Catégorie *</Label>
-              <Select 
-                value={formData.categoryId.toString()} 
-                onValueChange={(v) => setFormData({ ...formData, categoryId: parseInt(v) })}
+              <Select
+                value={formData.categoryId.toString()}
+                onValueChange={v =>
+                  setFormData({ ...formData, categoryId: parseInt(v) })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une catégorie" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories?.map((cat) => (
+                  {categories?.map(cat => (
                     <SelectItem key={cat.id} value={cat.id.toString()}>
                       {cat.name}
                     </SelectItem>
@@ -647,9 +708,11 @@ export default function Documents() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="priority">Priorité</Label>
-                <Select 
-                  value={formData.priority} 
-                  onValueChange={(v: any) => setFormData({ ...formData, priority: v })}
+                <Select
+                  value={formData.priority}
+                  onValueChange={(v: any) =>
+                    setFormData({ ...formData, priority: v })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -664,9 +727,11 @@ export default function Documents() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="status">Statut</Label>
-                <Select 
-                  value={formData.status} 
-                  onValueChange={(v: any) => setFormData({ ...formData, status: v })}
+                <Select
+                  value={formData.status}
+                  onValueChange={(v: any) =>
+                    setFormData({ ...formData, status: v })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -681,10 +746,16 @@ export default function Documents() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsCreateDialogOpen(false)}
+            >
               Annuler
             </Button>
-            <Button onClick={handleCreateDocument} disabled={createDocument.isPending}>
+            <Button
+              onClick={handleCreateDocument}
+              disabled={createDocument.isPending}
+            >
               {createDocument.isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -702,7 +773,9 @@ export default function Documents() {
           <DialogHeader>
             <div className="flex items-start justify-between">
               <div>
-                <DialogTitle className="text-xl">{selectedDocument?.title}</DialogTitle>
+                <DialogTitle className="text-xl">
+                  {selectedDocument?.title}
+                </DialogTitle>
                 <DialogDescription>
                   {getCategoryName(selectedDocument?.categoryId || 0)}
                 </DialogDescription>
@@ -713,7 +786,7 @@ export default function Documents() {
               </div>
             </div>
           </DialogHeader>
-          
+
           <ScrollArea className="flex-1 -mx-6 px-6">
             <div className="space-y-6 py-4">
               {/* Description */}
@@ -730,10 +803,14 @@ export default function Documents() {
               <div>
                 <h4 className="text-sm font-medium mb-3">Changer le statut</h4>
                 <div className="flex flex-wrap gap-2">
-                  {["pending", "in-progress", "completed"].map((status) => (
+                  {["pending", "in-progress", "completed"].map(status => (
                     <Button
                       key={status}
-                      variant={selectedDocument?.status === status ? "default" : "outline"}
+                      variant={
+                        selectedDocument?.status === status
+                          ? "default"
+                          : "outline"
+                      }
                       size="sm"
                       onClick={() => {
                         updateDocument.mutate({
@@ -760,34 +837,48 @@ export default function Documents() {
                   <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                     {getFileIcon(selectedDocument.fileType)}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{selectedDocument.fileName}</p>
+                      <p className="font-medium truncate">
+                        {selectedDocument.fileName}
+                      </p>
                       <p className="text-sm text-muted-foreground">
                         {(selectedDocument.fileSize / 1024).toFixed(1)} Ko
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => handleDownload(selectedDocument)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDownload(selectedDocument)}
+                      >
                         <Download className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handlePrint(selectedDocument)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handlePrint(selectedDocument)}
+                      >
                         <Printer className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <div 
+                  <div
                     className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {isUploadingFile ? (
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="text-sm text-muted-foreground">Upload en cours...</p>
+                        <p className="text-sm text-muted-foreground">
+                          Upload en cours...
+                        </p>
                       </div>
                     ) : (
                       <>
                         <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                        <p className="text-sm font-medium">Cliquez pour uploader un fichier</p>
+                        <p className="text-sm font-medium">
+                          Cliquez pour uploader un fichier
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Word, Excel, PDF, Images (max 10 Mo)
                         </p>
@@ -814,8 +905,11 @@ export default function Documents() {
                 </h4>
                 <div className="space-y-3">
                   {notes && notes.length > 0 ? (
-                    notes.map((note) => (
-                      <div key={note.id} className="p-3 bg-muted rounded-lg group">
+                    notes.map(note => (
+                      <div
+                        key={note.id}
+                        className="p-3 bg-muted rounded-lg group"
+                      >
                         <div className="flex items-start justify-between">
                           <p className="text-sm">{note.content}</p>
                           <Button
@@ -828,23 +922,28 @@ export default function Documents() {
                           </Button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-2">
-                          {new Date(note.createdAt).toLocaleDateString("fr-FR", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {new Date(note.createdAt).toLocaleDateString(
+                            "fr-FR",
+                            {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm text-muted-foreground">Aucune note pour ce document</p>
+                    <p className="text-sm text-muted-foreground">
+                      Aucune note pour ce document
+                    </p>
                   )}
                   <div className="flex gap-2">
                     <Textarea
                       value={newNote}
-                      onChange={(e) => setNewNote(e.target.value)}
+                      onChange={e => setNewNote(e.target.value)}
                       placeholder="Ajouter une note..."
                       rows={2}
                       className="flex-1"
@@ -873,7 +972,10 @@ export default function Documents() {
           </ScrollArea>
 
           <DialogFooter className="border-t pt-4">
-            <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDetailDialogOpen(false)}
+            >
               Fermer
             </Button>
             <Button
@@ -889,7 +991,9 @@ export default function Documents() {
             <Button
               variant="destructive"
               onClick={() => {
-                if (confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
+                if (
+                  confirm("Êtes-vous sûr de vouloir supprimer ce document ?")
+                ) {
                   deleteDocument.mutate({ id: selectedDocument.id });
                 }
               }}

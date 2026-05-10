@@ -1,12 +1,32 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 
 export default function AdminRoles() {
@@ -15,7 +35,11 @@ export default function AdminRoles() {
   const [formData, setFormData] = useState({ name: "", description: "" });
 
   // Fetch roles
-  const { data: roles = [], isLoading, refetch } = trpc.admin.getRoles.useQuery();
+  const {
+    data: roles = [],
+    isLoading,
+    refetch,
+  } = trpc.admin.getRoles.useQuery();
 
   // Create role mutation
   const createRoleMutation = trpc.admin.createRole.useMutation({
@@ -25,7 +49,7 @@ export default function AdminRoles() {
       setIsOpen(false);
       refetch();
     },
-    onError: (error) => {
+    onError: error => {
       alert(`Erreur: ${error.message || "Erreur lors de la création du rôle"}`);
     },
   });
@@ -64,7 +88,9 @@ export default function AdminRoles() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestion des Rôles</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Gestion des Rôles
+          </h1>
           <p className="text-muted-foreground mt-2">
             Gérez les rôles et les permissions de votre association
           </p>
@@ -90,7 +116,9 @@ export default function AdminRoles() {
                   id="name"
                   placeholder="Ex: Modérateur"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -100,12 +128,18 @@ export default function AdminRoles() {
                   id="description"
                   placeholder="Décrivez les responsabilités de ce rôle"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={4}
                 />
               </div>
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsOpen(false)}
+                >
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createRoleMutation.isPending}>
@@ -121,7 +155,8 @@ export default function AdminRoles() {
         <CardHeader>
           <CardTitle>Rôles Existants</CardTitle>
           <CardDescription>
-            {roles.length} rôle{roles.length !== 1 ? "s" : ""} configuré{roles.length !== 1 ? "s" : ""}
+            {roles.length} rôle{roles.length !== 1 ? "s" : ""} configuré
+            {roles.length !== 1 ? "s" : ""}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -131,7 +166,9 @@ export default function AdminRoles() {
             </div>
           ) : roles.length === 0 ? (
             <div className="flex items-center justify-center py-8">
-              <p className="text-muted-foreground">Aucun rôle créé pour le moment</p>
+              <p className="text-muted-foreground">
+                Aucun rôle créé pour le moment
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -146,18 +183,20 @@ export default function AdminRoles() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {roles.map((role) => (
+                  {roles.map(role => (
                     <TableRow key={role.id}>
                       <TableCell className="font-medium">{role.name}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {role.description || "-"}
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          role.isSystem
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            role.isSystem
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
                           {role.isSystem ? "Système" : "Personnalisé"}
                         </span>
                       </TableCell>
@@ -168,11 +207,19 @@ export default function AdminRoles() {
                         <div className="flex justify-end gap-2">
                           {!role.isSystem && (
                             <>
-                              <Button variant="ghost" size="sm" className="gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-2"
+                              >
                                 <Edit2 className="w-4 h-4" />
                                 Modifier
                               </Button>
-                              <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-2 text-destructive hover:text-destructive"
+                              >
                                 <Trash2 className="w-4 h-4" />
                                 Supprimer
                               </Button>

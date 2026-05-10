@@ -1,6 +1,12 @@
 import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -34,25 +40,38 @@ const PERIOD_OPTIONS = [
   { value: "year", label: "Cette année" },
 ];
 
-const COLORS = ["#1a2a5c", "#2ecc71", "#1abc9c", "#f39c12", "#e74c3c", "#9b59b6"];
+const COLORS = [
+  "#1a2a5c",
+  "#2ecc71",
+  "#1abc9c",
+  "#f39c12",
+  "#e74c3c",
+  "#9b59b6",
+];
 
 export default function CRMReports() {
   const [selectedPeriod, setSelectedPeriod] = useState("month");
 
   // Fetch data
-  const { data: contacts, isLoading: contactsLoading } = trpc.crm.contacts.list.useQuery();
-  const { data: activities, isLoading: activitiesLoading } = trpc.crm.activities.list.useQuery(0);
-  const { data: pipeline, isLoading: pipelineLoading } = trpc.crm.pipeline.list.useQuery();
+  const { data: contacts, isLoading: contactsLoading } =
+    trpc.crm.contacts.list.useQuery();
+  const { data: activities, isLoading: activitiesLoading } =
+    trpc.crm.activities.list.useQuery(0);
+  const { data: pipeline, isLoading: pipelineLoading } =
+    trpc.crm.pipeline.list.useQuery();
 
   // Calculate metrics
   const metrics = useMemo(() => {
     if (!contacts) return null;
 
     const totalContacts = contacts.length;
-    const activeContacts = contacts.filter((c) => c.status === "active").length;
-    const prospectContacts = contacts.filter((c) => c.status === "prospect").length;
+    const activeContacts = contacts.filter(c => c.status === "active").length;
+    const prospectContacts = contacts.filter(
+      c => c.status === "prospect"
+    ).length;
     const avgEngagementScore =
-      contacts.reduce((sum, c) => sum + (c.engagementScore || 0), 0) / totalContacts || 0;
+      contacts.reduce((sum, c) => sum + (c.engagementScore || 0), 0) /
+        totalContacts || 0;
 
     return {
       totalContacts,
@@ -69,7 +88,7 @@ export default function CRMReports() {
     const segments = contacts.reduce(
       (acc, contact) => {
         const segmentName = contact.segment || "général";
-        const existing = acc.find((s) => s.name === segmentName);
+        const existing = acc.find(s => s.name === segmentName);
         if (existing) {
           existing.value++;
         } else {
@@ -90,19 +109,19 @@ export default function CRMReports() {
     return [
       {
         name: "Prospect",
-        value: contacts.filter((c) => c.status === "prospect").length,
+        value: contacts.filter(c => c.status === "prospect").length,
       },
       {
         name: "Actif",
-        value: contacts.filter((c) => c.status === "active").length,
+        value: contacts.filter(c => c.status === "active").length,
       },
       {
         name: "Inactif",
-        value: contacts.filter((c) => c.status === "inactive").length,
+        value: contacts.filter(c => c.status === "inactive").length,
       },
       {
         name: "Archivé",
-        value: contacts.filter((c) => c.status === "archived").length,
+        value: contacts.filter(c => c.status === "archived").length,
       },
     ];
   }, [contacts]);
@@ -123,7 +142,7 @@ export default function CRMReports() {
     const types = activities.reduce(
       (acc, activity) => {
         const typeName = typeLabels[activity.type] || activity.type;
-        const existing = acc.find((t) => t.name === typeName);
+        const existing = acc.find(t => t.name === typeName);
         if (existing) {
           existing.value++;
         } else {
@@ -145,8 +164,9 @@ export default function CRMReports() {
     return months.map((month, index) => ({
       month,
       engagement: Math.floor(
-        contacts.reduce((sum, c) => sum + (c.engagementScore || 0), 0) / contacts.length +
-          (index * 5)
+        contacts.reduce((sum, c) => sum + (c.engagementScore || 0), 0) /
+          contacts.length +
+          index * 5
       ),
       contacts: Math.floor(contacts.length * (0.8 + index * 0.05)),
     }));
@@ -168,7 +188,7 @@ export default function CRMReports() {
     const stages = pipeline.reduce(
       (acc, item) => {
         const stageName = stageLabels[item.stage] || item.stage;
-        const existing = acc.find((s) => s.name === stageName);
+        const existing = acc.find(s => s.name === stageName);
         if (existing) {
           existing.value++;
         } else {
@@ -208,7 +228,7 @@ export default function CRMReports() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {PERIOD_OPTIONS.map((option) => (
+              {PERIOD_OPTIONS.map(option => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
@@ -222,24 +242,39 @@ export default function CRMReports() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Contacts
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.totalContacts}</div>
-                <p className="text-xs text-muted-foreground">Tous les contacts</p>
+                <div className="text-2xl font-bold">
+                  {metrics.totalContacts}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Tous les contacts
+                </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Contacts Actifs</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Contacts Actifs
+                </CardTitle>
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.activeContacts}</div>
+                <div className="text-2xl font-bold">
+                  {metrics.activeContacts}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  {metrics.totalContacts > 0 ? Math.round((metrics.activeContacts / metrics.totalContacts) * 100) : 0}% du total
+                  {metrics.totalContacts > 0
+                    ? Math.round(
+                        (metrics.activeContacts / metrics.totalContacts) * 100
+                      )
+                    : 0}
+                  % du total
                 </p>
               </CardContent>
             </Card>
@@ -250,20 +285,31 @@ export default function CRMReports() {
                 <Target className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.prospectContacts}</div>
+                <div className="text-2xl font-bold">
+                  {metrics.prospectContacts}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  {metrics.totalContacts > 0 ? Math.round((metrics.prospectContacts / metrics.totalContacts) * 100) : 0}% du total
+                  {metrics.totalContacts > 0
+                    ? Math.round(
+                        (metrics.prospectContacts / metrics.totalContacts) * 100
+                      )
+                    : 0}
+                  % du total
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Engagement Moyen</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Engagement Moyen
+                </CardTitle>
                 <TrendingUp className="h-4 w-4 text-orange-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.avgEngagementScore}</div>
+                <div className="text-2xl font-bold">
+                  {metrics.avgEngagementScore}
+                </div>
                 <p className="text-xs text-muted-foreground">Score sur 100</p>
               </CardContent>
             </Card>
@@ -276,7 +322,9 @@ export default function CRMReports() {
           <Card>
             <CardHeader>
               <CardTitle>Distribution par Segment</CardTitle>
-              <CardDescription>Répartition des contacts par segment</CardDescription>
+              <CardDescription>
+                Répartition des contacts par segment
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {segmentData.length > 0 ? (
@@ -293,7 +341,10 @@ export default function CRMReports() {
                       dataKey="value"
                     >
                       {segmentData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -311,7 +362,9 @@ export default function CRMReports() {
           <Card>
             <CardHeader>
               <CardTitle>Distribution par Statut</CardTitle>
-              <CardDescription>Répartition des contacts par statut</CardDescription>
+              <CardDescription>
+                Répartition des contacts par statut
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {statusData.length > 0 ? (
@@ -336,7 +389,9 @@ export default function CRMReports() {
           <Card>
             <CardHeader>
               <CardTitle>Activités par Type</CardTitle>
-              <CardDescription>Répartition des activités par type</CardDescription>
+              <CardDescription>
+                Répartition des activités par type
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {activityTypeData.length > 0 ? (
@@ -361,7 +416,9 @@ export default function CRMReports() {
           <Card>
             <CardHeader>
               <CardTitle>Tendance d'Engagement</CardTitle>
-              <CardDescription>Évolution de l'engagement sur 6 mois</CardDescription>
+              <CardDescription>
+                Évolution de l'engagement sur 6 mois
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {engagementTrendData.length > 0 ? (
@@ -404,21 +461,28 @@ export default function CRMReports() {
               {pipelineData.length > 0 ? (
                 <div className="space-y-4">
                   {pipelineData.map((stage, index) => (
-                    <div key={stage.name} className="flex items-center justify-between">
+                    <div
+                      key={stage.name}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{index + 1}</Badge>
-                        <span className="font-medium capitalize">{stage.name}</span>
+                        <span className="font-medium capitalize">
+                          {stage.name}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-32 bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-primary h-2 rounded-full"
                             style={{
-                              width: `${(stage.value / Math.max(...pipelineData.map((s) => s.value))) * 100}%`,
+                              width: `${(stage.value / Math.max(...pipelineData.map(s => s.value))) * 100}%`,
                             }}
                           />
                         </div>
-                        <span className="text-sm font-medium w-8 text-right">{stage.value}</span>
+                        <span className="text-sm font-medium w-8 text-right">
+                          {stage.value}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -441,10 +505,14 @@ export default function CRMReports() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Taux de Conversion</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Taux de Conversion
+                </h3>
                 <p className="text-2xl font-bold">
                   {metrics
-                    ? Math.round((metrics.activeContacts / metrics.totalContacts) * 100)
+                    ? Math.round(
+                        (metrics.activeContacts / metrics.totalContacts) * 100
+                      )
                     : 0}
                   %
                 </p>
@@ -454,9 +522,17 @@ export default function CRMReports() {
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Taux d'Activité</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Taux d'Activité
+                </h3>
                 <p className="text-2xl font-bold">
-                  {activities ? Math.round((activities.length / (metrics?.totalContacts || 1)) * 100) : 0}%
+                  {activities
+                    ? Math.round(
+                        (activities.length / (metrics?.totalContacts || 1)) *
+                          100
+                      )
+                    : 0}
+                  %
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   Contacts avec activités enregistrées
@@ -464,7 +540,9 @@ export default function CRMReports() {
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Contacts en Pipeline</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Contacts en Pipeline
+                </h3>
                 <p className="text-2xl font-bold">{pipeline?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   En cours de processus d'adhésion

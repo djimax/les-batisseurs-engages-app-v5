@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,7 +29,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { AlertCircle, Plus, ArrowLeft, Edit2, Trash2, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import {
+  AlertCircle,
+  Plus,
+  ArrowLeft,
+  Edit2,
+  Trash2,
+  CheckCircle,
+  Clock,
+  AlertTriangle,
+} from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { AttachmentsSection } from "@/components/AttachmentsSection";
@@ -36,10 +51,24 @@ export default function ProjectDetail() {
   const [activeTab, setActiveTab] = useState("info");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isAddingExpense, setIsAddingExpense] = useState(false);
-  const [newTaskData, setNewTaskData] = useState({ title: "", description: "", priority: "medium", dueDate: "" });
-  const [newExpenseData, setNewExpenseData] = useState({ description: "", amount: "", category: "other", date: new Date().toISOString().split("T")[0] });
+  const [newTaskData, setNewTaskData] = useState({
+    title: "",
+    description: "",
+    priority: "medium",
+    dueDate: "",
+  });
+  const [newExpenseData, setNewExpenseData] = useState({
+    description: "",
+    amount: "",
+    category: "other",
+    date: new Date().toISOString().split("T")[0],
+  });
 
-  const { data: project, isLoading, error } = trpc.projects.getById.useQuery({ id: projectId });
+  const {
+    data: project,
+    isLoading,
+    error,
+  } = trpc.projects.getById.useQuery({ id: projectId });
   // const { data: stats } = trpc.projects.getStats.useQuery({ projectId });
   const { data: members } = trpc.projects.getMembers.useQuery({ projectId });
   const { data: expenses } = trpc.projects.getExpenses.useQuery({ projectId });
@@ -67,7 +96,12 @@ export default function ProjectDetail() {
         dueDate: newTaskData.dueDate || undefined,
       });
       toast.success("Tâche créée avec succès");
-      setNewTaskData({ title: "", description: "", priority: "medium", dueDate: "" });
+      setNewTaskData({
+        title: "",
+        description: "",
+        priority: "medium",
+        dueDate: "",
+      });
       setIsAddingTask(false);
       utils.projects.getById.invalidate({ id: projectId });
     } catch (err) {
@@ -91,7 +125,10 @@ export default function ProjectDetail() {
 
   const handleUpdateTaskStatus = async (taskId: number, status: string) => {
     try {
-      await updateTaskStatusMutation.mutateAsync({ id: taskId, status: status as any });
+      await updateTaskStatusMutation.mutateAsync({
+        id: taskId,
+        status: status as any,
+      });
       utils.projects.getById.invalidate({ id: projectId });
       // utils.projects.getStats.invalidate({ projectId });
     } catch (err) {
@@ -116,7 +153,12 @@ export default function ProjectDetail() {
         date: newExpenseData.date ? new Date(newExpenseData.date) : undefined,
       });
       toast.success("Dépense ajoutée avec succès");
-      setNewExpenseData({ description: "", amount: "", category: "other", date: new Date().toISOString().split("T")[0] });
+      setNewExpenseData({
+        description: "",
+        amount: "",
+        category: "other",
+        date: new Date().toISOString().split("T")[0],
+      });
       setIsAddingExpense(false);
       utils.projects.getExpenses.invalidate({ projectId });
       // utils.projects.getStats.invalidate({ projectId });
@@ -185,7 +227,11 @@ export default function ProjectDetail() {
   if (error || !project) {
     return (
       <div className="space-y-4">
-        <Button variant="outline" onClick={() => window.location.href = "/projects"} className="gap-2">
+        <Button
+          variant="outline"
+          onClick={() => (window.location.href = "/projects")}
+          className="gap-2"
+        >
           <ArrowLeft className="h-4 w-4" />
           Retour aux projets
         </Button>
@@ -202,7 +248,11 @@ export default function ProjectDetail() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => window.location.href = "/projects"} size="sm">
+          <Button
+            variant="outline"
+            onClick={() => (window.location.href = "/projects")}
+            size="sm"
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
@@ -210,7 +260,9 @@ export default function ProjectDetail() {
             <p className="text-muted-foreground">{project.description}</p>
           </div>
         </div>
-        <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
+        <Badge className={getStatusColor(project.status)}>
+          {project.status}
+        </Badge>
       </div>
 
       {/* Statistiques */}
@@ -218,37 +270,59 @@ export default function ProjectDetail() {
         <div className="grid gap-4 md:grid-cols-5">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Progression</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Progression
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{project?.progress || 0}%</div>
+              <div className="text-2xl font-bold">
+                {project?.progress || 0}%
+              </div>
               <Progress value={project?.progress || 0} className="mt-2 h-2" />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Budget</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Budget
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{parseFloat(project?.budget || '0').toLocaleString()} €</div>
-              <p className="text-xs text-muted-foreground mt-1">Dépensé: {(expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0).toLocaleString()} €</p>
+              <div className="text-2xl font-bold">
+                {parseFloat(project?.budget || "0").toLocaleString()} €
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Dépensé:{" "}
+                {(
+                  expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) ||
+                  0
+                ).toLocaleString()}{" "}
+                €
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Tâches</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Tâches
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{project?.tasks?.filter(t => t.status === 'done').length || 0}/{project?.tasks?.length || 0}</div>
+              <div className="text-2xl font-bold">
+                {project?.tasks?.filter(t => t.status === "done").length || 0}/
+                {project?.tasks?.length || 0}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">Complétées</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Membres</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Membres
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{members?.length || 0}</div>
@@ -257,10 +331,21 @@ export default function ProjectDetail() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Restant</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Restant
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{(parseFloat(project?.budget || '0') - (expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0)).toLocaleString()} €</div>
+              <div className="text-2xl font-bold">
+                {(
+                  parseFloat(project?.budget || "0") -
+                  (expenses?.reduce(
+                    (sum, e) => sum + parseFloat(e.amount),
+                    0
+                  ) || 0)
+                ).toLocaleString()}{" "}
+                €
+              </div>
               <p className="text-xs text-muted-foreground mt-1">Budget</p>
             </CardContent>
           </Card>
@@ -287,12 +372,18 @@ export default function ProjectDetail() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Date de début</p>
-                  <p className="font-medium">{project.startDate ? new Date(project.startDate).toLocaleDateString("fr-FR") : "N/A"}</p>
+                  <p className="font-medium">
+                    {project.startDate
+                      ? new Date(project.startDate).toLocaleDateString("fr-FR")
+                      : "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Date de fin</p>
                   <p className="font-medium">
-                    {project.endDate ? new Date(project.endDate).toLocaleDateString("fr-FR") : "N/A"}
+                    {project.endDate
+                      ? new Date(project.endDate).toLocaleDateString("fr-FR")
+                      : "N/A"}
                   </p>
                 </div>
 
@@ -318,14 +409,21 @@ export default function ProjectDetail() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Ajouter une tâche</DialogTitle>
-                  <DialogDescription>Créez une nouvelle tâche pour ce projet</DialogDescription>
+                  <DialogDescription>
+                    Créez une nouvelle tâche pour ce projet
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium">Titre *</label>
                     <Input
                       value={newTaskData.title}
-                      onChange={(e) => setNewTaskData({ ...newTaskData, title: e.target.value })}
+                      onChange={e =>
+                        setNewTaskData({
+                          ...newTaskData,
+                          title: e.target.value,
+                        })
+                      }
                       placeholder="Titre de la tâche"
                     />
                   </div>
@@ -333,7 +431,12 @@ export default function ProjectDetail() {
                     <label className="text-sm font-medium">Description</label>
                     <Textarea
                       value={newTaskData.description}
-                      onChange={(e) => setNewTaskData({ ...newTaskData, description: e.target.value })}
+                      onChange={e =>
+                        setNewTaskData({
+                          ...newTaskData,
+                          description: e.target.value,
+                        })
+                      }
                       placeholder="Description..."
                       rows={3}
                     />
@@ -341,7 +444,12 @@ export default function ProjectDetail() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium">Priorité</label>
-                      <Select value={newTaskData.priority} onValueChange={(value) => setNewTaskData({ ...newTaskData, priority: value })}>
+                      <Select
+                        value={newTaskData.priority}
+                        onValueChange={value =>
+                          setNewTaskData({ ...newTaskData, priority: value })
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -358,15 +466,26 @@ export default function ProjectDetail() {
                       <Input
                         type="date"
                         value={newTaskData.dueDate}
-                        onChange={(e) => setNewTaskData({ ...newTaskData, dueDate: e.target.value })}
+                        onChange={e =>
+                          setNewTaskData({
+                            ...newTaskData,
+                            dueDate: e.target.value,
+                          })
+                        }
                       />
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setIsAddingTask(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsAddingTask(false)}
+                    >
                       Annuler
                     </Button>
-                    <Button onClick={handleAddTask} disabled={createTaskMutation.isPending}>
+                    <Button
+                      onClick={handleAddTask}
+                      disabled={createTaskMutation.isPending}
+                    >
                       Ajouter
                     </Button>
                   </div>
@@ -378,33 +497,54 @@ export default function ProjectDetail() {
           <div className="space-y-2">
             {project.tasks && project.tasks.length > 0 ? (
               project.tasks.map((task: any) => (
-                <Card key={task.id} className="hover:shadow-sm transition-shadow">
+                <Card
+                  key={task.id}
+                  className="hover:shadow-sm transition-shadow"
+                >
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           {getPriorityIcon(task.priority)}
                           <h3 className="font-medium">{task.title}</h3>
-                          <Badge className={getStatusColor(task.status)} variant="outline">
+                          <Badge
+                            className={getStatusColor(task.status)}
+                            variant="outline"
+                          >
                             {task.status}
                           </Badge>
                         </div>
-                        {task.description && <p className="text-sm text-muted-foreground mt-1">{task.description}</p>}
+                        {task.description && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {task.description}
+                          </p>
+                        )}
                         {task.dueDate && (
                           <p className="text-xs text-muted-foreground mt-2">
                             <Clock className="h-3 w-3 inline mr-1" />
-                            {task.dueDate ? new Date(task.dueDate).toLocaleDateString("fr-FR") : "N/A"}
+                            {task.dueDate
+                              ? new Date(task.dueDate).toLocaleDateString(
+                                  "fr-FR"
+                                )
+                              : "N/A"}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <Select value={task.status} onValueChange={(status) => handleUpdateTaskStatus(task.id, status)}>
+                        <Select
+                          value={task.status}
+                          onValueChange={status =>
+                            handleUpdateTaskStatus(task.id, status)
+                          }
+                        >
                           <SelectTrigger className="w-32">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="todo">À faire</SelectItem>
-                            <SelectItem value="in-progress">En cours</SelectItem>
+                            <SelectItem value="in-progress">
+                              En cours
+                            </SelectItem>
                             <SelectItem value="review">En révision</SelectItem>
                             <SelectItem value="done">Complétée</SelectItem>
                             <SelectItem value="blocked">Bloquée</SelectItem>
@@ -446,17 +586,24 @@ export default function ProjectDetail() {
               {members && members.length > 0 ? (
                 <div className="space-y-2">
                   {members.map((member: any) => (
-                    <div key={member.id} className="flex items-center justify-between p-2 border rounded">
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between p-2 border rounded"
+                    >
                       <div>
                         <p className="font-medium">{member.name}</p>
-                        <p className="text-sm text-muted-foreground">{member.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {member.email}
+                        </p>
                       </div>
                       <Badge>{member.role}</Badge>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-center py-4">Aucun membre assigné</p>
+                <p className="text-muted-foreground text-center py-4">
+                  Aucun membre assigné
+                </p>
               )}
             </CardContent>
           </Card>
@@ -475,31 +622,53 @@ export default function ProjectDetail() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Ajouter une dépense</DialogTitle>
-                  <DialogDescription>Enregistrez une nouvelle dépense pour ce projet</DialogDescription>
+                  <DialogDescription>
+                    Enregistrez une nouvelle dépense pour ce projet
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium">Description *</label>
                     <Input
                       value={newExpenseData.description}
-                      onChange={(e) => setNewExpenseData({ ...newExpenseData, description: e.target.value })}
+                      onChange={e =>
+                        setNewExpenseData({
+                          ...newExpenseData,
+                          description: e.target.value,
+                        })
+                      }
                       placeholder="Description de la dépense"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium">Montant (€) *</label>
+                      <label className="text-sm font-medium">
+                        Montant (€) *
+                      </label>
                       <Input
                         type="number"
                         value={newExpenseData.amount}
-                        onChange={(e) => setNewExpenseData({ ...newExpenseData, amount: e.target.value })}
+                        onChange={e =>
+                          setNewExpenseData({
+                            ...newExpenseData,
+                            amount: e.target.value,
+                          })
+                        }
                         placeholder="0"
                         min="0"
                       />
                     </div>
                     <div>
                       <label className="text-sm font-medium">Catégorie</label>
-                      <Select value={newExpenseData.category} onValueChange={(value) => setNewExpenseData({ ...newExpenseData, category: value })}>
+                      <Select
+                        value={newExpenseData.category}
+                        onValueChange={value =>
+                          setNewExpenseData({
+                            ...newExpenseData,
+                            category: value,
+                          })
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -518,14 +687,25 @@ export default function ProjectDetail() {
                     <Input
                       type="date"
                       value={newExpenseData.date}
-                      onChange={(e) => setNewExpenseData({ ...newExpenseData, date: e.target.value })}
+                      onChange={e =>
+                        setNewExpenseData({
+                          ...newExpenseData,
+                          date: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setIsAddingExpense(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsAddingExpense(false)}
+                    >
                       Annuler
                     </Button>
-                    <Button onClick={handleAddExpense} disabled={addExpenseMutation.isPending}>
+                    <Button
+                      onClick={handleAddExpense}
+                      disabled={addExpenseMutation.isPending}
+                    >
                       Ajouter
                     </Button>
                   </div>
@@ -542,21 +722,60 @@ export default function ProjectDetail() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Budget alloué</p>
-                    <p className="text-2xl font-bold">{parseFloat(project?.budget || '0').toLocaleString()} €</p>
+                    <p className="text-sm text-muted-foreground">
+                      Budget alloué
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {parseFloat(project?.budget || "0").toLocaleString()} €
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Dépensé</p>
-                    <p className="text-2xl font-bold text-orange-600">{(expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0).toLocaleString()} €</p>
+                    <p className="text-2xl font-bold text-orange-600">
+                      {(
+                        expenses?.reduce(
+                          (sum, e) => sum + parseFloat(e.amount),
+                          0
+                        ) || 0
+                      ).toLocaleString()}{" "}
+                      €
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Restant</p>
-                    <p className="text-2xl font-bold text-green-600">{(parseFloat(project?.budget || '0') - (expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0)).toLocaleString()} €</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {(
+                        parseFloat(project?.budget || "0") -
+                        (expenses?.reduce(
+                          (sum, e) => sum + parseFloat(e.amount),
+                          0
+                        ) || 0)
+                      ).toLocaleString()}{" "}
+                      €
+                    </p>
                   </div>
                 </div>
-                <Progress value={((expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0) / parseFloat(project?.budget || '1')) * 100} className="h-2" />
+                <Progress
+                  value={
+                    ((expenses?.reduce(
+                      (sum, e) => sum + parseFloat(e.amount),
+                      0
+                    ) || 0) /
+                      parseFloat(project?.budget || "1")) *
+                    100
+                  }
+                  className="h-2"
+                />
                 <p className="text-sm text-muted-foreground">
-                  {(((expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0) / parseFloat(project?.budget || '1')) * 100).toFixed(1)}% du budget utilisé
+                  {(
+                    ((expenses?.reduce(
+                      (sum, e) => sum + parseFloat(e.amount),
+                      0
+                    ) || 0) /
+                      parseFloat(project?.budget || "1")) *
+                    100
+                  ).toFixed(1)}
+                  % du budget utilisé
                 </p>
               </CardContent>
             </Card>
@@ -571,11 +790,16 @@ export default function ProjectDetail() {
                       <div>
                         <p className="font-medium">{expense.description}</p>
                         <p className="text-sm text-muted-foreground">
-                          {expense.category} • {expense.date ? new Date(expense.date).toLocaleDateString("fr-FR") : "N/A"}
+                          {expense.category} •{" "}
+                          {expense.date
+                            ? new Date(expense.date).toLocaleDateString("fr-FR")
+                            : "N/A"}
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
-                        <p className="font-bold text-lg">{expense.amount.toLocaleString()} €</p>
+                        <p className="font-bold text-lg">
+                          {expense.amount.toLocaleString()} €
+                        </p>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -606,7 +830,8 @@ export default function ProjectDetail() {
             </CardHeader>
             <CardContent>
               <div className="text-sm text-muted-foreground">
-                L'historique des modifications sera disponible dans une version future.
+                L'historique des modifications sera disponible dans une version
+                future.
               </div>
             </CardContent>
           </Card>

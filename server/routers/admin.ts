@@ -22,7 +22,11 @@ export const adminRouter = router({
       }
 
       // Read SQL file
-      const sqlFile = path.join(process.cwd(), "drizzle", "migrations_clean.sql");
+      const sqlFile = path.join(
+        process.cwd(),
+        "drizzle",
+        "migrations_clean.sql"
+      );
       if (!fs.existsSync(sqlFile)) {
         throw new Error("Migration SQL file not found");
       }
@@ -30,8 +34,8 @@ export const adminRouter = router({
       const sql = fs.readFileSync(sqlFile, "utf8");
       const statements = sql
         .split(";")
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0 && !s.startsWith("--"));
+        .map(s => s.trim())
+        .filter(s => s.length > 0 && !s.startsWith("--"));
 
       console.log(`📋 Running ${statements.length} SQL statements...`);
 

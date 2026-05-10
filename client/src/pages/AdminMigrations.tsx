@@ -1,10 +1,16 @@
-import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, CheckCircle2, Database } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle, CheckCircle2, Database } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AdminMigrations() {
   const [isRunning, setIsRunning] = useState(false);
@@ -15,7 +21,7 @@ export default function AdminMigrations() {
 
   // Check if user is admin
   useEffect(() => {
-    if (user?.role === 'admin') {
+    if (user?.role === "admin") {
       setIsAdmin(true);
     }
   }, [user]);
@@ -24,7 +30,7 @@ export default function AdminMigrations() {
     onSuccess: (data: any) => {
       setIsRunning(false);
       setResult(data);
-      toast.success('✅ Migrations completed successfully!');
+      toast.success("✅ Migrations completed successfully!");
     },
     onError: (error: any) => {
       setIsRunning(false);
@@ -49,10 +55,13 @@ export default function AdminMigrations() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Database className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Database Migrations</h1>
+            <h1 className="text-3xl font-bold text-slate-900">
+              Database Migrations
+            </h1>
           </div>
           <p className="text-slate-600">
-            Execute database migrations to create all necessary tables for the application
+            Execute database migrations to create all necessary tables for the
+            application
           </p>
         </div>
 
@@ -64,7 +73,8 @@ export default function AdminMigrations() {
               Run Migrations
             </CardTitle>
             <CardDescription>
-              This will create all required database tables if they don't already exist
+              This will create all required database tables if they don't
+              already exist
             </CardDescription>
           </CardHeader>
 
@@ -73,8 +83,9 @@ export default function AdminMigrations() {
             <Alert className="mb-6 border-amber-200 bg-amber-50">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                <strong>Important:</strong> This operation will create tables that don't exist. 
-                Existing tables will not be affected. Make sure you have a backup of your database before proceeding.
+                <strong>Important:</strong> This operation will create tables
+                that don't exist. Existing tables will not be affected. Make
+                sure you have a backup of your database before proceeding.
               </AlertDescription>
             </Alert>
 
@@ -109,31 +120,48 @@ export default function AdminMigrations() {
                       <>
                         <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <h3 className="font-semibold text-green-900">Migrations Completed</h3>
-                          <p className="text-sm text-green-700 mt-1">{result.message}</p>
+                          <h3 className="font-semibold text-green-900">
+                            Migrations Completed
+                          </h3>
+                          <p className="text-sm text-green-700 mt-1">
+                            {result.message}
+                          </p>
                         </div>
                       </>
                     ) : (
                       <>
                         <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <h3 className="font-semibold text-red-900">Migration Failed</h3>
-                          <p className="text-sm text-red-700 mt-1">{result.message}</p>
+                          <h3 className="font-semibold text-red-900">
+                            Migration Failed
+                          </h3>
+                          <p className="text-sm text-red-700 mt-1">
+                            {result.message}
+                          </p>
                         </div>
                       </>
                     )}
                   </div>
 
                   {/* Statistics */}
-                  {(result.successCount !== undefined || result.errorCount !== undefined) && (
+                  {(result.successCount !== undefined ||
+                    result.errorCount !== undefined) && (
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                        <div className="text-sm text-green-600 font-medium">Successful</div>
-                        <div className="text-2xl font-bold text-green-700">{result.successCount || 0}</div>
+                        <div className="text-sm text-green-600 font-medium">
+                          Successful
+                        </div>
+                        <div className="text-2xl font-bold text-green-700">
+                          {result.successCount || 0}
+                        </div>
                       </div>
                       <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-                        <div className="text-sm text-red-600 font-medium">Failed</div>
-                        <div className="text-2xl font-bold text-red-700">{result.errorCount || 0}</div>
+                        <div className="text-sm text-red-600 font-medium">
+                          Failed
+                        </div>
+                        <div className="text-2xl font-bold text-red-700">
+                          {result.errorCount || 0}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -141,7 +169,9 @@ export default function AdminMigrations() {
                   {/* Error Details */}
                   {result.errors && result.errors.length > 0 && (
                     <div className="mt-4 bg-red-50 rounded-lg p-4 border border-red-200">
-                      <h4 className="font-semibold text-red-900 mb-2">Error Details:</h4>
+                      <h4 className="font-semibold text-red-900 mb-2">
+                        Error Details:
+                      </h4>
                       <ul className="space-y-1">
                         {result.errors.map((error: string, index: number) => (
                           <li key={index} className="text-sm text-red-700">
@@ -157,7 +187,9 @@ export default function AdminMigrations() {
 
             {/* Info Box */}
             <div className="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">What will be created:</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">
+                What will be created:
+              </h4>
               <ul className="text-sm text-blue-700 space-y-1">
                 <li>✓ 32 database tables</li>
                 <li>✓ User and authentication tables</li>

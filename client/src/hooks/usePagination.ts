@@ -31,21 +31,24 @@ export function usePagination(initialLimit = 50) {
 
   const totalPages = useMemo(() => Math.ceil(total / limit), [total, limit]);
 
-  const goToPage = useCallback((newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  }, [totalPages]);
+  const goToPage = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= totalPages) {
+        setPage(newPage);
+      }
+    },
+    [totalPages]
+  );
 
   const nextPage = useCallback(() => {
     if (page < totalPages) {
-      setPage((prev) => prev + 1);
+      setPage(prev => prev + 1);
     }
   }, [page, totalPages]);
 
   const previousPage = useCallback(() => {
     if (page > 1) {
-      setPage((prev) => prev - 1);
+      setPage(prev => prev - 1);
     }
   }, [page]);
 
@@ -70,12 +73,12 @@ export function usePagination(initialLimit = 50) {
     total,
     offset,
     totalPages,
-    
+
     // Computed
     canGoNext,
     canGoPrevious,
     hasMore: offset + limit < total,
-    
+
     // Controls
     goToPage,
     nextPage,
@@ -93,10 +96,13 @@ export function usePaginationWithSearch(initialLimit = 50) {
   const pagination = usePagination(initialLimit);
   const [search, setSearch] = useState("");
 
-  const handleSearch = useCallback((query: string) => {
-    setSearch(query);
-    pagination.reset(); // Reset pagination when searching
-  }, [pagination]);
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearch(query);
+      pagination.reset(); // Reset pagination when searching
+    },
+    [pagination]
+  );
 
   return {
     ...pagination,
@@ -113,17 +119,20 @@ export function usePaginationWithSort(initialLimit = 50) {
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const handleSort = useCallback((field: string) => {
-    if (sortBy === field) {
-      // Toggle sort order if clicking the same field
-      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      // Set new sort field
-      setSortBy(field);
-      setSortOrder("asc");
-    }
-    pagination.reset(); // Reset pagination when sorting
-  }, [sortBy, pagination]);
+  const handleSort = useCallback(
+    (field: string) => {
+      if (sortBy === field) {
+        // Toggle sort order if clicking the same field
+        setSortOrder(prev => (prev === "asc" ? "desc" : "asc"));
+      } else {
+        // Set new sort field
+        setSortBy(field);
+        setSortOrder("asc");
+      }
+      pagination.reset(); // Reset pagination when sorting
+    },
+    [sortBy, pagination]
+  );
 
   return {
     ...pagination,
@@ -140,13 +149,16 @@ export function usePaginationWithFilters(initialLimit = 50) {
   const pagination = usePagination(initialLimit);
   const [filters, setFilters] = useState<Record<string, unknown>>({});
 
-  const handleFilterChange = useCallback((key: string, value: unknown) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-    pagination.reset(); // Reset pagination when filters change
-  }, [pagination]);
+  const handleFilterChange = useCallback(
+    (key: string, value: unknown) => {
+      setFilters(prev => ({
+        ...prev,
+        [key]: value,
+      }));
+      pagination.reset(); // Reset pagination when filters change
+    },
+    [pagination]
+  );
 
   const clearFilters = useCallback(() => {
     setFilters({});

@@ -4,7 +4,14 @@ import { getDb } from "../db";
 
 export const notificationsRouter = router({
   list: protectedProcedure
-    .input(z.object({ unreadOnly: z.boolean().optional(), limit: z.number().optional() }).optional())
+    .input(
+      z
+        .object({
+          unreadOnly: z.boolean().optional(),
+          limit: z.number().optional(),
+        })
+        .optional()
+    )
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) return [];
@@ -12,7 +19,7 @@ export const notificationsRouter = router({
       try {
         const unreadFilter = input?.unreadOnly ? "AND isRead = FALSE" : "";
         const limit = input?.limit || 20;
-        
+
         const result = await (db as any).$client.query(`
           SELECT id, title, message, type, isRead, createdAt, relatedEntityType, relatedEntityId
           FROM notifications
@@ -100,7 +107,9 @@ export const notificationsRouter = router({
         emailNotifications: z.boolean().optional(),
         smsNotifications: z.boolean().optional(),
         inAppNotifications: z.boolean().optional(),
-        notificationFrequency: z.enum(["immediate", "daily", "weekly", "never"]).optional(),
+        notificationFrequency: z
+          .enum(["immediate", "daily", "weekly", "never"])
+          .optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -109,10 +118,16 @@ export const notificationsRouter = router({
 
       try {
         const updates = [];
-        if (input.emailNotifications !== undefined) updates.push(`emailNotifications = ${input.emailNotifications}`);
-        if (input.smsNotifications !== undefined) updates.push(`smsNotifications = ${input.smsNotifications}`);
-        if (input.inAppNotifications !== undefined) updates.push(`inAppNotifications = ${input.inAppNotifications}`);
-        if (input.notificationFrequency) updates.push(`notificationFrequency = '${input.notificationFrequency}'`);
+        if (input.emailNotifications !== undefined)
+          updates.push(`emailNotifications = ${input.emailNotifications}`);
+        if (input.smsNotifications !== undefined)
+          updates.push(`smsNotifications = ${input.smsNotifications}`);
+        if (input.inAppNotifications !== undefined)
+          updates.push(`inAppNotifications = ${input.inAppNotifications}`);
+        if (input.notificationFrequency)
+          updates.push(
+            `notificationFrequency = '${input.notificationFrequency}'`
+          );
 
         if (updates.length === 0) return { success: false };
 

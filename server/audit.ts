@@ -182,17 +182,15 @@ export async function logImportAudit(
 /**
  * Get audit logs with filtering
  */
-export async function getAuditLogs(
-  filters?: {
-    userId?: number;
-    action?: string;
-    entityType?: string;
-    startDate?: Date;
-    endDate?: Date;
-    limit?: number;
-    offset?: number;
-  }
-): Promise<any[]> {
+export async function getAuditLogs(filters?: {
+  userId?: number;
+  action?: string;
+  entityType?: string;
+  startDate?: Date;
+  endDate?: Date;
+  limit?: number;
+  offset?: number;
+}): Promise<any[]> {
   const db = await getDb();
   if (!db) return [];
   let query: any = db.select().from(auditLogs);
@@ -220,5 +218,8 @@ export async function getAuditLogs(
   const limit = filters?.limit || 100;
   const offset = filters?.offset || 0;
 
-  return query.orderBy((col: any) => col.createdAt).limit(limit).offset(offset);
+  return query
+    .orderBy((col: any) => col.createdAt)
+    .limit(limit)
+    .offset(offset);
 }

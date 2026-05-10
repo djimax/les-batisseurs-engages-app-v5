@@ -1,9 +1,18 @@
 import { protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import {
-  getEmailTemplates, getEmailTemplateById, createEmailTemplate, updateEmailTemplate, deleteEmailTemplate,
-  getEmailHistory, getEmailHistoryById, createEmailHistory, updateEmailHistory,
-  getEmailRecipients, createEmailRecipient, updateEmailRecipient,
+  getEmailTemplates,
+  getEmailTemplateById,
+  createEmailTemplate,
+  updateEmailTemplate,
+  deleteEmailTemplate,
+  getEmailHistory,
+  getEmailHistoryById,
+  createEmailHistory,
+  updateEmailHistory,
+  getEmailRecipients,
+  createEmailRecipient,
+  updateEmailRecipient,
   getAllMembers,
 } from "./db";
 import { logAudit } from "./audit";
@@ -23,14 +32,16 @@ export const emailRouter = router({
       }),
 
     create: protectedProcedure
-      .input(z.object({
-        name: z.string().min(1),
-        subject: z.string().min(1),
-        content: z.string().min(1),
-        description: z.string().optional(),
-        category: z.string().optional(),
-        variables: z.array(z.string()).optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().min(1),
+          subject: z.string().min(1),
+          content: z.string().min(1),
+          description: z.string().optional(),
+          category: z.string().optional(),
+          variables: z.array(z.string()).optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const template = await createEmailTemplate({
           ...input,
@@ -49,15 +60,17 @@ export const emailRouter = router({
       }),
 
     update: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        name: z.string().optional(),
-        subject: z.string().optional(),
-        content: z.string().optional(),
-        description: z.string().optional(),
-        category: z.string().optional(),
-        variables: z.array(z.string()).optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          name: z.string().optional(),
+          subject: z.string().optional(),
+          content: z.string().optional(),
+          description: z.string().optional(),
+          category: z.string().optional(),
+          variables: z.array(z.string()).optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const { id, ...data } = input;
         const updateData: any = { ...data };
@@ -94,15 +107,19 @@ export const emailRouter = router({
 
   // Send mass emails
   sendMassEmail: protectedProcedure
-    .input(z.object({
-      subject: z.string().min(1),
-      content: z.string().min(1),
-      templateId: z.number().optional(),
-      recipientFilter: z.object({
-        role: z.string().optional(),
-        status: z.string().optional(),
-      }).optional(),
-    }))
+    .input(
+      z.object({
+        subject: z.string().min(1),
+        content: z.string().min(1),
+        templateId: z.number().optional(),
+        recipientFilter: z
+          .object({
+            role: z.string().optional(),
+            status: z.string().optional(),
+          })
+          .optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         const members = await getAllMembers();
@@ -208,10 +225,12 @@ export const emailRouter = router({
   // Email history
   history: router({
     list: protectedProcedure
-      .input(z.object({
-        limit: z.number().default(50),
-        offset: z.number().default(0),
-      }))
+      .input(
+        z.object({
+          limit: z.number().default(50),
+          offset: z.number().default(0),
+        })
+      )
       .query(async ({ input }) => {
         const history = await getEmailHistory(input.limit);
         return history.slice(input.offset, input.offset + input.limit);

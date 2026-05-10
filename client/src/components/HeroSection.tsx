@@ -32,7 +32,9 @@ export function HeroSection({
   };
 
   return (
-    <div className={`${getGradientClass()} rounded-2xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden`}>
+    <div
+      className={`${getGradientClass()} rounded-2xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden`}
+    >
       {/* Formes organiques de fond */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" />
@@ -47,18 +49,12 @@ export function HeroSection({
               {title}
             </h2>
             {subtitle && (
-              <p className="text-white/80 text-lg max-w-2xl">
-                {subtitle}
-              </p>
+              <p className="text-white/80 text-lg max-w-2xl">{subtitle}</p>
             )}
           </div>
         </div>
 
-        {children && (
-          <div className="mt-6 text-white/90">
-            {children}
-          </div>
-        )}
+        {children && <div className="mt-6 text-white/90">{children}</div>}
 
         {action && (
           <button

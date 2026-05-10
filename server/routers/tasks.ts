@@ -5,15 +5,23 @@ import { TRPCError } from "@trpc/server";
 
 export const tasksRouter = router({
   list: protectedProcedure
-    .input(z.object({ projectId: z.number(), status: z.string().optional() }).optional())
+    .input(
+      z
+        .object({ projectId: z.number(), status: z.string().optional() })
+        .optional()
+    )
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
 
       try {
-        const projectFilter = input?.projectId ? `AND projectId = ${input.projectId}` : "";
-        const statusFilter = input?.status ? `AND status = '${input.status}'` : "";
-        
+        const projectFilter = input?.projectId
+          ? `AND projectId = ${input.projectId}`
+          : "";
+        const statusFilter = input?.status
+          ? `AND status = '${input.status}'`
+          : "";
+
         const result = await (db as any).$client.query(`
           SELECT id, title, description, status, priority, dueDate, assignedTo, progress, createdAt, projectId
           FROM tasks
@@ -72,7 +80,10 @@ export const tasksRouter = router({
         return { success: true, id: result?.[0]?.insertId };
       } catch (error) {
         console.error("[Tasks] Error creating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la création de la tâche" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la création de la tâche",
+        });
       }
     }),
 
@@ -94,12 +105,19 @@ export const tasksRouter = router({
 
       try {
         const updates: string[] = [];
-        if (input.title) updates.push(`title = '${input.title.replace(/'/g, "''")}'`);
-        if (input.description !== undefined) updates.push(`description = '${(input.description || "").replace(/'/g, "''")}'`);
+        if (input.title)
+          updates.push(`title = '${input.title.replace(/'/g, "''")}'`);
+        if (input.description !== undefined)
+          updates.push(
+            `description = '${(input.description || "").replace(/'/g, "''")}'`
+          );
         if (input.priority) updates.push(`priority = '${input.priority}'`);
-        if (input.dueDate !== undefined) updates.push(`dueDate = '${input.dueDate || null}'`);
-        if (input.assignedTo !== undefined) updates.push(`assignedTo = ${input.assignedTo || null}`);
-        if (input.progress !== undefined) updates.push(`progress = ${input.progress}`);
+        if (input.dueDate !== undefined)
+          updates.push(`dueDate = '${input.dueDate || null}'`);
+        if (input.assignedTo !== undefined)
+          updates.push(`assignedTo = ${input.assignedTo || null}`);
+        if (input.progress !== undefined)
+          updates.push(`progress = ${input.progress}`);
 
         if (updates.length === 0) return { success: true };
 
@@ -112,7 +130,10 @@ export const tasksRouter = router({
         return { success: true };
       } catch (error) {
         console.error("[Tasks] Error updating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la modification de la tâche" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la modification de la tâche",
+        });
       }
     }),
 
@@ -123,26 +144,41 @@ export const tasksRouter = router({
       if (!db) throw new Error("Database not available");
 
       try {
-        await (db as any).$client.query(`DELETE FROM tasks WHERE id = ${input.id}`);
+        await (db as any).$client.query(
+          `DELETE FROM tasks WHERE id = ${input.id}`
+        );
         return { success: true };
       } catch (error) {
         console.error("[Tasks] Error deleting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la suppression de la tâche" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la suppression de la tâche",
+        });
       }
     }),
 
   updateStatus: protectedProcedure
-    .input(z.object({ id: z.number(), status: z.enum(["todo", "in-progress", "review", "done", "blocked"]) }))
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.enum(["todo", "in-progress", "review", "done", "blocked"]),
+      })
+    )
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
       try {
-        await (db as any).$client.query(`UPDATE tasks SET status = '${input.status}', updatedAt = NOW() WHERE id = ${input.id}`);
+        await (db as any).$client.query(
+          `UPDATE tasks SET status = '${input.status}', updatedAt = NOW() WHERE id = ${input.id}`
+        );
         return { success: true };
       } catch (error) {
         console.error("[Tasks] Error updating status:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la mise à jour du statut" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la mise à jour du statut",
+        });
       }
     }),
 
@@ -153,11 +189,16 @@ export const tasksRouter = router({
       if (!db) throw new Error("Database not available");
 
       try {
-        await (db as any).$client.query(`UPDATE tasks SET progress = ${input.progress}, updatedAt = NOW() WHERE id = ${input.id}`);
+        await (db as any).$client.query(
+          `UPDATE tasks SET progress = ${input.progress}, updatedAt = NOW() WHERE id = ${input.id}`
+        );
         return { success: true };
       } catch (error) {
         console.error("[Tasks] Error updating progress:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erreur lors de la mise à jour de la progression" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erreur lors de la mise à jour de la progression",
+        });
       }
     }),
 });

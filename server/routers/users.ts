@@ -4,7 +4,12 @@ import { getDb } from "../db";
 import { users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { requireAdmin, requireManageUsers, getRoleDisplayName, getRoleDescription } from "../permissions";
+import {
+  requireAdmin,
+  requireManageUsers,
+  getRoleDisplayName,
+  getRoleDescription,
+} from "../permissions";
 
 export const usersRouter = router({
   /**
@@ -50,7 +55,11 @@ export const usersRouter = router({
       }
 
       try {
-        const user = await db.select().from(users).where(eq(users.id, input.id)).limit(1);
+        const user = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, input.id))
+          .limit(1);
         if (!user.length) {
           throw new TRPCError({
             code: "NOT_FOUND",
@@ -144,7 +153,7 @@ export const usersRouter = router({
         // Soft delete or mark as inactive
         await db
           .update(users)
-          .set({ 
+          .set({
             email: null,
             name: "Deleted User",
             updatedAt: new Date(),
@@ -168,7 +177,7 @@ export const usersRouter = router({
    */
   getPermissions: protectedProcedure.query(({ ctx }) => {
     const role = (ctx.user?.role as any) || "lecteur";
-    
+
     return {
       role,
       roleDisplay: getRoleDisplayName(role),
@@ -209,7 +218,11 @@ export const usersRouter = router({
 
       try {
         // Check if user already exists
-        const existing = await db.select().from(users).where(eq(users.email, input.email)).limit(1);
+        const existing = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, input.email))
+          .limit(1);
         if (existing.length > 0) {
           throw new TRPCError({
             code: "BAD_REQUEST",

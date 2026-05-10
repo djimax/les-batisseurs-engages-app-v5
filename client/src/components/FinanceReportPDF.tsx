@@ -85,7 +85,7 @@ export function FinanceReportPDF({
           <tbody>
             ${transactions
               .map(
-                (t) => `
+                t => `
               <tr>
                 <td>${new Date(t.date).toLocaleDateString("fr-FR")}</td>
                 <td>${t.type === "cotisation" ? "Cotisation" : t.type === "don" ? "Don" : "Dépense"}</td>

@@ -53,10 +53,16 @@ class ProjectMonitor {
 
   private log(color: string, text: string) {
     const timestamp = new Date().toISOString();
-    console.log(`${colors.gray}[${timestamp}]${colors.reset} ${color}${text}${colors.reset}`);
+    console.log(
+      `${colors.gray}[${timestamp}]${colors.reset} ${color}${text}${colors.reset}`
+    );
   }
 
-  private async runCheck(name: string, command: string, timeout: number): Promise<CheckResult> {
+  private async runCheck(
+    name: string,
+    command: string,
+    timeout: number
+  ): Promise<CheckResult> {
     const start = Date.now();
     try {
       execSync(command, { timeout, encoding: "utf-8" });
@@ -106,9 +112,18 @@ class ProjectMonitor {
     this.log(colors.cyan, "\n📊 Résultats des vérifications:\n");
 
     for (const result of results) {
-      const statusIcon = result.status === "pass" ? "✅" : result.status === "warn" ? "⚠️" : "❌";
+      const statusIcon =
+        result.status === "pass"
+          ? "✅"
+          : result.status === "warn"
+            ? "⚠️"
+            : "❌";
       const statusColor =
-        result.status === "pass" ? colors.green : result.status === "warn" ? colors.yellow : colors.red;
+        result.status === "pass"
+          ? colors.green
+          : result.status === "warn"
+            ? colors.yellow
+            : colors.red;
 
       this.log(
         statusColor,
@@ -119,7 +134,7 @@ class ProjectMonitor {
 
   private checkAlerts(results: CheckResult[]): void {
     const alerts = this.config.monitoring.alerts;
-    const failedChecks = results.filter((r) => r.status === "fail");
+    const failedChecks = results.filter(r => r.status === "fail");
 
     if (failedChecks.length > 0) {
       this.log(colors.red, "\n🚨 Alertes détectées:\n");
@@ -167,9 +182,9 @@ class ProjectMonitor {
 
   private displaySummary(): void {
     const uptime = Date.now() - this.startTime.getTime();
-    const passed = this.results.filter((r) => r.status === "pass").length;
-    const failed = this.results.filter((r) => r.status === "fail").length;
-    const warned = this.results.filter((r) => r.status === "warn").length;
+    const passed = this.results.filter(r => r.status === "pass").length;
+    const failed = this.results.filter(r => r.status === "fail").length;
+    const warned = this.results.filter(r => r.status === "warn").length;
 
     this.log(colors.blue, "\n📈 Résumé du monitoring:\n");
     this.log(colors.green, `✅ Réussis: ${passed}`);
@@ -183,12 +198,12 @@ class ProjectMonitor {
 const monitor = new ProjectMonitor();
 
 if (process.argv.includes("--continuous")) {
-  monitor.startContinuousMonitoring().catch((error) => {
+  monitor.startContinuousMonitoring().catch(error => {
     console.error("❌ Erreur du monitoring:", error);
     process.exit(1);
   });
 } else {
-  monitor.runAllChecks().catch((error) => {
+  monitor.runAllChecks().catch(error => {
     console.error("❌ Erreur du monitoring:", error);
     process.exit(1);
   });

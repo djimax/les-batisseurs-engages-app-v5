@@ -22,15 +22,26 @@ export const membershipsRouter = router({
   }),
 
   listMemberships: protectedProcedure
-    .input(z.object({ memberId: z.number().optional(), status: z.string().optional() }).optional())
+    .input(
+      z
+        .object({
+          memberId: z.number().optional(),
+          status: z.string().optional(),
+        })
+        .optional()
+    )
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
 
       try {
-        const memberFilter = input?.memberId ? `AND memberId = ${input.memberId}` : "";
-        const statusFilter = input?.status ? `AND paymentStatus = '${input.status}'` : "";
-        
+        const memberFilter = input?.memberId
+          ? `AND memberId = ${input.memberId}`
+          : "";
+        const statusFilter = input?.status
+          ? `AND paymentStatus = '${input.status}'`
+          : "";
+
         const result = await (db as any).$client.query(`
           SELECT m.id, m.memberId, m.membershipTypeId, m.startDate, m.endDate, m.amount, 
                  m.paymentStatus, m.paymentDate, mt.name as typeName

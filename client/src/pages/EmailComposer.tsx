@@ -10,12 +10,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Send, CheckCircle2, AlertCircle, Users, Filter } from "lucide-react";
+import {
+  Loader2,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Users,
+  Filter,
+} from "lucide-react";
 
 const MEMBER_ROLES = [
   { value: "admin", label: "Admin" },
@@ -40,45 +53,58 @@ export default function EmailComposer() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   // Filtres
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [excludeNoEmail, setExcludeNoEmail] = useState(false);
   const [excludedMemberIds, setExcludedMemberIds] = useState<number[]>([]);
 
-  const { data: templates, isLoading: templatesLoading } = trpc.email.templates.list.useQuery();
+  const { data: templates, isLoading: templatesLoading } =
+    trpc.email.templates.list.useQuery();
   const { data: members } = trpc.members.list.useQuery();
   const sendEmailMutation = trpc.email.sendMassEmail.useMutation();
 
   // Calculer les destinataires filtrés
   const filteredRecipients = useMemo(() => {
     if (!members) return [];
-    
-    return members.filter((member) => {
+
+    return members.filter(member => {
       // Filtre par rôle
-      if (selectedRoles.length > 0 && !selectedRoles.includes(member.role || "member")) {
+      if (
+        selectedRoles.length > 0 &&
+        !selectedRoles.includes(member.role || "member")
+      ) {
         return false;
       }
-      
+
       // Filtre par statut
-      if (selectedStatuses.length > 0 && !selectedStatuses.includes(member.status || "active")) {
+      if (
+        selectedStatuses.length > 0 &&
+        !selectedStatuses.includes(member.status || "active")
+      ) {
         return false;
       }
-      
+
       // Exclure les membres sans email
       if (excludeNoEmail && !member.email) {
         return false;
       }
-      
+
       // Exclure les membres sélectionnés
       if (excludedMemberIds.includes(member.id)) {
         return false;
       }
-      
+
       return true;
     });
-  }, [members, selectedRoles, selectedStatuses, excludeNoEmail, excludedMemberIds]);
+  }, [
+    members,
+    selectedRoles,
+    selectedStatuses,
+    excludeNoEmail,
+    excludedMemberIds,
+  ]);
 
   const handleLoadTemplate = (id: string) => {
     if (id === "new") {
@@ -86,7 +112,7 @@ export default function EmailComposer() {
       setContent("");
       setTemplateId("new");
     } else {
-      const template = templates?.find((t) => t.id === parseInt(id));
+      const template = templates?.find(t => t.id === parseInt(id));
       if (template) {
         setSubject(template.subject);
         setContent(template.content);
@@ -96,20 +122,22 @@ export default function EmailComposer() {
   };
 
   const toggleRole = (role: string) => {
-    setSelectedRoles((prev) =>
-      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    setSelectedRoles(prev =>
+      prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]
     );
   };
 
   const toggleStatus = (status: string) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    setSelectedStatuses(prev =>
+      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
     );
   };
 
   const toggleExcludedMember = (memberId: number) => {
-    setExcludedMemberIds((prev) =>
-      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId]
+    setExcludedMemberIds(prev =>
+      prev.includes(memberId)
+        ? prev.filter(id => id !== memberId)
+        : [...prev, memberId]
     );
   };
 
@@ -132,7 +160,8 @@ export default function EmailComposer() {
       const result = await sendEmailMutation.mutateAsync({
         subject,
         content,
-        templateId: templateId && templateId !== "new" ? parseInt(templateId) : undefined,
+        templateId:
+          templateId && templateId !== "new" ? parseInt(templateId) : undefined,
       });
 
       if (result.success) {
@@ -151,7 +180,9 @@ export default function EmailComposer() {
       }
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Erreur lors de l'envoi de l'email"
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de l'envoi de l'email"
       );
     } finally {
       setIsLoading(false);
@@ -174,17 +205,22 @@ export default function EmailComposer() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Rôles</CardTitle>
-              <CardDescription>Sélectionner les rôles à inclure</CardDescription>
+              <CardDescription>
+                Sélectionner les rôles à inclure
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {MEMBER_ROLES.map((role) => (
+              {MEMBER_ROLES.map(role => (
                 <div key={role.value} className="flex items-center gap-2">
                   <Checkbox
                     id={`role-${role.value}`}
                     checked={selectedRoles.includes(role.value)}
                     onCheckedChange={() => toggleRole(role.value)}
                   />
-                  <label htmlFor={`role-${role.value}`} className="text-sm cursor-pointer">
+                  <label
+                    htmlFor={`role-${role.value}`}
+                    className="text-sm cursor-pointer"
+                  >
                     {role.label}
                   </label>
                 </div>
@@ -196,17 +232,22 @@ export default function EmailComposer() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Statuts</CardTitle>
-              <CardDescription>Sélectionner les statuts à inclure</CardDescription>
+              <CardDescription>
+                Sélectionner les statuts à inclure
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {MEMBER_STATUS.map((status) => (
+              {MEMBER_STATUS.map(status => (
                 <div key={status.value} className="flex items-center gap-2">
                   <Checkbox
                     id={`status-${status.value}`}
                     checked={selectedStatuses.includes(status.value)}
                     onCheckedChange={() => toggleStatus(status.value)}
                   />
-                  <label htmlFor={`status-${status.value}`} className="text-sm cursor-pointer">
+                  <label
+                    htmlFor={`status-${status.value}`}
+                    className="text-sm cursor-pointer"
+                  >
                     {status.label}
                   </label>
                 </div>
@@ -224,9 +265,14 @@ export default function EmailComposer() {
                 <Checkbox
                   id="exclude-no-email"
                   checked={excludeNoEmail}
-                  onCheckedChange={(checked) => setExcludeNoEmail(checked as boolean)}
+                  onCheckedChange={checked =>
+                    setExcludeNoEmail(checked as boolean)
+                  }
                 />
-                <label htmlFor="exclude-no-email" className="text-sm cursor-pointer">
+                <label
+                  htmlFor="exclude-no-email"
+                  className="text-sm cursor-pointer"
+                >
                   Exclure sans email
                 </label>
               </div>
@@ -242,9 +288,14 @@ export default function EmailComposer() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{filteredRecipients.length}</div>
+              <div className="text-2xl font-bold text-primary">
+                {filteredRecipients.length}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {filteredRecipients.length === 1 ? "destinataire" : "destinataires"} sélectionné(s)
+                {filteredRecipients.length === 1
+                  ? "destinataire"
+                  : "destinataires"}{" "}
+                sélectionné(s)
               </p>
             </CardContent>
           </Card>
@@ -267,8 +318,11 @@ export default function EmailComposer() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="new">Créer un nouvel email</SelectItem>
-                  {templates?.map((template) => (
-                    <SelectItem key={template.id} value={template.id.toString()}>
+                  {templates?.map(template => (
+                    <SelectItem
+                      key={template.id}
+                      value={template.id.toString()}
+                    >
                       {template.name}
                     </SelectItem>
                   ))}
@@ -289,18 +343,20 @@ export default function EmailComposer() {
                 <Input
                   placeholder="Entrez le sujet de l'email"
                   value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
+                  onChange={e => setSubject(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
 
               {/* Content */}
               <div>
-                <label className="block text-sm font-medium mb-2">Contenu</label>
+                <label className="block text-sm font-medium mb-2">
+                  Contenu
+                </label>
                 <Textarea
                   placeholder="Entrez le contenu de l'email"
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={e => setContent(e.target.value)}
                   disabled={isLoading}
                   rows={10}
                   className="font-mono text-sm"
@@ -327,26 +383,34 @@ export default function EmailComposer() {
           {filteredRecipients.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Aperçu des Destinataires</CardTitle>
+                <CardTitle className="text-lg">
+                  Aperçu des Destinataires
+                </CardTitle>
                 <CardDescription>
-                  {filteredRecipients.length} destinataire(s) recevront cet email
+                  {filteredRecipients.length} destinataire(s) recevront cet
+                  email
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-48 w-full rounded-md border p-4">
                   <div className="space-y-2">
-                    {filteredRecipients.map((member) => (
+                    {filteredRecipients.map(member => (
                       <div
                         key={member.id}
                         className="flex items-center justify-between p-2 rounded hover:bg-muted"
                       >
                         <div className="flex-1">
-                          <p className="text-sm font-medium">{member.firstName} {member.lastName}</p>
-                          <p className="text-xs text-muted-foreground">{member.email}</p>
+                          <p className="text-sm font-medium">
+                            {member.firstName} {member.lastName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {member.email}
+                          </p>
                         </div>
                         <div className="flex gap-1">
                           <Badge variant="outline" className="text-xs">
-                            {MEMBER_ROLES.find((r) => r.value === member.role)?.label || "Membre"}
+                            {MEMBER_ROLES.find(r => r.value === member.role)
+                              ?.label || "Membre"}
                           </Badge>
                           <Button
                             variant="ghost"
@@ -369,14 +433,18 @@ export default function EmailComposer() {
           {successMessage && (
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+              <AlertDescription className="text-green-800">
+                {successMessage}
+              </AlertDescription>
             </Alert>
           )}
 
           {errorMessage && (
             <Alert className="border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">{errorMessage}</AlertDescription>
+              <AlertDescription className="text-red-800">
+                {errorMessage}
+              </AlertDescription>
             </Alert>
           )}
 
@@ -384,7 +452,12 @@ export default function EmailComposer() {
           <div className="flex gap-2">
             <Button
               onClick={handleSendEmail}
-              disabled={isLoading || !subject.trim() || !content.trim() || filteredRecipients.length === 0}
+              disabled={
+                isLoading ||
+                !subject.trim() ||
+                !content.trim() ||
+                filteredRecipients.length === 0
+              }
               className="w-full sm:w-auto"
             >
               {isLoading ? (

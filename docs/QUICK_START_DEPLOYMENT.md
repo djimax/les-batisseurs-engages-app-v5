@@ -77,12 +77,15 @@ pnpm monitor
 ## 📊 Vérifications Rapides
 
 ### Health Check
+
 ```bash
 pnpm health-check
 ```
+
 Vérifie : dépendances, TypeScript, imports, base de données, migrations, tests.
 
 ### Pre-commit Hook
+
 ```bash
 # Le hook s'exécute automatiquement avant chaque commit
 git commit -m "My changes"
@@ -92,6 +95,7 @@ pnpm pre-commit
 ```
 
 ### Monitoring Continu
+
 ```bash
 # Démarrer le monitoring en temps réel
 pnpm monitor:continuous
@@ -102,35 +106,39 @@ pnpm monitor:continuous
 ## 🔔 Configuration des Alertes
 
 ### Slack
+
 1. Créer un webhook Slack : https://api.slack.com/apps
 2. Copier l'URL du webhook
 3. Définir : `export SLACK_WEBHOOK_URL="..."`
 4. Exécuter : `pnpm setup-webhooks`
 
 ### Email
+
 1. Configurer le serveur SMTP
 2. Définir : `export EMAIL_RECIPIENTS="admin@example.com"`
 3. Exécuter : `pnpm setup-webhooks`
 
 ### GitHub
+
 1. Créer un token : https://github.com/settings/tokens
 2. Définir : `export GITHUB_TOKEN="ghp_..."`
 3. Exécuter : `pnpm setup-webhooks`
 
 ## 📝 Scripts Disponibles
 
-| Script | Commande | Description |
-|--------|----------|-------------|
-| Health Check | `pnpm health-check` | Vérifier l'état du projet |
-| Monitor | `pnpm monitor` | Monitoring une fois |
-| Monitor Continu | `pnpm monitor:continuous` | Monitoring en temps réel |
-| Setup Webhooks | `pnpm setup-webhooks` | Configurer les webhooks |
-| Deploy | `pnpm deploy` | Déployer en production |
-| Pre-commit | `pnpm pre-commit` | Vérifications pré-commit |
+| Script          | Commande                  | Description               |
+| --------------- | ------------------------- | ------------------------- |
+| Health Check    | `pnpm health-check`       | Vérifier l'état du projet |
+| Monitor         | `pnpm monitor`            | Monitoring une fois       |
+| Monitor Continu | `pnpm monitor:continuous` | Monitoring en temps réel  |
+| Setup Webhooks  | `pnpm setup-webhooks`     | Configurer les webhooks   |
+| Deploy          | `pnpm deploy`             | Déployer en production    |
+| Pre-commit      | `pnpm pre-commit`         | Vérifications pré-commit  |
 
 ## 🆘 Dépannage Rapide
 
 ### Le health check échoue
+
 ```bash
 # Vérifier les dépendances
 pnpm install
@@ -143,6 +151,7 @@ pnpm drizzle-kit generate
 ```
 
 ### Le déploiement échoue
+
 ```bash
 # Vérifier les logs
 tail -f .manus-logs/devserver.log
@@ -155,6 +164,7 @@ pnpm check
 ```
 
 ### Les webhooks ne fonctionnent pas
+
 ```bash
 # Vérifier la configuration
 cat .webhooks.json
@@ -182,6 +192,7 @@ pnpm setup-webhooks
 ## 📚 Documentation Complète
 
 Pour plus de détails, consultez :
+
 - [PRODUCTION_DEPLOYMENT.md](./PRODUCTION_DEPLOYMENT.md) - Guide complet
 - [ENVIRONMENT_VARIABLES.md](./ENVIRONMENT_VARIABLES.md) - Variables d'environnement
 - [ERROR_PATTERNS.md](./ERROR_PATTERNS.md) - Patterns d'erreurs courants
@@ -198,6 +209,7 @@ Pour plus de détails, consultez :
 5. Validation : 2 min
 
 **Résultat final :**
+
 - ✅ Application déployée en production
 - ✅ Monitoring activé
 - ✅ Alertes configurées

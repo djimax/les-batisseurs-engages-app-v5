@@ -7,14 +7,19 @@ interface RoleContextType {
   switchRole: (role: UserRole) => void;
 }
 
-export const RoleContext = createContext<RoleContextType | undefined>(undefined);
+export const RoleContext = createContext<RoleContextType | undefined>(
+  undefined
+);
 
 interface RoleProviderProps {
   children: React.ReactNode;
   initialRole?: UserRole;
 }
 
-export function RoleProvider({ children, initialRole = "membre" }: RoleProviderProps) {
+export function RoleProvider({
+  children,
+  initialRole = "membre",
+}: RoleProviderProps) {
   const [currentRole, setCurrentRole] = useState<UserRole>(initialRole);
 
   const switchRole = useCallback((role: UserRole) => {

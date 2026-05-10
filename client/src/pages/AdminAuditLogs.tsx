@@ -1,11 +1,30 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 
@@ -24,7 +43,10 @@ export default function AdminAuditLogs() {
   const { data: logs = [], isLoading } = trpc.admin.getAuditLogs.useQuery({
     limit,
     offset,
-    entityType: filters.entityType && filters.entityType !== "all" ? filters.entityType : undefined,
+    entityType:
+      filters.entityType && filters.entityType !== "all"
+        ? filters.entityType
+        : undefined,
     userId: filters.userId ? parseInt(filters.userId) : undefined,
   });
 
@@ -91,10 +113,16 @@ export default function AdminAuditLogs() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="entityType">Type d'Entité</Label>
-              <Select value={filters.entityType || "all"} onValueChange={(value) => {
-                setFilters({ ...filters, entityType: value === "all" ? "" : value });
-                setPage(0);
-              }}>
+              <Select
+                value={filters.entityType || "all"}
+                onValueChange={value => {
+                  setFilters({
+                    ...filters,
+                    entityType: value === "all" ? "" : value,
+                  });
+                  setPage(0);
+                }}
+              >
                 <SelectTrigger id="entityType">
                   <SelectValue placeholder="Tous les types" />
                 </SelectTrigger>
@@ -117,7 +145,7 @@ export default function AdminAuditLogs() {
                 type="number"
                 placeholder="Laisser vide pour tous"
                 value={filters.userId}
-                onChange={(e) => {
+                onChange={e => {
                   setFilters({ ...filters, userId: e.target.value });
                   setPage(0);
                 }}
@@ -131,7 +159,8 @@ export default function AdminAuditLogs() {
         <CardHeader>
           <CardTitle>Activités Récentes</CardTitle>
           <CardDescription>
-            {logs.length} activité{logs.length !== 1 ? "s" : ""} affichée{logs.length !== 1 ? "s" : ""}
+            {logs.length} activité{logs.length !== 1 ? "s" : ""} affichée
+            {logs.length !== 1 ? "s" : ""}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -158,7 +187,7 @@ export default function AdminAuditLogs() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {logs.map((log) => (
+                    {logs.map(log => (
                       <TableRow key={log.id}>
                         <TableCell className="text-sm">
                           {new Date(log.createdAt).toLocaleString("fr-FR")}
@@ -168,7 +197,9 @@ export default function AdminAuditLogs() {
                             {log.action}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm">{log.entityType}</TableCell>
+                        <TableCell className="text-sm">
+                          {log.entityType}
+                        </TableCell>
                         <TableCell className="text-sm">
                           {log.entityName || `#${log.entityId}`}
                         </TableCell>
@@ -188,9 +219,7 @@ export default function AdminAuditLogs() {
 
               {/* Pagination */}
               <div className="flex items-center justify-between pt-4">
-                <p className="text-sm text-muted-foreground">
-                  Page {page + 1}
-                </p>
+                <p className="text-sm text-muted-foreground">Page {page + 1}</p>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"

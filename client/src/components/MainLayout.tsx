@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Menu, X, LogOut, Settings, Home, Users, FileText, DollarSign, Briefcase, MessageSquare } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Settings,
+  Home,
+  Users,
+  FileText,
+  DollarSign,
+  Briefcase,
+  MessageSquare,
+} from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "./ui/button";
 
@@ -9,7 +20,11 @@ interface MainLayoutProps {
   associationName?: string;
 }
 
-export function MainLayout({ children, onLogout, associationName = "Les Bâtisseurs Engagés" }: MainLayoutProps) {
+export function MainLayout({
+  children,
+  onLogout,
+  associationName = "Les Bâtisseurs Engagés",
+}: MainLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
 
@@ -35,13 +50,17 @@ export function MainLayout({ children, onLogout, associationName = "Les Bâtisse
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="px-6 py-4 border-b border-border">
-            <h1 className="text-xl font-bold text-primary">{associationName}</h1>
-            <p className="text-xs text-muted-foreground mt-1">Gestion d'association</p>
+            <h1 className="text-xl font-bold text-primary">
+              {associationName}
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1">
+              Gestion d'association
+            </p>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            {menuItems.map((item) => {
+            {menuItems.map(item => {
               const Icon = item.icon;
               const active = isActive(item.href);
               return (
@@ -98,7 +117,9 @@ export function MainLayout({ children, onLogout, associationName = "Les Bâtisse
           </button>
 
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground hidden sm:inline">Bienvenue</span>
+            <span className="text-sm text-muted-foreground hidden sm:inline">
+              Bienvenue
+            </span>
           </div>
         </header>
 

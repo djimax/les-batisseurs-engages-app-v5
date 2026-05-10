@@ -54,7 +54,8 @@ describe("attachmentsRouter", () => {
           taskId: 1,
           fileName: "test1.pdf",
           fileKey: "task-attachments/1/123456-test1.pdf",
-          fileUrl: "https://cdn.example.com/task-attachments/1/123456-test1.pdf",
+          fileUrl:
+            "https://cdn.example.com/task-attachments/1/123456-test1.pdf",
           fileSize: 1024,
           mimeType: "application/pdf",
           uploadedBy: 1,
@@ -66,7 +67,8 @@ describe("attachmentsRouter", () => {
           taskId: 1,
           fileName: "test2.pdf",
           fileKey: "task-attachments/1/123457-test2.pdf",
-          fileUrl: "https://cdn.example.com/task-attachments/1/123457-test2.pdf",
+          fileUrl:
+            "https://cdn.example.com/task-attachments/1/123457-test2.pdf",
           fileSize: 2048,
           mimeType: "application/pdf",
           uploadedBy: 1,
@@ -83,7 +85,9 @@ describe("attachmentsRouter", () => {
 
   describe("deleteAttachment", () => {
     it("devrait supprimer une pièce jointe", async () => {
-      vi.mocked(db.deleteTaskAttachment).mockResolvedValueOnce({ success: true });
+      vi.mocked(db.deleteTaskAttachment).mockResolvedValueOnce({
+        success: true,
+      });
 
       expect(db.deleteTaskAttachment).toBeDefined();
     });

@@ -23,21 +23,52 @@ import { attachmentsRouter } from "./routers/attachments";
 import { searchRouter } from "./routers/search";
 
 import { z } from "zod";
-import { 
-  getAllCategories, getCategoryById, createCategory, seedDefaultCategories,
-  getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument, getDocumentStats, seedDefaultDocuments,
-  getNotesByDocumentId, createNote, deleteNote,
-  getAllMembers, getMemberById, createMember, updateMember, deleteMember,
-  logActivity, getRecentActivity,
-  createCotisation, getCotisations, getCotisationsByMember, updateCotisation,
-  createDon, getDons,
-  createDepense, getDepenses,
-  createTransaction, getTransactions,
+import {
+  getAllCategories,
+  getCategoryById,
+  createCategory,
+  seedDefaultCategories,
+  getAllDocuments,
+  getDocumentById,
+  createDocument,
+  updateDocument,
+  deleteDocument,
+  getDocumentStats,
+  seedDefaultDocuments,
+  getNotesByDocumentId,
+  createNote,
+  deleteNote,
+  getAllMembers,
+  getMemberById,
+  createMember,
+  updateMember,
+  deleteMember,
+  logActivity,
+  getRecentActivity,
+  createCotisation,
+  getCotisations,
+  getCotisationsByMember,
+  updateCotisation,
+  createDon,
+  getDons,
+  createDepense,
+  getDepenses,
+  createTransaction,
+  getTransactions,
   getFinancialStats,
-  getGlobalSettings, updateGlobalSettings, initializeGlobalSettings,
-  getDb
+  getGlobalSettings,
+  updateGlobalSettings,
+  initializeGlobalSettings,
+  getDb,
 } from "./db";
-import { roles, permissions, auditLogs, emailTemplates, emailHistory, emailRecipients } from "../drizzle/schema";
+import {
+  roles,
+  permissions,
+  auditLogs,
+  emailTemplates,
+  emailHistory,
+  emailRecipients,
+} from "../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import { logAudit } from "./audit";
 import { storagePut } from "./storage";
@@ -74,20 +105,22 @@ export const appRouter = router({
       await seedDefaultCategories();
       return getAllCategories();
     }),
-    
+
     getById: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => getCategoryById(input.id)),
-    
+
     create: protectedProcedure
-      .input(z.object({
-        name: z.string().min(1),
-        slug: z.string().min(1),
-        description: z.string().optional(),
-        color: z.string().optional(),
-        icon: z.string().optional(),
-        sortOrder: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().min(1),
+          slug: z.string().min(1),
+          description: z.string().optional(),
+          color: z.string().optional(),
+          icon: z.string().optional(),
+          sortOrder: z.number().optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const result = await createCategory(input);
         await logActivity({
@@ -104,38 +137,44 @@ export const appRouter = router({
   // ============ DOCUMENTS ============
   documents: router({
     list: publicProcedure
-      .input(z.object({
-        categoryId: z.number().optional(),
-        status: z.string().optional(),
-        priority: z.string().optional(),
-        search: z.string().optional(),
-        isArchived: z.boolean().optional(),
-      }).optional())
+      .input(
+        z
+          .object({
+            categoryId: z.number().optional(),
+            status: z.string().optional(),
+            priority: z.string().optional(),
+            search: z.string().optional(),
+            isArchived: z.boolean().optional(),
+          })
+          .optional()
+      )
       .query(async ({ input }) => {
         await seedDefaultCategories();
         await seedDefaultDocuments();
         return getAllDocuments(input);
       }),
-    
+
     getById: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => getDocumentById(input.id)),
-    
+
     stats: publicProcedure.query(async () => {
       await seedDefaultCategories();
       await seedDefaultDocuments();
       return getDocumentStats();
     }),
-    
+
     create: protectedProcedure
-      .input(z.object({
-        title: z.string().min(1),
-        description: z.string().optional(),
-        categoryId: z.number(),
-        status: z.enum(["pending", "in-progress", "completed"]).optional(),
-        priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
-        dueDate: z.date().optional(),
-      }))
+      .input(
+        z.object({
+          title: z.string().min(1),
+          description: z.string().optional(),
+          categoryId: z.number(),
+          status: z.enum(["pending", "in-progress", "completed"]).optional(),
+          priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
+          dueDate: z.date().optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const result = await createDocument({
           ...input,
@@ -154,21 +193,26 @@ export const appRouter = router({
         });
         return result;
       }),
-    
+
     update: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        title: z.string().optional(),
-        description: z.string().optional(),
-        categoryId: z.number().optional(),
-        status: z.enum(["pending", "in-progress", "completed"]).optional(),
-        priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
-        dueDate: z.date().nullable().optional(),
-        isArchived: z.boolean().optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          title: z.string().optional(),
+          description: z.string().optional(),
+          categoryId: z.number().optional(),
+          status: z.enum(["pending", "in-progress", "completed"]).optional(),
+          priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
+          dueDate: z.date().nullable().optional(),
+          isArchived: z.boolean().optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const { id, ...data } = input;
-        const result = await updateDocument(id, { ...data, updatedBy: ctx.user.id });
+        const result = await updateDocument(id, {
+          ...data,
+          updatedBy: ctx.user.id,
+        });
         await logActivity({
           userId: ctx.user.id,
           action: "update",
@@ -178,7 +222,7 @@ export const appRouter = router({
         });
         return result;
       }),
-    
+
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
@@ -192,27 +236,29 @@ export const appRouter = router({
         });
         return { success: true };
       }),
-    
+
     uploadFile: protectedProcedure
-      .input(z.object({
-        documentId: z.number(),
-        fileName: z.string(),
-        fileType: z.string(),
-        fileSize: z.number(),
-        fileBase64: z.string(),
-      }))
+      .input(
+        z.object({
+          documentId: z.number(),
+          fileName: z.string(),
+          fileType: z.string(),
+          fileSize: z.number(),
+          fileBase64: z.string(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const { documentId, fileName, fileType, fileSize, fileBase64 } = input;
-        
+
         // Convert base64 to buffer
         const fileBuffer = Buffer.from(fileBase64, "base64");
-        
+
         // Generate unique file key
         const fileKey = `documents/${documentId}/${nanoid()}-${fileName}`;
-        
+
         // Upload to S3
         const { url } = await storagePut(fileKey, fileBuffer, fileType);
-        
+
         // Update document with file info
         await updateDocument(documentId, {
           fileUrl: url,
@@ -222,7 +268,7 @@ export const appRouter = router({
           fileSize,
           updatedBy: ctx.user.id,
         });
-        
+
         await logActivity({
           userId: ctx.user.id,
           action: "upload",
@@ -230,15 +276,15 @@ export const appRouter = router({
           entityId: documentId,
           details: `Fichier "${fileName}" uploadé`,
         });
-        
+
         await notifyOwner({
           title: "Fichier uploadé",
           content: `Le fichier "${fileName}" a été uploadé par ${ctx.user.name || "un utilisateur"}.`,
         });
-        
+
         return { success: true, url, fileKey };
       }),
-    
+
     removeFile: protectedProcedure
       .input(z.object({ documentId: z.number() }))
       .mutation(async ({ input, ctx }) => {
@@ -259,32 +305,48 @@ export const appRouter = router({
         });
         return { success: true };
       }),
-    
+
     // Export documents report data
     exportReport: publicProcedure
-      .input(z.object({
-        categoryId: z.number().optional(),
-        status: z.string().optional(),
-      }).optional())
+      .input(
+        z
+          .object({
+            categoryId: z.number().optional(),
+            status: z.string().optional(),
+          })
+          .optional()
+      )
       .query(async ({ input }) => {
         const docs = await getAllDocuments(input);
         const cats = await getAllCategories();
         const stats = await getDocumentStats();
-        
+
         const catMap = Object.fromEntries(cats.map(c => [c.id, c.name]));
-        
+
         const reportData = docs.map(doc => ({
           id: doc.id,
           title: doc.title,
           description: doc.description || "",
           category: catMap[doc.categoryId] || "Non catégorisé",
-          status: doc.status === "completed" ? "Complété" : doc.status === "in-progress" ? "En cours" : "En attente",
-          priority: doc.priority === "urgent" ? "Urgent" : doc.priority === "high" ? "Haute" : doc.priority === "medium" ? "Moyenne" : "Basse",
+          status:
+            doc.status === "completed"
+              ? "Complété"
+              : doc.status === "in-progress"
+                ? "En cours"
+                : "En attente",
+          priority:
+            doc.priority === "urgent"
+              ? "Urgent"
+              : doc.priority === "high"
+                ? "Haute"
+                : doc.priority === "medium"
+                  ? "Moyenne"
+                  : "Basse",
           hasFile: !!doc.fileUrl,
           createdAt: doc.createdAt,
           updatedAt: doc.updatedAt,
         }));
-        
+
         return {
           documents: reportData,
           stats,
@@ -292,20 +354,24 @@ export const appRouter = router({
           generatedAt: new Date(),
         };
       }),
-    
+
     // List archived documents
     archived: publicProcedure
-      .input(z.object({
-        categoryId: z.number().optional(),
-        search: z.string().optional(),
-      }).optional())
+      .input(
+        z
+          .object({
+            categoryId: z.number().optional(),
+            search: z.string().optional(),
+          })
+          .optional()
+      )
       .query(async ({ input }) => {
         return getAllDocuments({
           ...input,
           isArchived: true,
         });
       }),
-    
+
     // Archive a document
     archive: protectedProcedure
       .input(z.object({ id: z.number() }))
@@ -327,7 +393,7 @@ export const appRouter = router({
         });
         return result;
       }),
-    
+
     // Restore an archived document
     restore: protectedProcedure
       .input(z.object({ id: z.number() }))
@@ -352,12 +418,14 @@ export const appRouter = router({
     listByDocument: publicProcedure
       .input(z.object({ documentId: z.number() }))
       .query(async ({ input }) => getNotesByDocumentId(input.documentId)),
-    
+
     create: protectedProcedure
-      .input(z.object({
-        documentId: z.number(),
-        content: z.string().min(1),
-      }))
+      .input(
+        z.object({
+          documentId: z.number(),
+          content: z.string().min(1),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const result = await createNote({
           documentId: input.documentId,
@@ -373,7 +441,7 @@ export const appRouter = router({
         });
         return result;
       }),
-    
+
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
@@ -392,21 +460,23 @@ export const appRouter = router({
   // ============ MEMBERS ============
   members: router({
     list: protectedProcedure.query(async () => getAllMembers()),
-    
+
     getById: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => getMemberById(input.id)),
-    
+
     create: protectedProcedure
-      .input(z.object({
-        firstName: z.string().min(1),
-        lastName: z.string().min(1),
-        email: z.string().email().optional(),
-        phone: z.string().optional(),
-        role: z.string().optional(),
-        function: z.string().optional(),
-        status: z.enum(["active", "inactive", "pending"]).optional(),
-      }))
+      .input(
+        z.object({
+          firstName: z.string().min(1),
+          lastName: z.string().min(1),
+          email: z.string().email().optional(),
+          phone: z.string().optional(),
+          role: z.string().optional(),
+          function: z.string().optional(),
+          status: z.enum(["active", "inactive", "pending"]).optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const result = await createMember(input);
         await logActivity({
@@ -422,18 +492,20 @@ export const appRouter = router({
         });
         return result;
       }),
-    
+
     update: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().email().optional(),
-        phone: z.string().optional(),
-        role: z.string().optional(),
-        function: z.string().optional(),
-        status: z.enum(["active", "inactive", "pending"]).optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          firstName: z.string().optional(),
+          lastName: z.string().optional(),
+          email: z.string().email().optional(),
+          phone: z.string().optional(),
+          role: z.string().optional(),
+          function: z.string().optional(),
+          status: z.enum(["active", "inactive", "pending"]).optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const { id, ...data } = input;
         const result = await updateMember(id, data);
@@ -446,7 +518,7 @@ export const appRouter = router({
         });
         return result;
       }),
-    
+
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
@@ -460,7 +532,7 @@ export const appRouter = router({
         });
         return { success: true };
       }),
-    
+
     // Export members list
     exportList: protectedProcedure.query(async () => {
       const membersList = await getAllMembers();
@@ -472,7 +544,12 @@ export const appRouter = router({
           phone: m.phone || "",
           role: m.role || "Membre",
           function: m.function || "",
-          status: m.status === "active" ? "Actif" : m.status === "inactive" ? "Inactif" : "En attente",
+          status:
+            m.status === "active"
+              ? "Actif"
+              : m.status === "inactive"
+                ? "Inactif"
+                : "En attente",
           joinedAt: m.joinedAt,
         })),
         total: membersList.length,
@@ -509,9 +586,13 @@ export const appRouter = router({
         }
 
         // Read SQL file
-        const fs = await import('fs');
-        const path = await import('path');
-        const sqlFile = path.join(process.cwd(), "drizzle", "migrations_clean.sql");
+        const fs = await import("fs");
+        const path = await import("path");
+        const sqlFile = path.join(
+          process.cwd(),
+          "drizzle",
+          "migrations_clean.sql"
+        );
         if (!fs.existsSync(sqlFile)) {
           throw new Error("Migration SQL file not found");
         }
@@ -583,21 +664,23 @@ export const appRouter = router({
     }),
 
     createRole: protectedProcedure
-      .input(z.object({
-        name: z.string().min(1),
-        description: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().min(1),
+          description: z.string().optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const db = await getDb();
         if (!db) throw new Error("Database not available");
-        
+
         try {
           const result = await db.insert(roles).values({
             name: input.name,
             description: input.description,
             isSystem: false,
           });
-          
+
           // Log audit
           await logAudit({
             userId: ctx.user?.id,
@@ -607,7 +690,7 @@ export const appRouter = router({
             description: `Created role: ${input.name}`,
             status: "success",
           });
-          
+
           return result;
         } catch (error) {
           console.error("Failed to create role:", error);
@@ -616,35 +699,43 @@ export const appRouter = router({
       }),
 
     getAuditLogs: protectedProcedure
-      .input(z.object({
-        limit: z.number().default(100),
-        offset: z.number().default(0),
-        entityType: z.string().optional(),
-        userId: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          limit: z.number().default(100),
+          offset: z.number().default(0),
+          entityType: z.string().optional(),
+          userId: z.number().optional(),
+        })
+      )
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) return [];
-        
+
         try {
           const result = await db.select().from(auditLogs);
           let filtered = result;
-          
+
           if (input.entityType) {
-            filtered = filtered.filter(log => log.entityType === input.entityType);
+            filtered = filtered.filter(
+              log => log.entityType === input.entityType
+            );
           }
           if (input.userId) {
             filtered = filtered.filter(log => log.userId === input.userId);
           }
-          
+
           return filtered
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
             .slice(input.offset, input.offset + input.limit);
         } catch (error) {
           console.error("Failed to get audit logs:", error);
           return [];
         }
-       }),
+      }),
   }),
 
   // ============ GLOBAL SETTINGS ============
@@ -655,26 +746,32 @@ export const appRouter = router({
     }),
 
     update: protectedProcedure
-      .input(z.object({
-        associationName: z.string().optional(),
-        seatCity: z.string().optional(),
-        folio: z.string().optional(),
-        email: z.string().email("Email invalide").optional().or(z.literal('')),
-        website: z.string().optional(),
-        phone: z.string().optional(),
-        logo: z.string().nullable().optional(),
-        description: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          associationName: z.string().optional(),
+          seatCity: z.string().optional(),
+          folio: z.string().optional(),
+          email: z
+            .string()
+            .email("Email invalide")
+            .optional()
+            .or(z.literal("")),
+          website: z.string().optional(),
+          phone: z.string().optional(),
+          logo: z.string().nullable().optional(),
+          description: z.string().optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         if (ctx.user?.role !== "admin") {
           throw new Error("Only admins can update global settings");
         }
-        
+
         const result = await updateGlobalSettings({
           ...input,
           updatedBy: ctx.user?.id,
         });
-        
+
         await logAudit({
           userId: ctx.user?.id,
           action: "UPDATE",
@@ -683,7 +780,7 @@ export const appRouter = router({
           description: "Updated global settings",
           status: "success",
         });
-        
+
         return result;
       }),
   }),

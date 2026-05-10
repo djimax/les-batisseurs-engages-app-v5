@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
-import { 
-  getAllProjects, 
-  getProjectById, 
-  createProject, 
-  updateProject, 
+import {
+  getAllProjects,
+  getProjectById,
+  createProject,
+  updateProject,
   deleteProject,
   getTasksByProjectId,
   getProjectMembers,
@@ -16,7 +16,7 @@ import {
   createTask,
   updateTask,
   deleteTask,
-  getTaskById
+  getTaskById,
 } from "../db";
 import { TRPCError } from "@trpc/server";
 
@@ -52,32 +52,47 @@ export const projectsRouter = router({
           statistics: {
             taskCount: tasks.length,
             completedCount: tasks.filter(t => t.status === "done").length,
-            totalExpenses: expenses.reduce((sum, e) => sum + parseFloat(e.amount.toString()), 0),
-            budgetUsagePercentage: project.budget 
-              ? Math.round((expenses.reduce((sum, e) => sum + parseFloat(e.amount.toString()), 0) / parseFloat(project.budget.toString())) * 100)
+            totalExpenses: expenses.reduce(
+              (sum, e) => sum + parseFloat(e.amount.toString()),
+              0
+            ),
+            budgetUsagePercentage: project.budget
+              ? Math.round(
+                  (expenses.reduce(
+                    (sum, e) => sum + parseFloat(e.amount.toString()),
+                    0
+                  ) /
+                    parseFloat(project.budget.toString())) *
+                    100
+                )
               : 0,
             tasksByStatus: {
               todo: tasks.filter(t => t.status === "todo").length,
-            inProgress: tasks.filter(t => t.status === "in-progress").length,
-            completed: tasks.filter(t => t.status === "done").length,
-            }
-          }
+              inProgress: tasks.filter(t => t.status === "in-progress").length,
+              completed: tasks.filter(t => t.status === "done").length,
+            },
+          },
         };
       } catch (error) {
         console.error("[Projects] Error getting project:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get project" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get project",
+        });
       }
     }),
 
   create: protectedProcedure
-    .input(z.object({
-      title: z.string().min(1),
-      description: z.string().optional(),
-      status: z.string().optional(),
-      startDate: z.date().optional(),
-      endDate: z.date().optional(),
-      budget: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        title: z.string().min(1),
+        description: z.string().optional(),
+        status: z.string().optional(),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+        budget: z.string().optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         const project = await createProject({
@@ -86,28 +101,35 @@ export const projectsRouter = router({
           status: (input.status as any) || "planning",
           startDate: input.startDate,
           endDate: input.endDate,
-          budget: input.budget ? parseFloat(input.budget).toString() : undefined,
+          budget: input.budget
+            ? parseFloat(input.budget).toString()
+            : undefined,
           progress: 0,
           createdBy: ctx.user?.id || 0,
         });
         return project;
       } catch (error) {
         console.error("[Projects] Error creating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create project" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create project",
+        });
       }
     }),
 
   update: protectedProcedure
-    .input(z.object({
-      id: z.number(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      status: z.string().optional(),
-      startDate: z.date().optional(),
-      endDate: z.date().optional(),
-      budget: z.string().optional(),
-      progress: z.number().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        status: z.string().optional(),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+        budget: z.string().optional(),
+        progress: z.number().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
         const updated = await updateProject(input.id, {
@@ -116,26 +138,36 @@ export const projectsRouter = router({
           status: (input.status as any) || undefined,
           startDate: input.startDate,
           endDate: input.endDate,
-          budget: input.budget ? parseFloat(input.budget).toString() : undefined,
+          budget: input.budget
+            ? parseFloat(input.budget).toString()
+            : undefined,
         });
         return updated;
       } catch (error) {
         console.error("[Projects] Error updating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update project" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update project",
+        });
       }
     }),
 
   updateStatus: protectedProcedure
-    .input(z.object({
-      id: z.number(),
-      status: z.string(),
-    }))
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.string(),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
         return await updateProject(input.id, { status: input.status as any });
       } catch (error) {
         console.error("[Projects] Error updating status:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update project status" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update project status",
+        });
       }
     }),
 
@@ -147,21 +179,26 @@ export const projectsRouter = router({
         return { success: true };
       } catch (error) {
         console.error("[Projects] Error deleting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete project" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete project",
+        });
       }
     }),
 
   // ============ TASKS CRUD ============
   createTask: protectedProcedure
-    .input(z.object({
-      projectId: z.number(),
-      title: z.string().min(1),
-      description: z.string().optional(),
-      status: z.string().optional(),
-      priority: z.string().optional(),
-      dueDate: z.date().optional(),
-      assignedTo: z.number().optional(),
-    }))
+    .input(
+      z.object({
+        projectId: z.number(),
+        title: z.string().min(1),
+        description: z.string().optional(),
+        status: z.string().optional(),
+        priority: z.string().optional(),
+        dueDate: z.date().optional(),
+        assignedTo: z.number().optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         return await createTask({
@@ -176,21 +213,26 @@ export const projectsRouter = router({
         });
       } catch (error) {
         console.error("[Tasks] Error creating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create task" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create task",
+        });
       }
     }),
 
   updateTask: protectedProcedure
-    .input(z.object({
-      id: z.number(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      status: z.string().optional(),
-      priority: z.string().optional(),
-      dueDate: z.date().optional(),
-      assignedTo: z.number().optional(),
-      progress: z.number().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        status: z.string().optional(),
+        priority: z.string().optional(),
+        dueDate: z.date().optional(),
+        assignedTo: z.number().optional(),
+        progress: z.number().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
         return await updateTask(input.id, {
@@ -203,7 +245,10 @@ export const projectsRouter = router({
         });
       } catch (error) {
         console.error("[Tasks] Error updating:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update task" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update task",
+        });
       }
     }),
 
@@ -215,7 +260,10 @@ export const projectsRouter = router({
         return { success: true };
       } catch (error) {
         console.error("[Tasks] Error deleting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete task" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete task",
+        });
       }
     }),
 
@@ -232,11 +280,13 @@ export const projectsRouter = router({
     }),
 
   addMember: protectedProcedure
-    .input(z.object({
-      projectId: z.number(),
-      userId: z.number(),
-      role: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        projectId: z.number(),
+        userId: z.number(),
+        role: z.string().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
         return await addProjectMember({
@@ -246,22 +296,30 @@ export const projectsRouter = router({
         });
       } catch (error) {
         console.error("[ProjectMembers] Error adding:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to add member" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to add member",
+        });
       }
     }),
 
   removeMember: protectedProcedure
-    .input(z.object({
-      projectId: z.number(),
-      userId: z.number(),
-    }))
+    .input(
+      z.object({
+        projectId: z.number(),
+        userId: z.number(),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
         await removeProjectMember(input.projectId, input.userId);
         return { success: true };
       } catch (error) {
         console.error("[ProjectMembers] Error removing:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to remove member" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to remove member",
+        });
       }
     }),
 
@@ -278,14 +336,16 @@ export const projectsRouter = router({
     }),
 
   addExpense: protectedProcedure
-    .input(z.object({
-      projectId: z.number(),
-      title: z.string().min(1),
-      description: z.string().optional(),
-      amount: z.string(),
-      category: z.string().optional(),
-      date: z.date().optional(),
-    }))
+    .input(
+      z.object({
+        projectId: z.number(),
+        title: z.string().min(1),
+        description: z.string().optional(),
+        amount: z.string(),
+        category: z.string().optional(),
+        date: z.date().optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         return await addProjectExpense({
@@ -299,7 +359,10 @@ export const projectsRouter = router({
         });
       } catch (error) {
         console.error("[ProjectExpenses] Error adding:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to add expense" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to add expense",
+        });
       }
     }),
 
@@ -311,7 +374,10 @@ export const projectsRouter = router({
         return { success: true };
       } catch (error) {
         console.error("[ProjectExpenses] Error deleting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete expense" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete expense",
+        });
       }
     }),
 });

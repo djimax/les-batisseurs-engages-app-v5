@@ -48,7 +48,7 @@ export function ListWidget({
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground">Aucun élément</p>
         ) : (
-          items.map((item) => (
+          items.map(item => (
             <div
               key={item.id}
               className="flex items-center justify-between p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors"
@@ -56,11 +56,17 @@ export function ListWidget({
             >
               <div className="flex-1">
                 <p className="text-sm font-medium">{item.title}</p>
-                {item.subtitle && <p className="text-xs text-muted-foreground">{item.subtitle}</p>}
+                {item.subtitle && (
+                  <p className="text-xs text-muted-foreground">
+                    {item.subtitle}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 {item.badge && (
-                  <span className={`text-xs px-2 py-1 rounded ${badgeColors[item.badge.color]}`}>
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${badgeColors[item.badge.color]}`}
+                  >
                     {item.badge.text}
                   </span>
                 )}

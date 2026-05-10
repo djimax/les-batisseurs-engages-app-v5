@@ -1,10 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Plus, DollarSign, Gift, TrendingUp, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { FinanceCharts } from "@/components/FinanceCharts";
@@ -102,7 +121,13 @@ export default function Finance() {
     };
 
     setCotisations([...cotisations, cotisation]);
-    setNewCotisation({ memberId: "", montant: "", dateDebut: "", dateFin: "", notes: "" });
+    setNewCotisation({
+      memberId: "",
+      montant: "",
+      dateDebut: "",
+      dateFin: "",
+      notes: "",
+    });
     toast.success("Cotisation ajoutée avec succès");
   };
 
@@ -123,7 +148,13 @@ export default function Finance() {
     };
 
     setDons([...dons, don]);
-    setNewDon({ donateur: "", montant: "", description: "", email: "", telephone: "" });
+    setNewDon({
+      donateur: "",
+      montant: "",
+      description: "",
+      email: "",
+      telephone: "",
+    });
     toast.success("Don enregistré avec succès");
   };
 
@@ -143,13 +174,27 @@ export default function Finance() {
     };
 
     setDepenses([...depenses, depense]);
-    setNewDepense({ description: "", montant: "", categorie: "autre", notes: "" });
+    setNewDepense({
+      description: "",
+      montant: "",
+      categorie: "autre",
+      notes: "",
+    });
     toast.success("Dépense enregistrée avec succès");
   };
 
-  const totalCotisations = cotisations.reduce((sum, c) => sum + parseFloat(c.montant || "0"), 0);
-  const totalDons = dons.reduce((sum, d) => sum + parseFloat(d.montant || "0"), 0);
-  const totalDepenses = depenses.reduce((sum, d) => sum + parseFloat(d.montant || "0"), 0);
+  const totalCotisations = cotisations.reduce(
+    (sum, c) => sum + parseFloat(c.montant || "0"),
+    0
+  );
+  const totalDons = dons.reduce(
+    (sum, d) => sum + parseFloat(d.montant || "0"),
+    0
+  );
+  const totalDepenses = depenses.reduce(
+    (sum, d) => sum + parseFloat(d.montant || "0"),
+    0
+  );
   const solde = totalCotisations + totalDons - totalDepenses;
 
   const getStatutColor = (statut: string) => {
@@ -177,7 +222,9 @@ export default function Finance() {
 
       {/* Vue d'ensemble */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight mb-4">Vue d'ensemble</h2>
+        <h2 className="text-2xl font-bold tracking-tight mb-4">
+          Vue d'ensemble
+        </h2>
       </div>
 
       {/* Statistiques */}
@@ -188,8 +235,12 @@ export default function Finance() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold"><AmountDisplay amount={totalCotisations} sourceCurrency="EUR" /></div>
-            <p className="text-xs text-muted-foreground">{cotisations.length} cotisations</p>
+            <div className="text-2xl font-bold">
+              <AmountDisplay amount={totalCotisations} sourceCurrency="EUR" />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {cotisations.length} cotisations
+            </p>
           </CardContent>
         </Card>
 
@@ -199,8 +250,12 @@ export default function Finance() {
             <Gift className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold"><AmountDisplay amount={totalDons} sourceCurrency="EUR" /></div>
-            <p className="text-xs text-muted-foreground">{dons.length} dons reçus</p>
+            <div className="text-2xl font-bold">
+              <AmountDisplay amount={totalDons} sourceCurrency="EUR" />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {dons.length} dons reçus
+            </p>
           </CardContent>
         </Card>
 
@@ -210,18 +265,26 @@ export default function Finance() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold"><AmountDisplay amount={totalDepenses} sourceCurrency="EUR" /></div>
-            <p className="text-xs text-muted-foreground">{depenses.length} dépenses</p>
+            <div className="text-2xl font-bold">
+              <AmountDisplay amount={totalDepenses} sourceCurrency="EUR" />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {depenses.length} dépenses
+            </p>
           </CardContent>
         </Card>
 
         <Card className={solde >= 0 ? "border-green-200" : "border-red-200"}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Solde</CardTitle>
-            <AlertCircle className={`h-4 w-4 ${solde >= 0 ? "text-green-600" : "text-red-600"}`} />
+            <AlertCircle
+              className={`h-4 w-4 ${solde >= 0 ? "text-green-600" : "text-red-600"}`}
+            />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${solde >= 0 ? "text-green-600" : "text-red-600"}`}>
+            <div
+              className={`text-2xl font-bold ${solde >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
               <AmountDisplay amount={solde} sourceCurrency="EUR" />
             </div>
             <p className="text-xs text-muted-foreground">Bilan financier</p>
@@ -247,7 +310,7 @@ export default function Finance() {
                 <SelectValue placeholder="Trier par" />
               </SelectTrigger>
               <SelectContent>
-                {SORT_OPTIONS.map((option) => (
+                {SORT_OPTIONS.map(option => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
@@ -275,7 +338,12 @@ export default function Finance() {
                       id="memberId"
                       type="number"
                       value={newCotisation.memberId}
-                      onChange={(e) => setNewCotisation({ ...newCotisation, memberId: e.target.value })}
+                      onChange={e =>
+                        setNewCotisation({
+                          ...newCotisation,
+                          memberId: e.target.value,
+                        })
+                      }
                       placeholder="ID du membre"
                     />
                   </div>
@@ -286,7 +354,12 @@ export default function Finance() {
                       type="number"
                       step="0.01"
                       value={newCotisation.montant}
-                      onChange={(e) => setNewCotisation({ ...newCotisation, montant: e.target.value })}
+                      onChange={e =>
+                        setNewCotisation({
+                          ...newCotisation,
+                          montant: e.target.value,
+                        })
+                      }
                       placeholder="0.00"
                     />
                   </div>
@@ -296,7 +369,12 @@ export default function Finance() {
                       id="dateDebut"
                       type="date"
                       value={newCotisation.dateDebut}
-                      onChange={(e) => setNewCotisation({ ...newCotisation, dateDebut: e.target.value })}
+                      onChange={e =>
+                        setNewCotisation({
+                          ...newCotisation,
+                          dateDebut: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
@@ -305,7 +383,12 @@ export default function Finance() {
                       id="dateFin"
                       type="date"
                       value={newCotisation.dateFin}
-                      onChange={(e) => setNewCotisation({ ...newCotisation, dateFin: e.target.value })}
+                      onChange={e =>
+                        setNewCotisation({
+                          ...newCotisation,
+                          dateFin: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
@@ -313,7 +396,12 @@ export default function Finance() {
                     <Input
                       id="notes"
                       value={newCotisation.notes}
-                      onChange={(e) => setNewCotisation({ ...newCotisation, notes: e.target.value })}
+                      onChange={e =>
+                        setNewCotisation({
+                          ...newCotisation,
+                          notes: e.target.value,
+                        })
+                      }
                       placeholder="Notes..."
                     />
                   </div>
@@ -328,38 +416,64 @@ export default function Finance() {
           <Card>
             <CardContent className="pt-6">
               {cotisations.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">Aucune cotisation enregistrée</p>
+                <p className="text-center text-muted-foreground py-8">
+                  Aucune cotisation enregistrée
+                </p>
               ) : (
                 <div className="space-y-2">
                   {cotisations
                     .sort((a, b) => {
                       switch (sortBy) {
                         case "date-newest":
-                          return new Date(b.dateDebut).getTime() - new Date(a.dateDebut).getTime();
+                          return (
+                            new Date(b.dateDebut).getTime() -
+                            new Date(a.dateDebut).getTime()
+                          );
                         case "date-oldest":
-                          return new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime();
+                          return (
+                            new Date(a.dateDebut).getTime() -
+                            new Date(b.dateDebut).getTime()
+                          );
                         case "amount-high":
-                          return parseFloat(b.montant || "0") - parseFloat(a.montant || "0");
+                          return (
+                            parseFloat(b.montant || "0") -
+                            parseFloat(a.montant || "0")
+                          );
                         case "amount-low":
-                          return parseFloat(a.montant || "0") - parseFloat(b.montant || "0");
+                          return (
+                            parseFloat(a.montant || "0") -
+                            parseFloat(b.montant || "0")
+                          );
                         default:
                           return 0;
                       }
                     })
-                    .map((cot) => (
-                    <div key={cot.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-medium">Membre #{cot.memberId}</p>
-                        <p className="text-sm text-muted-foreground">{cot.notes}</p>
+                    .map(cot => (
+                      <div
+                        key={cot.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium">Membre #{cot.memberId}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {cot.notes}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold">
+                            <AmountDisplay
+                              amount={parseFloat(cot.montant || "0")}
+                              sourceCurrency="EUR"
+                            />
+                          </p>
+                          <span
+                            className={`text-xs px-2 py-1 rounded ${getStatutColor(cot.statut)}`}
+                          >
+                            {cot.statut}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold"><AmountDisplay amount={parseFloat(cot.montant || "0")} sourceCurrency="EUR" /></p>
-                        <span className={`text-xs px-2 py-1 rounded ${getStatutColor(cot.statut)}`}>
-                          {cot.statut}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               )}
             </CardContent>
@@ -390,7 +504,9 @@ export default function Finance() {
                     <Input
                       id="donateur"
                       value={newDon.donateur}
-                      onChange={(e) => setNewDon({ ...newDon, donateur: e.target.value })}
+                      onChange={e =>
+                        setNewDon({ ...newDon, donateur: e.target.value })
+                      }
                       placeholder="Nom du donateur"
                     />
                   </div>
@@ -401,7 +517,9 @@ export default function Finance() {
                       type="number"
                       step="0.01"
                       value={newDon.montant}
-                      onChange={(e) => setNewDon({ ...newDon, montant: e.target.value })}
+                      onChange={e =>
+                        setNewDon({ ...newDon, montant: e.target.value })
+                      }
                       placeholder="0.00"
                     />
                   </div>
@@ -410,7 +528,9 @@ export default function Finance() {
                     <Input
                       id="description"
                       value={newDon.description}
-                      onChange={(e) => setNewDon({ ...newDon, description: e.target.value })}
+                      onChange={e =>
+                        setNewDon({ ...newDon, description: e.target.value })
+                      }
                       placeholder="Description du don..."
                     />
                   </div>
@@ -420,7 +540,9 @@ export default function Finance() {
                       id="emailDon"
                       type="email"
                       value={newDon.email}
-                      onChange={(e) => setNewDon({ ...newDon, email: e.target.value })}
+                      onChange={e =>
+                        setNewDon({ ...newDon, email: e.target.value })
+                      }
                       placeholder="email@example.com"
                     />
                   </div>
@@ -429,7 +551,9 @@ export default function Finance() {
                     <Input
                       id="telephone"
                       value={newDon.telephone}
-                      onChange={(e) => setNewDon({ ...newDon, telephone: e.target.value })}
+                      onChange={e =>
+                        setNewDon({ ...newDon, telephone: e.target.value })
+                      }
                       placeholder="+33 6 XX XX XX XX"
                     />
                   </div>
@@ -444,16 +568,28 @@ export default function Finance() {
           <Card>
             <CardContent className="pt-6">
               {dons.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">Aucun don enregistré</p>
+                <p className="text-center text-muted-foreground py-8">
+                  Aucun don enregistré
+                </p>
               ) : (
                 <div className="space-y-2">
-                  {dons.map((don) => (
-                    <div key={don.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  {dons.map(don => (
+                    <div
+                      key={don.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{don.donateur}</p>
-                        <p className="text-sm text-muted-foreground">{don.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {don.description}
+                        </p>
                       </div>
-                      <p className="font-semibold text-green-600"><AmountDisplay amount={parseFloat(don.montant || "0")} sourceCurrency="EUR" /></p>
+                      <p className="font-semibold text-green-600">
+                        <AmountDisplay
+                          amount={parseFloat(don.montant || "0")}
+                          sourceCurrency="EUR"
+                        />
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -486,7 +622,12 @@ export default function Finance() {
                     <Input
                       id="descriptionDepense"
                       value={newDepense.description}
-                      onChange={(e) => setNewDepense({ ...newDepense, description: e.target.value })}
+                      onChange={e =>
+                        setNewDepense({
+                          ...newDepense,
+                          description: e.target.value,
+                        })
+                      }
                       placeholder="Description de la dépense"
                     />
                   </div>
@@ -497,13 +638,23 @@ export default function Finance() {
                       type="number"
                       step="0.01"
                       value={newDepense.montant}
-                      onChange={(e) => setNewDepense({ ...newDepense, montant: e.target.value })}
+                      onChange={e =>
+                        setNewDepense({
+                          ...newDepense,
+                          montant: e.target.value,
+                        })
+                      }
                       placeholder="0.00"
                     />
                   </div>
                   <div>
                     <Label htmlFor="categorie">Catégorie</Label>
-                    <Select value={newDepense.categorie} onValueChange={(value) => setNewDepense({ ...newDepense, categorie: value })}>
+                    <Select
+                      value={newDepense.categorie}
+                      onValueChange={value =>
+                        setNewDepense({ ...newDepense, categorie: value })
+                      }
+                    >
                       <SelectTrigger id="categorie">
                         <SelectValue placeholder="Sélectionnez une catégorie" />
                       </SelectTrigger>
@@ -513,7 +664,9 @@ export default function Finance() {
                         <SelectItem value="loyer">Loyer</SelectItem>
                         <SelectItem value="utilities">Utilities</SelectItem>
                         <SelectItem value="transport">Transport</SelectItem>
-                        <SelectItem value="communication">Communication</SelectItem>
+                        <SelectItem value="communication">
+                          Communication
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -522,7 +675,9 @@ export default function Finance() {
                     <Input
                       id="notesDepense"
                       value={newDepense.notes}
-                      onChange={(e) => setNewDepense({ ...newDepense, notes: e.target.value })}
+                      onChange={e =>
+                        setNewDepense({ ...newDepense, notes: e.target.value })
+                      }
                       placeholder="Notes..."
                     />
                   </div>
@@ -537,16 +692,28 @@ export default function Finance() {
           <Card>
             <CardContent className="pt-6">
               {depenses.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">Aucune dépense enregistrée</p>
+                <p className="text-center text-muted-foreground py-8">
+                  Aucune dépense enregistrée
+                </p>
               ) : (
                 <div className="space-y-2">
-                  {depenses.map((dep) => (
-                    <div key={dep.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  {depenses.map(dep => (
+                    <div
+                      key={dep.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{dep.description}</p>
-                        <p className="text-sm text-muted-foreground">{dep.categorie}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {dep.categorie}
+                        </p>
                       </div>
-                      <p className="font-semibold text-red-600"><AmountDisplay amount={parseFloat(dep.montant || "0")} sourceCurrency="EUR" /></p>
+                      <p className="font-semibold text-red-600">
+                        <AmountDisplay
+                          amount={parseFloat(dep.montant || "0")}
+                          sourceCurrency="EUR"
+                        />
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -558,9 +725,11 @@ export default function Finance() {
         {/* Graphiques Tab */}
         <TabsContent value="graphiques" className="space-y-4">
           <div>
-            <h2 className="text-xl font-semibold mb-4">Visualisation Financière</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Visualisation Financière
+            </h2>
             <FinanceCharts
-              expensesByCategory={depenses.map((d) => ({
+              expensesByCategory={depenses.map(d => ({
                 category: d.categorie,
                 amount: parseFloat(d.montant || "0"),
               }))}

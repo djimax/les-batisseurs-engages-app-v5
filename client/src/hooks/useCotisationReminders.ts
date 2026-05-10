@@ -24,9 +24,11 @@ export function useCotisationReminders(cotisations: Cotisation[]) {
     const now = new Date();
     const reminderList: CotisationReminder[] = [];
 
-    cotisations.forEach((cot) => {
+    cotisations.forEach(cot => {
       const dateFin = new Date(cot.dateFin);
-      const daysUntilExpiry = Math.floor((dateFin.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const daysUntilExpiry = Math.floor(
+        (dateFin.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       // Cotisations en retard (expirées depuis plus de 0 jours)
       if (daysUntilExpiry < 0 && cot.statut !== "payée") {
@@ -40,7 +42,11 @@ export function useCotisationReminders(cotisations: Cotisation[]) {
         });
       }
       // Cotisations expirées bientôt (dans les 7 jours)
-      else if (daysUntilExpiry >= 0 && daysUntilExpiry <= 7 && cot.statut === "en attente") {
+      else if (
+        daysUntilExpiry >= 0 &&
+        daysUntilExpiry <= 7 &&
+        cot.statut === "en attente"
+      ) {
         reminderList.push({
           id: cot.id,
           memberId: cot.memberId,
@@ -55,8 +61,10 @@ export function useCotisationReminders(cotisations: Cotisation[]) {
     return reminderList;
   }, [cotisations]);
 
-  const overdueCount = reminders.filter((r) => r.statut === "en retard").length;
-  const expiringSoonCount = reminders.filter((r) => r.statut === "expirée bientôt").length;
+  const overdueCount = reminders.filter(r => r.statut === "en retard").length;
+  const expiringSoonCount = reminders.filter(
+    r => r.statut === "expirée bientôt"
+  ).length;
   const totalReminders = reminders.length;
 
   return {

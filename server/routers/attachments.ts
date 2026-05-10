@@ -1,22 +1,32 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { createTaskAttachment, getTaskAttachments, deleteTaskAttachment } from "../db";
+import {
+  createTaskAttachment,
+  getTaskAttachments,
+  deleteTaskAttachment,
+} from "../db";
 import { storagePut, storageGet } from "../storage";
 
 export const attachmentsRouter = router({
   uploadTaskAttachment: protectedProcedure
-    .input(z.object({
-      taskId: z.number(),
-      fileName: z.string().min(1),
-      fileData: z.instanceof(Buffer),
-      mimeType: z.string(),
-    }))
+    .input(
+      z.object({
+        taskId: z.number(),
+        fileName: z.string().min(1),
+        fileData: z.instanceof(Buffer),
+        mimeType: z.string(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         // Upload file to S3
         const fileKey = `task-attachments/${ctx.user?.id}/${Date.now()}-${input.fileName}`;
-        const { url } = await storagePut(fileKey, input.fileData, input.mimeType);
+        const { url } = await storagePut(
+          fileKey,
+          input.fileData,
+          input.mimeType
+        );
 
         // Create attachment record
         const attachment = await createTaskAttachment({
@@ -32,7 +42,10 @@ export const attachmentsRouter = router({
         return attachment;
       } catch (error) {
         console.error("[Attachments] Error uploading:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to upload attachment" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to upload attachment",
+        });
       }
     }),
 
@@ -43,7 +56,10 @@ export const attachmentsRouter = router({
         return await getTaskAttachments(input.taskId);
       } catch (error) {
         console.error("[Attachments] Error getting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get attachments" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get attachments",
+        });
       }
     }),
 
@@ -54,7 +70,10 @@ export const attachmentsRouter = router({
         return await deleteTaskAttachment(input.id);
       } catch (error) {
         console.error("[Attachments] Error deleting:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete attachment" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete attachment",
+        });
       }
     }),
 
@@ -66,7 +85,10 @@ export const attachmentsRouter = router({
         return { url: result.url };
       } catch (error) {
         console.error("[Attachments] Error getting download URL:", error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get download URL" });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get download URL",
+        });
       }
     }),
 });

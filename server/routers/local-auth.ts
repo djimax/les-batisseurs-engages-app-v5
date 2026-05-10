@@ -30,7 +30,9 @@ export const localAuthRouter = router({
     .input(
       z.object({
         email: z.string().email("Email invalide"),
-        password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+        password: z
+          .string()
+          .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
         name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
       })
     )
@@ -121,7 +123,10 @@ export const localAuthRouter = router({
         }
 
         // Verify password
-        const isPasswordValid = await verifyPassword(input.password, localUser.passwordHash);
+        const isPasswordValid = await verifyPassword(
+          input.password,
+          localUser.passwordHash
+        );
         if (!isPasswordValid) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
@@ -274,7 +279,10 @@ export const localAuthRouter = router({
         }
 
         // Verify current password
-        const isPasswordValid = await verifyPassword(input.currentPassword, localUser.passwordHash);
+        const isPasswordValid = await verifyPassword(
+          input.currentPassword,
+          localUser.passwordHash
+        );
         if (!isPasswordValid) {
           throw new TRPCError({
             code: "UNAUTHORIZED",

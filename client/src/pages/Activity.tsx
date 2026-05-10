@@ -1,10 +1,16 @@
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Activity as ActivityIcon, 
+import {
+  Activity as ActivityIcon,
   FileText,
   Users,
   FolderOpen,
@@ -13,7 +19,7 @@ import {
   Edit,
   Plus,
   MessageSquare,
-  Clock
+  Clock,
 } from "lucide-react";
 
 const actionIcons: Record<string, any> = {
@@ -47,7 +53,9 @@ const entityLabels: Record<string, string> = {
 };
 
 export default function Activity() {
-  const { data: activities, isLoading } = trpc.activity.recent.useQuery({ limit: 50 });
+  const { data: activities, isLoading } = trpc.activity.recent.useQuery({
+    limit: 50,
+  });
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("fr-FR", {
@@ -90,24 +98,30 @@ export default function Activity() {
   };
 
   // Group activities by date
-  const groupedActivities = activities?.reduce((groups: Record<string, typeof activities>, activity) => {
-    const date = new Date(activity.createdAt).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(activity);
-    return groups;
-  }, {}) || {};
+  const groupedActivities =
+    activities?.reduce(
+      (groups: Record<string, typeof activities>, activity) => {
+        const date = new Date(activity.createdAt).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(activity);
+        return groups;
+      },
+      {}
+    ) || {};
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Historique d'activité</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          Historique d'activité
+        </h1>
         <p className="text-muted-foreground">
           Suivez toutes les actions effectuées dans l'application
         </p>
@@ -120,9 +134,7 @@ export default function Activity() {
             <ActivityIcon className="h-5 w-5" />
             Activités récentes
           </CardTitle>
-          <CardDescription>
-            Les 50 dernières actions effectuées
-          </CardDescription>
+          <CardDescription>Les 50 dernières actions effectuées</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -140,50 +152,61 @@ export default function Activity() {
           ) : activities && activities.length > 0 ? (
             <ScrollArea className="h-[600px] pr-4">
               <div className="space-y-8">
-                {Object.entries(groupedActivities).map(([date, dayActivities]) => (
-                  <div key={date}>
-                    <div className="sticky top-0 bg-card z-10 py-2">
-                      <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        {date}
-                      </h3>
-                    </div>
-                    <div className="space-y-4 mt-3">
-                      {dayActivities.map((activity) => {
-                        const ActionIcon = actionIcons[activity.action] || Edit;
-                        const EntityIcon = entityIcons[activity.entityType] || FileText;
+                {Object.entries(groupedActivities).map(
+                  ([date, dayActivities]) => (
+                    <div key={date}>
+                      <div className="sticky top-0 bg-card z-10 py-2">
+                        <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          {date}
+                        </h3>
+                      </div>
+                      <div className="space-y-4 mt-3">
+                        {dayActivities.map(activity => {
+                          const ActionIcon =
+                            actionIcons[activity.action] || Edit;
+                          const EntityIcon =
+                            entityIcons[activity.entityType] || FileText;
 
-                        return (
-                          <div 
-                            key={activity.id} 
-                            className="flex items-start gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                          >
-                            <div className={`p-2 rounded-full ${getActionColor(activity.action)}`}>
-                              <ActionIcon className="h-4 w-4" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <Badge variant="outline" className="gap-1">
-                                  <EntityIcon className="h-3 w-3" />
-                                  {entityLabels[activity.entityType] || activity.entityType}
-                                </Badge>
-                                <Badge className={getActionColor(activity.action)}>
-                                  {actionLabels[activity.action] || activity.action}
-                                </Badge>
+                          return (
+                            <div
+                              key={activity.id}
+                              className="flex items-start gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                            >
+                              <div
+                                className={`p-2 rounded-full ${getActionColor(activity.action)}`}
+                              >
+                                <ActionIcon className="h-4 w-4" />
                               </div>
-                              <p className="mt-2 text-sm">
-                                {activity.details || `${actionLabels[activity.action] || activity.action} d'un ${entityLabels[activity.entityType] || activity.entityType}`}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {getRelativeTime(activity.createdAt)}
-                              </p>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <Badge variant="outline" className="gap-1">
+                                    <EntityIcon className="h-3 w-3" />
+                                    {entityLabels[activity.entityType] ||
+                                      activity.entityType}
+                                  </Badge>
+                                  <Badge
+                                    className={getActionColor(activity.action)}
+                                  >
+                                    {actionLabels[activity.action] ||
+                                      activity.action}
+                                  </Badge>
+                                </div>
+                                <p className="mt-2 text-sm">
+                                  {activity.details ||
+                                    `${actionLabels[activity.action] || activity.action} d'un ${entityLabels[activity.entityType] || activity.entityType}`}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {getRelativeTime(activity.createdAt)}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </ScrollArea>
           ) : (
@@ -203,7 +226,9 @@ export default function Activity() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Créations</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Créations
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-emerald-600">
@@ -213,7 +238,9 @@ export default function Activity() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Modifications</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Modifications
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-blue-600">
@@ -223,7 +250,9 @@ export default function Activity() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Uploads</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Uploads
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-purple-600">
@@ -233,11 +262,17 @@ export default function Activity() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Suppressions</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Suppressions
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-red-600">
-                {activities.filter(a => a.action === "delete" || a.action === "remove_file").length}
+                {
+                  activities.filter(
+                    a => a.action === "delete" || a.action === "remove_file"
+                  ).length
+                }
               </div>
             </CardContent>
           </Card>

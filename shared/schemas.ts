@@ -13,49 +13,71 @@ import { z } from "zod";
  */
 export const montantSchema = z
   .union([z.number(), z.string()])
-  .refine((val) => {
+  .refine(val => {
     const num = typeof val === "string" ? parseFloat(val) : val;
     return !isNaN(num) && num >= 0;
   }, "Montant doit être un nombre positif")
-  .transform((val) => {
+  .transform(val => {
     const num = typeof val === "string" ? parseFloat(val) : val;
     return Math.round(num * 100) / 100; // Round to 2 decimal places
   });
 
 // ============ COTISATIONS SCHEMAS ============
 
-export const createCotisationSchema = z.object({
-  memberId: z.number().int().positive(),
-  montant: montantSchema,
-  dateDebut: z.date().or(z.string().datetime()),
-  dateFin: z.date().or(z.string().datetime()),
-  notes: z.string().optional(),
-}).refine(
-  (data) => {
-    const debut = typeof data.dateDebut === "string" ? new Date(data.dateDebut) : data.dateDebut;
-    const fin = typeof data.dateFin === "string" ? new Date(data.dateFin) : data.dateFin;
-    return fin > debut;
-  },
-  { message: "La date de fin doit être après la date de début", path: ["dateFin"] }
-);
+export const createCotisationSchema = z
+  .object({
+    memberId: z.number().int().positive(),
+    montant: montantSchema,
+    dateDebut: z.date().or(z.string().datetime()),
+    dateFin: z.date().or(z.string().datetime()),
+    notes: z.string().optional(),
+  })
+  .refine(
+    data => {
+      const debut =
+        typeof data.dateDebut === "string"
+          ? new Date(data.dateDebut)
+          : data.dateDebut;
+      const fin =
+        typeof data.dateFin === "string"
+          ? new Date(data.dateFin)
+          : data.dateFin;
+      return fin > debut;
+    },
+    {
+      message: "La date de fin doit être après la date de début",
+      path: ["dateFin"],
+    }
+  );
 
-export const updateCotisationSchema = z.object({
-  id: z.number().int().positive(),
-  montant: montantSchema.optional(),
-  dateDebut: z.date().or(z.string().datetime()).optional(),
-  dateFin: z.date().or(z.string().datetime()).optional(),
-  statut: z.enum(["payée", "en attente", "en retard"]).optional(),
-  datePayment: z.date().or(z.string().datetime()).optional(),
-  notes: z.string().optional(),
-}).refine(
-  (data) => {
-    if (!data.dateDebut || !data.dateFin) return true;
-    const debut = typeof data.dateDebut === "string" ? new Date(data.dateDebut) : data.dateDebut;
-    const fin = typeof data.dateFin === "string" ? new Date(data.dateFin) : data.dateFin;
-    return fin > debut;
-  },
-  { message: "La date de fin doit être après la date de début", path: ["dateFin"] }
-);
+export const updateCotisationSchema = z
+  .object({
+    id: z.number().int().positive(),
+    montant: montantSchema.optional(),
+    dateDebut: z.date().or(z.string().datetime()).optional(),
+    dateFin: z.date().or(z.string().datetime()).optional(),
+    statut: z.enum(["payée", "en attente", "en retard"]).optional(),
+    datePayment: z.date().or(z.string().datetime()).optional(),
+    notes: z.string().optional(),
+  })
+  .refine(
+    data => {
+      if (!data.dateDebut || !data.dateFin) return true;
+      const debut =
+        typeof data.dateDebut === "string"
+          ? new Date(data.dateDebut)
+          : data.dateDebut;
+      const fin =
+        typeof data.dateFin === "string"
+          ? new Date(data.dateFin)
+          : data.dateFin;
+      return fin > debut;
+    },
+    {
+      message: "La date de fin doit être après la date de début",
+      path: ["dateFin"],
+    }
+  );
 
 export const listCotisationsSchema = z.object({
   memberId: z.number().int().positive().optional(),
@@ -175,7 +197,10 @@ export const createCategorySchema = z.object({
   name: z.string().min(1, "Le nom est requis").max(100),
   slug: z.string().min(1).max(100),
   description: z.string().optional(),
-  color: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i)
+    .optional(),
   icon: z.string().optional(),
   sortOrder: z.number().int().optional(),
 });
@@ -185,7 +210,10 @@ export const updateCategorySchema = z.object({
   name: z.string().min(1).max(100).optional(),
   slug: z.string().min(1).max(100).optional(),
   description: z.string().optional(),
-  color: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i)
+    .optional(),
   icon: z.string().optional(),
   sortOrder: z.number().int().optional(),
 });
@@ -199,7 +227,9 @@ export const paginationSchema = z.object({
 
 // ============ RESPONSE SCHEMAS ============
 
-export const paginatedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+export const paginatedResponseSchema = <T extends z.ZodTypeAny>(
+  itemSchema: T
+) =>
   z.object({
     items: z.array(itemSchema),
     total: z.number().int().nonnegative(),

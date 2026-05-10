@@ -40,7 +40,7 @@ export function WidgetKPI({ metrics }: WidgetKPIProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {kpis.map((kpi) => {
+      {kpis.map(kpi => {
         const Icon = kpi.icon;
         return (
           <Card key={kpi.label} className="hover:shadow-lg transition-shadow">

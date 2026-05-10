@@ -26,7 +26,11 @@ interface UserMenuProps {
   onLogout: () => Promise<void>;
 }
 
-export function UserMenu({ userName = "Utilisateur", userEmail = "", onLogout }: UserMenuProps) {
+export function UserMenu({
+  userName = "Utilisateur",
+  userEmail = "",
+  onLogout,
+}: UserMenuProps) {
   const [, setLocation] = useLocation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -76,7 +80,9 @@ export function UserMenu({ userName = "Utilisateur", userEmail = "", onLogout }:
         <DropdownMenuContent align="end" className="w-56">
           <div className="px-2 py-1.5">
             <p className="text-sm font-medium truncate">{userName}</p>
-            <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {userEmail}
+            </p>
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -110,7 +116,8 @@ export function UserMenu({ userName = "Utilisateur", userEmail = "", onLogout }:
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmer la déconnexion</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à l'application.
+              Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous
+              reconnecter pour accéder à l'application.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-3 justify-end">

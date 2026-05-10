@@ -3,7 +3,7 @@ import type { User } from "../drizzle/schema";
 
 /**
  * Role-based permissions system
- * 
+ *
  * Admin: Full access to all features
  * Gestionnaire: Can add and modify data, but cannot delete
  * Lecteur: Read-only access
@@ -54,19 +54,26 @@ export const rolePermissions: Record<UserRole, Permission> = {
 /**
  * Check if user has permission to perform action
  */
-export function checkPermission(user: User | null, permission: keyof Permission): boolean {
+export function checkPermission(
+  user: User | null,
+  permission: keyof Permission
+): boolean {
   if (!user) return false;
-  
+
   const userRole = (user.role as UserRole) || "lecteur";
   const permissions = rolePermissions[userRole];
-  
+
   return permissions[permission] === true;
 }
 
 /**
  * Throw error if user doesn't have permission
  */
-export function requirePermission(user: User | null, permission: keyof Permission, action: string): void {
+export function requirePermission(
+  user: User | null,
+  permission: keyof Permission,
+  action: string
+): void {
   if (!checkPermission(user, permission)) {
     throw new TRPCError({
       code: "FORBIDDEN",
@@ -153,9 +160,12 @@ export function getRoleDisplayName(role: UserRole): string {
  */
 export function getRoleDescription(role: UserRole): string {
   const descriptions: Record<UserRole, string> = {
-    admin: "Accès complet à tous les modules et fonctionnalités. Peut gérer les utilisateurs et les paramètres.",
-    gestionnaire: "Peut ajouter et modifier les données, mais ne peut pas les supprimer. Accès en lecture à tous les documents.",
-    lecteur: "Accès en lecture seule. Peut visualiser et télécharger les documents.",
+    admin:
+      "Accès complet à tous les modules et fonctionnalités. Peut gérer les utilisateurs et les paramètres.",
+    gestionnaire:
+      "Peut ajouter et modifier les données, mais ne peut pas les supprimer. Accès en lecture à tous les documents.",
+    lecteur:
+      "Accès en lecture seule. Peut visualiser et télécharger les documents.",
   };
   return descriptions[role] || "";
 }

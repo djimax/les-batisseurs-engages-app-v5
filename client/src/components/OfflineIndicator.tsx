@@ -1,6 +1,6 @@
-import { useOfflineStatus } from '@/hooks/useOfflineStatus';
-import { Wifi, WifiOff } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useOfflineStatus } from "@/hooks/useOfflineStatus";
+import { Wifi, WifiOff } from "lucide-react";
+import { useEffect, useState } from "react";
 
 /**
  * Component to display online/offline status indicator
@@ -24,7 +24,9 @@ export function OfflineIndicator() {
         <WifiOff className="w-5 h-5 text-amber-600" />
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium text-amber-900">Mode hors ligne</p>
-          <p className="text-xs text-amber-700">Les modifications seront synchronisées à la reconnexion</p>
+          <p className="text-xs text-amber-700">
+            Les modifications seront synchronisées à la reconnexion
+          </p>
         </div>
       </div>
     </div>

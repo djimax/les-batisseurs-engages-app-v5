@@ -8,7 +8,8 @@ import { toast } from "sonner";
 export default function ExportCenter() {
   const [loading, setLoading] = useState<string | null>(null);
 
-  const exportMembersExcelMutation = trpc.exports.exportMembersExcel.useMutation();
+  const exportMembersExcelMutation =
+    trpc.exports.exportMembersExcel.useMutation();
   const exportMembersPDFMutation = trpc.exports.exportMembersPDF.useMutation();
 
   const handleExport = async (
@@ -52,7 +53,9 @@ export default function ExportCenter() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Centre d'Export</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">
+            Centre d'Export
+          </h1>
           <p className="text-slate-600">
             Exportez vos données en PDF ou Excel pour les partager et analyser
           </p>
@@ -76,7 +79,9 @@ export default function ExportCenter() {
 
             <div className="space-y-3">
               <Button
-                onClick={() => handleExport(exportMembersExcelMutation, "excel", "members")}
+                onClick={() =>
+                  handleExport(exportMembersExcelMutation, "excel", "members")
+                }
                 disabled={loading === "members-excel"}
                 className="w-full bg-green-600 hover:bg-green-700"
               >
@@ -84,7 +89,9 @@ export default function ExportCenter() {
                 {loading === "members-excel" ? "Export en cours..." : "Excel"}
               </Button>
               <Button
-                onClick={() => handleExport(exportMembersPDFMutation, "pdf", "members")}
+                onClick={() =>
+                  handleExport(exportMembersPDFMutation, "pdf", "members")
+                }
                 disabled={loading === "members-pdf"}
                 className="w-full bg-red-600 hover:bg-red-700"
               >
@@ -149,12 +156,22 @@ export default function ExportCenter() {
 
         {/* Info Section */}
         <Card className="mt-8 p-6 bg-blue-50 border-blue-200">
-          <h3 className="font-semibold text-blue-900 mb-3">ℹ️ À propos des exports</h3>
+          <h3 className="font-semibold text-blue-900 mb-3">
+            ℹ️ À propos des exports
+          </h3>
           <ul className="space-y-2 text-sm text-blue-800">
-            <li>• Les exports contiennent toutes les données actuelles de votre base</li>
+            <li>
+              • Les exports contiennent toutes les données actuelles de votre
+              base
+            </li>
             <li>• Les fichiers Excel peuvent être modifiés et réimportés</li>
-            <li>• Les fichiers PDF sont formatés pour l'impression et le partage</li>
-            <li>• Les exports sont générés en temps réel avec les données actuelles</li>
+            <li>
+              • Les fichiers PDF sont formatés pour l'impression et le partage
+            </li>
+            <li>
+              • Les exports sont générés en temps réel avec les données
+              actuelles
+            </li>
           </ul>
         </Card>
       </div>

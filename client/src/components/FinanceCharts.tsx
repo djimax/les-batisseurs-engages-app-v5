@@ -37,7 +37,14 @@ interface FinanceChartsProps {
   balanceHistory: BalanceData[];
 }
 
-const COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+const COLORS = [
+  "#3b82f6",
+  "#ef4444",
+  "#10b981",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ec4899",
+];
 
 export function FinanceCharts({
   expensesByCategory,
@@ -65,10 +72,13 @@ export function FinanceCharts({
                 dataKey="amount"
               >
                 {expensesByCategory.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => `${value}F`} />
+              <Tooltip formatter={value => `${value}F`} />
             </PieChart>
           </ResponsiveContainer>
         </CardContent>
@@ -77,7 +87,9 @@ export function FinanceCharts({
       {/* Bar Chart - Revenus vs Dépenses */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Revenus vs Dépenses Mensuels</CardTitle>
+          <CardTitle className="text-lg">
+            Revenus vs Dépenses Mensuels
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -85,7 +97,7 @@ export function FinanceCharts({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip formatter={(value) => `${value}F`} />
+              <Tooltip formatter={value => `${value}F`} />
               <Legend />
               <Bar dataKey="revenues" fill="#10b981" name="Revenus" />
               <Bar dataKey="expenses" fill="#ef4444" name="Dépenses" />
@@ -105,7 +117,7 @@ export function FinanceCharts({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip formatter={(value) => `${value}F`} />
+              <Tooltip formatter={value => `${value}F`} />
               <Legend />
               <Line
                 type="monotone"
