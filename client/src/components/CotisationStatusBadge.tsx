@@ -27,7 +27,8 @@ const STATUS_CONFIG: Record<
     label: "En retard",
     variant: "secondary",
     icon: <AlertCircle className="h-3 w-3" />,
-    color: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+    color:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
   },
   impayé: {
     label: "Impayé",

@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  calculateCotisationStatus,
-  updateMemberCotisationStatus,
-} from "./db";
+import { calculateCotisationStatus, updateMemberCotisationStatus } from "./db";
 
 describe("Cotisation Status", () => {
   describe("calculateCotisationStatus", () => {
@@ -106,17 +103,32 @@ describe("Cotisation Status", () => {
 
       // Test case 1: Valid adhesion (100 days left)
       const daysValid = 100;
-      const statusValid = daysValid < 0 ? "impayé" : daysValid < joursRetardMax ? "en_retard" : "à_jour";
+      const statusValid =
+        daysValid < 0
+          ? "impayé"
+          : daysValid < joursRetardMax
+            ? "en_retard"
+            : "à_jour";
       expect(statusValid).toBe("à_jour");
 
       // Test case 2: Expiring soon (15 days left)
       const daysExpiring = 15;
-      const statusExpiring = daysExpiring < 0 ? "impayé" : daysExpiring < joursRetardMax ? "en_retard" : "à_jour";
+      const statusExpiring =
+        daysExpiring < 0
+          ? "impayé"
+          : daysExpiring < joursRetardMax
+            ? "en_retard"
+            : "à_jour";
       expect(statusExpiring).toBe("en_retard");
 
       // Test case 3: Expired (-5 days)
       const daysExpired = -5;
-      const statusExpired = daysExpired < 0 ? "impayé" : daysExpired < joursRetardMax ? "en_retard" : "à_jour";
+      const statusExpired =
+        daysExpired < 0
+          ? "impayé"
+          : daysExpired < joursRetardMax
+            ? "en_retard"
+            : "à_jour";
       expect(statusExpired).toBe("impayé");
     });
   });

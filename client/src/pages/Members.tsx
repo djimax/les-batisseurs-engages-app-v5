@@ -493,7 +493,9 @@ export default function Members() {
                       </TableCell>
                       <TableCell>{getStatusBadge(member.status)}</TableCell>
                       <TableCell>
-                        <CotisationStatusBadge status={member.cotisationStatus as any} />
+                        <CotisationStatusBadge
+                          status={member.cotisationStatus as any}
+                        />
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
