@@ -114,6 +114,7 @@ export default function Members() {
   const utils = trpc.useUtils();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<string>("name-asc");
+  const [cotisationFilter, setCotisationFilter] = useState<string>("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
@@ -250,7 +251,9 @@ export default function Members() {
         (member.email && member.email.toLowerCase().includes(searchLower)) ||
         (member.role && member.role.toLowerCase().includes(searchLower)) ||
         (member.memberId && member.memberId.includes(searchTerm));
-      return matchesSearch;
+      const matchesCotisation =
+        !cotisationFilter || member.cotisationStatus === cotisationFilter;
+      return matchesSearch && matchesCotisation;
     }) || []
   ).sort((a, b) => {
     switch (sortBy) {
@@ -373,7 +376,7 @@ export default function Members() {
       {/* Search and Sort */}
       <Card>
         <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -397,6 +400,23 @@ export default function Members() {
                       {option.label}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Statut de cotisation
+              </label>
+              <Select value={cotisationFilter} onValueChange={setCotisationFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Tous les statuts" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Tous les statuts</SelectItem>
+                  <SelectItem value="à_jour">À jour</SelectItem>
+                  <SelectItem value="en_retard">En retard</SelectItem>
+                  <SelectItem value="impayé">Impayé</SelectItem>
+                  <SelectItem value="exempté">Exempté</SelectItem>
                 </SelectContent>
               </Select>
             </div>
