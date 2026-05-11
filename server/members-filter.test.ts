@@ -43,33 +43,27 @@ const mockMembers = [
 
 describe("Members Cotisation Filter", () => {
   it("should filter members by 'à_jour' status", () => {
-    const filtered = mockMembers.filter(
-      (m) => m.cotisationStatus === "à_jour"
-    );
+    const filtered = mockMembers.filter(m => m.cotisationStatus === "à_jour");
     expect(filtered).toHaveLength(1);
     expect(filtered[0].firstName).toBe("Alice");
   });
 
   it("should filter members by 'en_retard' status", () => {
     const filtered = mockMembers.filter(
-      (m) => m.cotisationStatus === "en_retard"
+      m => m.cotisationStatus === "en_retard"
     );
     expect(filtered).toHaveLength(1);
     expect(filtered[0].firstName).toBe("Bob");
   });
 
   it("should filter members by 'impayé' status", () => {
-    const filtered = mockMembers.filter(
-      (m) => m.cotisationStatus === "impayé"
-    );
+    const filtered = mockMembers.filter(m => m.cotisationStatus === "impayé");
     expect(filtered).toHaveLength(1);
     expect(filtered[0].firstName).toBe("Charlie");
   });
 
   it("should filter members by 'exempté' status", () => {
-    const filtered = mockMembers.filter(
-      (m) => m.cotisationStatus === "exempté"
-    );
+    const filtered = mockMembers.filter(m => m.cotisationStatus === "exempté");
     expect(filtered).toHaveLength(1);
     expect(filtered[0].firstName).toBe("Diana");
   });
@@ -77,7 +71,7 @@ describe("Members Cotisation Filter", () => {
   it("should return all members when filter is empty", () => {
     const cotisationFilter = "";
     const filtered = mockMembers.filter(
-      (m) => !cotisationFilter || m.cotisationStatus === cotisationFilter
+      m => !cotisationFilter || m.cotisationStatus === cotisationFilter
     );
     expect(filtered).toHaveLength(4);
   });
@@ -85,7 +79,7 @@ describe("Members Cotisation Filter", () => {
   it("should combine search and cotisation filters", () => {
     const searchTerm = "martin";
     const cotisationFilter = "en_retard";
-    const filtered = mockMembers.filter((m) => {
+    const filtered = mockMembers.filter(m => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         m.firstName.toLowerCase().includes(searchLower) ||
@@ -102,7 +96,7 @@ describe("Members Cotisation Filter", () => {
   it("should return empty array when no members match both filters", () => {
     const searchTerm = "alice";
     const cotisationFilter = "impayé";
-    const filtered = mockMembers.filter((m) => {
+    const filtered = mockMembers.filter(m => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         m.firstName.toLowerCase().includes(searchLower) ||
@@ -117,13 +111,11 @@ describe("Members Cotisation Filter", () => {
 
   it("should count members by cotisation status", () => {
     const counts = {
-      à_jour: mockMembers.filter((m) => m.cotisationStatus === "à_jour")
+      à_jour: mockMembers.filter(m => m.cotisationStatus === "à_jour").length,
+      en_retard: mockMembers.filter(m => m.cotisationStatus === "en_retard")
         .length,
-      en_retard: mockMembers.filter((m) => m.cotisationStatus === "en_retard")
-        .length,
-      impayé: mockMembers.filter((m) => m.cotisationStatus === "impayé").length,
-      exempté: mockMembers.filter((m) => m.cotisationStatus === "exempté")
-        .length,
+      impayé: mockMembers.filter(m => m.cotisationStatus === "impayé").length,
+      exempté: mockMembers.filter(m => m.cotisationStatus === "exempté").length,
     };
     expect(counts.à_jour).toBe(1);
     expect(counts.en_retard).toBe(1);

@@ -407,7 +407,10 @@ export default function Members() {
               <label className="text-sm font-medium mb-2 block">
                 Statut de cotisation
               </label>
-              <Select value={cotisationFilter} onValueChange={setCotisationFilter}>
+              <Select
+                value={cotisationFilter}
+                onValueChange={setCotisationFilter}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Tous les statuts" />
                 </SelectTrigger>
