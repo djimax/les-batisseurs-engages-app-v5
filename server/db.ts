@@ -1978,3 +1978,86 @@ export async function updateMemberCotisationStatus(
     .set({ cotisationStatus: status as any })
     .where(eq(members.memberId, memberMemberId));
 }
+
+
+/**
+ * Get all active cotisation criteria
+ */
+export async function getActiveCotisationCriteria(): Promise<CotisationCriteria[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db
+    .select()
+    .from(cotisationCriteria)
+    .where(eq(cotisationCriteria.isActive, true));
+}
+
+/**
+ * Get cotisation criteria by ID
+ */
+export async function getCotisationCriteriaById(
+  id: number
+): Promise<CotisationCriteria | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db
+    .select()
+    .from(cotisationCriteria)
+    .where(eq(cotisationCriteria.id, id));
+  return result[0] || null;
+}
+
+/**
+ * Create cotisation criteria
+ */
+export async function createCotisationCriteria(
+  data: InsertCotisationCriteria
+): Promise<CotisationCriteria> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(cotisationCriteria).values(data);
+  const created = await getCotisationCriteriaById(result[0].insertId);
+  if (!created) throw new Error("Failed to create cotisation criteria");
+  return created;
+}
+
+/**
+ * Update cotisation criteria
+ */
+export async function updateCotisationCriteria(
+  id: number,
+  data: Partial<InsertCotisationCriteria>
+): Promise<CotisationCriteria> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db
+    .update(cotisationCriteria)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(cotisationCriteria.id, id));
+  const updated = await getCotisationCriteriaById(id);
+  if (!updated) throw new Error("Failed to update cotisation criteria");
+  return updated;
+}
+
+/**
+ * Delete cotisation criteria
+ */
+export async function deleteCotisationCriteria(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db
+    .delete(cotisationCriteria)
+    .where(eq(cotisationCriteria.id, id));
+}
+
+/**
+ * Deactivate cotisation criteria
+ */
+export async function deactivateCotisationCriteria(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db
+    .update(cotisationCriteria)
+    .set({ isActive: false, updatedAt: new Date() })
+    .where(eq(cotisationCriteria.id, id));
+}

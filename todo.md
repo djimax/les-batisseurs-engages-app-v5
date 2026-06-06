@@ -564,3 +564,74 @@
 - ✅ Filtre de cotisation : 8/8 tests réussis
 - ✅ TypeScript : 0 erreurs
 - ✅ Interface utilisateur : 3 colonnes (Recherche, Tri, Filtre Cotisation)
+
+
+## Phase 34 - Gestion Complète des Critères de Cotisation
+
+### Page d'Administration CotisationSettings
+
+- [x] Créer client/src/pages/CotisationSettings.tsx avec interface complète
+- [x] Implémenter la création de nouveaux critères
+- [x] Implémenter la modification des critères existants
+- [x] Implémenter la suppression des critères
+- [x] Implémenter la désactivation des critères
+- [x] Ajouter les formulaires de configuration (montant, dates, délais)
+- [x] Afficher les critères actifs avec badges de statut
+
+### Routeur tRPC
+
+- [x] Créer server/routers/cotisation-settings.ts avec procédures complètes
+- [x] Implémenter getAll pour récupérer les critères actifs
+- [x] Implémenter getById pour récupérer un critère spécifique
+- [x] Implémenter create pour créer un nouveau critère
+- [x] Implémenter update pour modifier un critère
+- [x] Implémenter delete pour supprimer un critère
+- [x] Implémenter deactivate pour désactiver un critère
+- [x] Ajouter les vérifications de rôle (admin only)
+
+### Fonctions de Base de Données
+
+- [x] Ajouter getActiveCotisationCriteria() dans server/db.ts
+- [x] Ajouter getCotisationCriteriaById() dans server/db.ts
+- [x] Ajouter createCotisationCriteria() dans server/db.ts
+- [x] Ajouter updateCotisationCriteria() dans server/db.ts
+- [x] Ajouter deleteCotisationCriteria() dans server/db.ts
+- [x] Ajouter deactivateCotisationCriteria() dans server/db.ts
+
+### Intégration dans la Navigation
+
+- [x] Ajouter l'import de CotisationSettings dans App.tsx
+- [x] Ajouter la route /admin/cotisation dans App.tsx
+- [x] Ajouter le lien "Cotisations" dans le menu Administration du DashboardLayout
+- [x] Utiliser l'icône DollarSign pour le lien
+
+### Correction des Erreurs
+
+- [x] Corriger l'erreur du Select avec valeur vide dans Members.tsx
+- [x] Changer value="" à value="all" pour le SelectItem
+- [x] Mettre à jour la logique de filtrage pour accepter "all"
+
+### Tests Vitest
+
+- [x] Créer server/routers/cotisation-settings.test.ts avec 21 tests
+- [x] Tester la validation des entrées (create, update, delete, deactivate)
+- [x] Tester la structure des données de cotisation
+- [x] Tester les types de données corrects
+- [x] Tester la logique métier (calcul des jours, statuts)
+- [x] Tester le filtrage des critères
+- [x] Tous les tests passent (21/21 ✓)
+
+### Validation
+
+- [x] TypeScript compile sans erreurs
+- [x] Tous les tests Vitest passent (21/21)
+- [x] Serveur de développement fonctionne correctement
+- [x] Page CotisationSettings accessible via /admin/cotisation
+- [x] Lien dans le menu d'administration fonctionne
+
+### Prochaines Étapes
+
+- [ ] Intégrer les critères de cotisation dans le calcul automatique du statut
+- [ ] Créer des rapports sur les cotisations (statistiques, listes à relancer)
+- [ ] Ajouter des notifications automatiques pour les retards de cotisation
+- [ ] Créer des factures/quittances automatiques basées sur les critères

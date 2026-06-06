@@ -188,6 +188,12 @@ const menuGroups: MenuGroup[] = [
         path: "/admin/migrations",
         adminOnly: true,
       },
+      {
+        icon: DollarSign,
+        label: "Cotisations",
+        path: "/admin/cotisation",
+        adminOnly: true,
+      },
       { icon: Activity, label: "Activité", path: "/activity" },
       { icon: History, label: "Historique", path: "/audit-history" },
     ],

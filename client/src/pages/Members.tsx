@@ -252,7 +252,7 @@ export default function Members() {
         (member.role && member.role.toLowerCase().includes(searchLower)) ||
         (member.memberId && member.memberId.includes(searchTerm));
       const matchesCotisation =
-        !cotisationFilter || member.cotisationStatus === cotisationFilter;
+        cotisationFilter === "all" || !cotisationFilter || member.cotisationStatus === cotisationFilter;
       return matchesSearch && matchesCotisation;
     }) || []
   ).sort((a, b) => {
@@ -415,7 +415,7 @@ export default function Members() {
                   <SelectValue placeholder="Tous les statuts" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les statuts</SelectItem>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
                   <SelectItem value="à_jour">À jour</SelectItem>
                   <SelectItem value="en_retard">En retard</SelectItem>
                   <SelectItem value="impayé">Impayé</SelectItem>

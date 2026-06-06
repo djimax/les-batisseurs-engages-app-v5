@@ -21,6 +21,7 @@ import { reportsRouter } from "./routers/reports";
 import { widgetsRouter } from "./routers/widgets";
 import { attachmentsRouter } from "./routers/attachments";
 import { searchRouter } from "./routers/search";
+import { cotisationSettingsRouter } from "./routers/cotisation-settings";
 
 import { z } from "zod";
 import {
@@ -98,6 +99,7 @@ export const appRouter = router({
   widgets: widgetsRouter,
   attachments: attachmentsRouter,
   search: searchRouter,
+  cotisationSettings: cotisationSettingsRouter,
 
   // ============ CATEGORIES ============
   categories: router({

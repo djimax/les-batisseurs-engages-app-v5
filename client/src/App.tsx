@@ -47,6 +47,7 @@ const AdvancedReports = lazy(() => import("@/pages/AdvancedReports"));
 const CustomizableDashboard = lazy(
   () => import("@/pages/CustomizableDashboard")
 );
+const CotisationSettings = lazy(() => import("@/pages/CotisationSettings"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -89,6 +90,7 @@ function Router() {
                 <Route path="/audit-history" component={AuditHistory} />
                 <Route path="/admin/roles" component={AdminRoles} />
                 <Route path="/admin/audit-logs" component={AdminAuditLogs} />
+                <Route path="/admin/cotisation" component={CotisationSettings} />
                 <Route path="/crm" component={CRMDashboard} />
                 <Route path="/crm/contacts" component={CRMContacts} />
                 <Route path="/crm/activities" component={CRMActivities} />
