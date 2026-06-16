@@ -44,7 +44,7 @@ export default function Budgets() {
   };
 
   const totalBudget = budgets.reduce(
-    (sum: number, b: any) => sum + (b.totalAmount || 0),
+    (sum: number, b: any) => sum + (parseFloat(b.totalAmount) || 0),
     0
   );
 
@@ -91,7 +91,7 @@ export default function Budgets() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {totalBudget.toLocaleString()} €
+              {totalBudget.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
             </div>
             <p className="text-xs text-muted-foreground">
               {budgets.length} budgets
@@ -161,7 +161,7 @@ export default function Budgets() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      {budget.totalAmount?.toLocaleString()} €
+                      {parseFloat(budget.totalAmount || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                     </div>
                     <div
                       className={`text-sm font-medium ${

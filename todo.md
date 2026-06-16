@@ -333,3 +333,14 @@
 - [x] Serveur de développement fonctionne
 - [x] Page Groupes & Antennes fonctionnelle
 - [x] Sauvegarder checkpoint
+
+
+## Phase 37 - Correction du Bug Budget
+
+### Bug Identifié
+- [x] Correction du calcul du budget total (concaténation au lieu d'addition)
+- [x] Vérifier la page Budgets.tsx
+- [x] Corriger la logique de calcul des montants avec parseFloat()
+- [x] Ajouter formatage correct avec locale 'fr-FR' et 2 décimales
+- [x] Corriger l'affichage des montants individuels
+- [x] Sauvegarder checkpoint
