@@ -85,6 +85,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Users, label: "Annuaire", path: "/members" },
       { icon: UserCheck, label: "Adhésions", path: "/adhesions" },
       { icon: Users, label: "Utilisateurs", path: "/users" },
+      { icon: Building2, label: "Groupes & Antennes", path: "/groups" },
     ],
   },
   {

@@ -1107,3 +1107,49 @@ export const cotisationCriteria = mysqlTable("cotisation_criteria", {
 
 export type CotisationCriteria = typeof cotisationCriteria.$inferSelect;
 export type InsertCotisationCriteria = typeof cotisationCriteria.$inferInsert;
+
+
+/**
+ * Member groups and local branches (antennes)
+ */
+export const groups = mysqlTable("groups", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 150 }).notNull(),
+  description: text("description"),
+  location: varchar("location", { length: 200 }).notNull(),
+  city: varchar("city", { length: 100 }).notNull(),
+  region: varchar("region", { length: 100 }),
+  country: varchar("country", { length: 100 }).default("France"),
+  responsibleId: int("responsibleId"),
+  responsibleName: varchar("responsibleName", { length: 150 }),
+  responsibleEmail: varchar("responsibleEmail", { length: 320 }),
+  responsiblePhone: varchar("responsiblePhone", { length: 20 }),
+  responsiblePhotoUrl: text("responsiblePhotoUrl"),
+  status: mysqlEnum("status", ["active", "inactive", "pending"])
+    .default("active")
+    .notNull(),
+  photoUrl: text("photoUrl"),
+  memberCount: int("memberCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Group = typeof groups.$inferSelect;
+export type InsertGroup = typeof groups.$inferInsert;
+
+/**
+ * Group members relationship
+ */
+export const groupMembers = mysqlTable("group_members", {
+  id: int("id").autoincrement().primaryKey(),
+  groupId: int("groupId").notNull(),
+  memberId: int("memberId").notNull(),
+  role: mysqlEnum("role", ["member", "coordinator", "leader"])
+    .default("member")
+    .notNull(),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type GroupMember = typeof groupMembers.$inferSelect;
+export type InsertGroupMember = typeof groupMembers.$inferInsert;
