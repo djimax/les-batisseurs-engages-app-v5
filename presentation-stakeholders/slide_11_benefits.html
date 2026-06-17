@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bénéfices pour l'Association</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F4F7F6;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Titre */
+        .header {
+            margin-left: 120px;
+            margin-right: 120px;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 10px;
+            text-decoration: underline;
+            text-decoration-color: #FFC82E;
+            text-decoration-thickness: 4px;
+            text-underline-offset: 8px;
+        }
+
+        /* Contenu principal */
+        .content {
+            margin-left: 120px;
+            margin-right: 120px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .benefit-column {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .column-icon {
+            width: 40px;
+            height: 40px;
+            background: #FFC82E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0A3224;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .column-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0A3224;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #2E7D32;
+        }
+
+        /* Liste des bénéfices */
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .benefit-item {
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #0A3224;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .benefit-item::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2E7D32;
+            font-weight: 700;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Titre -->
+        <div class="header">
+            <h1 class="page-title">Bénéfices pour l'Association</h1>
+        </div>
+
+        <!-- Contenu - Trois colonnes -->
+        <div class="content">
+            <!-- Colonne 1: Opérationnel -->
+            <div class="benefit-column">
+                <div class="column-header">
+                    <div class="column-icon">⚙</div>
+                </div>
+                <h3 class="column-title">Opérationnel</h3>
+                <div class="benefits-list">
+                    <div class="benefit-item">Meilleure organisation des membres</div>
+                    <div class="benefit-item">Suivi des adhésions automatisé</div>
+                    <div class="benefit-item">Gestion décentralisée via les antennes</div>
+                </div>
+            </div>
+
+            <!-- Colonne 2: Administratif -->
+            <div class="benefit-column">
+                <div class="column-header">
+                    <div class="column-icon">📋</div>
+                </div>
+                <h3 class="column-title">Administratif</h3>
+                <div class="benefits-list">
+                    <div class="benefit-item">Configuration flexible des cotisations</div>
+                    <div class="benefit-item">Budgets calculés correctement</div>
+                    <div class="benefit-item">Rapports plus précis</div>
+                </div>
+            </div>
+
+            <!-- Colonne 3: Utilisateur -->
+            <div class="benefit-column">
+                <div class="column-header">
+                    <div class="column-icon">👤</div>
+                </div>
+                <h3 class="column-title">Utilisateur</h3>
+                <div class="benefits-list">
+                    <div class="benefit-item">Interface intuitive et moderne</div>
+                    <div class="benefit-item">Photos pour identifier facilement</div>
+                    <div class="benefit-item">Accès rapide aux informations</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correction du Budget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F4F7F6;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Titre */
+        .header {
+            margin-left: 120px;
+            margin-right: 120px;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 10px;
+            text-decoration: underline;
+            text-decoration-color: #FFC82E;
+            text-decoration-thickness: 4px;
+            text-underline-offset: 8px;
+        }
+
+        /* Contenu principal */
+        .content {
+            margin-left: 120px;
+            margin-right: 120px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            flex: 1;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid;
+        }
+
+        .section.before .section-title {
+            border-bottom-color: #A0A0A0;
+        }
+
+        .section.after .section-title {
+            border-bottom-color: #2E7D32;
+        }
+
+        /* Boîte de calcul */
+        .calculation-box {
+            background: #FFFFFF;
+            border-left: 4px solid;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section.before .calculation-box {
+            border-left-color: #A0A0A0;
+            opacity: 0.7;
+        }
+
+        .section.after .calculation-box {
+            border-left-color: #2E7D32;
+        }
+
+        .calculation-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #A0A0A0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calculation-result {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0A3224;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .section.before .calculation-result {
+            color: #A0A0A0;
+            font-style: italic;
+        }
+
+        .section.after .calculation-result {
+            color: #2E7D32;
+        }
+
+        /* Liste des points clés */
+        .key-points {
+            margin-top: 10px;
+        }
+
+        .key-point {
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #0A3224;
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .key-point::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-size: 18px;
+        }
+
+        .section.before .key-point::before {
+            color: #A0A0A0;
+        }
+
+        .section.after .key-point::before {
+            content: "✓";
+            color: #2E7D32;
+            font-weight: 700;
+        }
+
+        /* Exemple détaillé */
+        .example {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0A3224;
+            margin-top: 15px;
+            padding: 12px;
+            background: #F0F0F0;
+            border-radius: 4px;
+            line-height: 1.6;
+        }
+
+        .section.after .example {
+            background: #E8F5E9;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Titre -->
+        <div class="header">
+            <h1 class="page-title">Correction du Calcul du Budget</h1>
+        </div>
+
+        <!-- Contenu -->
+        <div class="content">
+            <!-- Avant (Problème) -->
+            <div class="section before">
+                <h3 class="section-title">Avant (Problème)</h3>
+                
+                <div class="calculation-box">
+                    <div class="calculation-label">Résultat incorrect</div>
+                    <div class="calculation-result">"1000200"</div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-point">Les montants se concaténaient</div>
+                    <div class="key-point">Pas d'addition réelle</div>
+                    <div class="key-point">Affichage en chaîne de caractères</div>
+                </div>
+
+                <div class="example">
+                    Exemple:<br>
+                    1000 + 200 = "1000200"
+                </div>
+            </div>
+
+            <!-- Après (Solution) -->
+            <div class="section after">
+                <h3 class="section-title">Après (Solution)</h3>
+                
+                <div class="calculation-box">
+                    <div class="calculation-label">Résultat correct</div>
+                    <div class="calculation-result">151 300,00 €</div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-point">Addition correcte des montants</div>
+                    <div class="key-point">Affichage formaté français</div>
+                    <div class="key-point">Deux décimales systématiques</div>
+                    <div class="key-point">Séparateur décimal français</div>
+                </div>
+
+                <div class="example">
+                    Exemple:<br>
+                    1000 + 200 + 100000 + 100 + 50000 = 151 300,00 €
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

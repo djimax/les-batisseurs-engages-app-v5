@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Utilisateur - Cohérence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F4F7F6;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Titre */
+        .header {
+            margin-left: 120px;
+            margin-right: 120px;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 10px;
+            text-decoration: underline;
+            text-decoration-color: #FFC82E;
+            text-decoration-thickness: 4px;
+            text-underline-offset: 8px;
+        }
+
+        /* Contenu principal */
+        .content {
+            margin-left: 120px;
+            margin-right: 120px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Grille des éléments */
+        .elements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .design-element {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .element-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .element-icon {
+            width: 24px;
+            height: 24px;
+            background: #FFC82E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0A3224;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .element-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0A3224;
+        }
+
+        .element-description {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0A3224;
+            opacity: 0.8;
+            line-height: 1.5;
+            padding-left: 36px;
+        }
+
+        /* Section résultat */
+        .result-section {
+            border-top: 3px solid #2E7D32;
+            padding-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .result-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0A3224;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .result-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2E7D32;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Titre -->
+        <div class="header">
+            <h1 class="page-title">Interface Utilisateur - Cohérence</h1>
+        </div>
+
+        <!-- Contenu -->
+        <div class="content">
+            <!-- Grille des éléments de design -->
+            <div class="elements-grid">
+                <div class="design-element">
+                    <div class="element-header">
+                        <div class="element-icon">✓</div>
+                        <h3 class="element-title">Grilles de cartes</h3>
+                    </div>
+                    <p class="element-description">Affichage cohérent partout dans l'application</p>
+                </div>
+
+                <div class="design-element">
+                    <div class="element-header">
+                        <div class="element-icon">✓</div>
+                        <h3 class="element-title">Photos intégrées</h3>
+                    </div>
+                    <p class="element-description">Tous les éléments supportent les photos</p>
+                </div>
+
+                <div class="design-element">
+                    <div class="element-header">
+                        <div class="element-icon">✓</div>
+                        <h3 class="element-title">Filtres avancés</h3>
+                    </div>
+                    <p class="element-description">Recherche, statut, localisation</p>
+                </div>
+
+                <div class="design-element">
+                    <div class="element-header">
+                        <div class="element-icon">✓</div>
+                        <h3 class="element-title">Formulaires CRUD</h3>
+                    </div>
+                    <p class="element-description">Créer, modifier, supprimer facilement</p>
+                </div>
+
+                <div class="design-element">
+                    <div class="element-header">
+                        <div class="element-icon">✓</div>
+                        <h3 class="element-title">Messages d'erreur</h3>
+                    </div>
+                    <p class="element-description">Feedback clair pour l'utilisateur</p>
+                </div>
+            </div>
+
+            <!-- Section résultat -->
+            <div class="result-section">
+                <span class="result-label">Résultat</span>
+                <span class="result-text">Interface professionnelle et intuitive</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

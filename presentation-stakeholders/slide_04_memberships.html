@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Adhésions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F4F7F6;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Titre */
+        .header {
+            margin-left: 120px;
+            margin-right: 120px;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 10px;
+            text-decoration: underline;
+            text-decoration-color: #FFC82E;
+            text-decoration-thickness: 4px;
+            text-underline-offset: 8px;
+        }
+
+        /* Contenu principal */
+        .content-wrapper {
+            margin-left: 120px;
+            margin-right: 120px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            flex: 1;
+        }
+
+        /* Section Nouvelles Capacités */
+        .capabilities-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #2E7D32;
+        }
+
+        .capability-item {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0A3224;
+            margin-bottom: 16px;
+            padding-left: 28px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .capability-item::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2E7D32;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Section Bénéfice */
+        .benefit-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .benefit-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #FFC82E;
+        }
+
+        .benefit-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0A3224;
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+
+        .benefit-highlight {
+            font-weight: 700;
+            color: #2E7D32;
+            text-decoration: underline;
+            text-decoration-color: #FFC82E;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Titre -->
+        <div class="header">
+            <h1 class="page-title">Gestion des Adhésions - Suivi Complet</h1>
+        </div>
+
+        <!-- Contenu -->
+        <div class="content-wrapper">
+            <!-- Nouvelles Capacités -->
+            <div class="capabilities-section">
+                <h3 class="section-title">Nouvelles Capacités</h3>
+                <div class="capability-item">Affichage visuel en cartes avec photos des adhérents</div>
+                <div class="capability-item">Dates d'expiration visibles directement sur chaque adhésion</div>
+                <div class="capability-item">Statuts d'adhésion (Actif, expiré, en grâce)</div>
+                <div class="capability-item">Badges visuels "Expire bientôt" pour les alertes</div>
+                <div class="capability-item">Informations complètes (montant, dates, responsable)</div>
+            </div>
+
+            <!-- Bénéfice -->
+            <div class="benefit-section">
+                <h3 class="benefit-title">Bénéfice</h3>
+                <p class="benefit-text">
+                    <span class="benefit-highlight">Suivi immédiat</span> des adhésions et <span class="benefit-highlight">anticipation</span> des renouvellements. Réduction des oublis et meilleure gestion de la trésorerie.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

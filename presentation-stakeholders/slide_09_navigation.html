@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Intégrée</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F4F7F6;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Titre */
+        .header {
+            margin-left: 120px;
+            margin-right: 120px;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 10px;
+            text-decoration: underline;
+            text-decoration-color: #FFC82E;
+            text-decoration-thickness: 4px;
+            text-underline-offset: 8px;
+        }
+
+        /* Contenu principal */
+        .content {
+            margin-left: 120px;
+            margin-right: 120px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Grille de navigation */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #FFC82E;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0A3224;
+            margin-bottom: 14px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .menu-item::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #2E7D32;
+            font-weight: 700;
+        }
+
+        /* Highlight pour les nouvelles fonctionnalités */
+        .menu-item.new {
+            background: rgba(255, 200, 46, 0.1);
+            padding: 10px 12px 10px 20px;
+            margin-left: -12px;
+            margin-right: -12px;
+            border-left: 3px solid #FFC82E;
+        }
+
+        .menu-item.new::before {
+            content: "✓";
+            color: #FFC82E;
+        }
+
+        /* Section Facilité d'Accès */
+        .access-section {
+            border-top: 3px solid #2E7D32;
+            padding-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .access-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0A3224;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .access-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #2E7D32;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Titre -->
+        <div class="header">
+            <h1 class="page-title">Navigation Intégrée</h1>
+        </div>
+
+        <!-- Contenu -->
+        <div class="content">
+            <!-- Grille de navigation -->
+            <div class="nav-grid">
+                <!-- Menu Gestion des Membres -->
+                <div class="nav-section">
+                    <h3 class="menu-title">Gestion des Membres</h3>
+                    <div class="menu-item">Annuaire</div>
+                    <div class="menu-item new">Adhésions</div>
+                    <div class="menu-item new">Groupes & Antennes</div>
+                </div>
+
+                <!-- Menu Administration -->
+                <div class="nav-section">
+                    <h3 class="menu-title">Administration</h3>
+                    <div class="menu-item new">Critères de Cotisation</div>
+                    <div class="menu-item">Utilisateurs</div>
+                    <div class="menu-item">Paramètres</div>
+                </div>
+
+                <!-- Menu Finances -->
+                <div class="nav-section">
+                    <h3 class="menu-title">Finances</h3>
+                    <div class="menu-item new">Budgets</div>
+                    <div class="menu-item">Factures</div>
+                    <div class="menu-item">Rapports</div>
+                </div>
+            </div>
+
+            <!-- Section Facilité d'Accès -->
+            <div class="access-section">
+                <span class="access-label">Facilité d'Accès</span>
+                <span class="access-text">Toutes les fonctionnalités au même endroit</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

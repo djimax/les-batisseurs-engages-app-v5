@@ -1,0 +1,153 @@
+{
+  "project_info": {
+    "title": "Les Bâtisseurs Engagés - Nouvelles Fonctionnalités",
+    "created": 1781687014.966,
+    "last_updated": 1781687197.54,
+    "total_slides": 14
+  },
+  "slides": [
+    {
+      "id": "slide_01_title",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "slide_02_overview",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "slide_03_members",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "slide_04_memberships",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "slide_05_groups",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "slide_06_cotisation",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "slide_07_budget",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "slide_08_ui",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "slide_09_navigation",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "slide_10_quality",
+      "state": "edited",
+      "pageNum": 10
+    },
+    {
+      "id": "slide_11_benefits",
+      "state": "edited",
+      "pageNum": 11
+    },
+    {
+      "id": "slide_12_roadmap",
+      "state": "edited",
+      "pageNum": 12
+    },
+    {
+      "id": "slide_13_conclusion",
+      "state": "edited",
+      "pageNum": 13
+    },
+    {
+      "id": "slide_14_qa",
+      "state": "edited",
+      "pageNum": 14
+    }
+  ],
+  "outline": [
+    {
+      "id": "slide_01_title",
+      "title": "Les Bâtisseurs Engagés - Nouvelles Fonctionnalités",
+      "summary": "Slide de titre présentant les améliorations de la plateforme de gestion d'association pour 2026."
+    },
+    {
+      "id": "slide_02_overview",
+      "title": "Vue d'Ensemble des Améliorations",
+      "summary": "Présentation des quatre grands axes d'amélioration : Gestion des Membres, Adhésions, Groupes & Antennes, et Critères de Cotisation."
+    },
+    {
+      "id": "slide_03_members",
+      "title": "Gestion des Membres - Avant/Après",
+      "summary": "Comparaison de l'interface avant et après : passage d'un tableau simple à des cartes visuelles avec photos."
+    },
+    {
+      "id": "slide_04_memberships",
+      "title": "Gestion des Adhésions - Suivi Complet",
+      "summary": "Nouvelles capacités pour le suivi des adhésions avec dates d'expiration, statuts et badges visuels."
+    },
+    {
+      "id": "slide_05_groups",
+      "title": "Groupes & Antennes - Structure Décentralisée",
+      "summary": "Fonctionnalités de gestion décentralisée avec responsables, filtres et statuts.",
+      "image_plan": "/home/ubuntu/upload/pasted_file_BoXZuY_image.png - The image clearly shows the 'Groupes & Antennes' interface, which is the main topic of this slide. It illustrates the creation and management of groups within the association."
+    },
+    {
+      "id": "slide_06_cotisation",
+      "title": "Critères de Cotisation - Configuration Flexible",
+      "summary": "Page d'administration pour configurer les critères, montants et dates de validité des cotisations."
+    },
+    {
+      "id": "slide_07_budget",
+      "title": "Correction du Calcul du Budget",
+      "summary": "Résolution du bug de concaténation des montants avec affichage formaté correct."
+    },
+    {
+      "id": "slide_08_ui",
+      "title": "Interface Utilisateur - Cohérence",
+      "summary": "Design unifié avec grilles de cartes, photos intégrées, filtres avancés et messages d'erreur clairs."
+    },
+    {
+      "id": "slide_09_navigation",
+      "title": "Navigation Intégrée",
+      "summary": "Accès facile à toutes les nouvelles fonctionnalités via les menus existants."
+    },
+    {
+      "id": "slide_10_quality",
+      "title": "Tests et Qualité",
+      "summary": "Assurance qualité avec 42+ tests Vitest, pas d'erreurs TypeScript et validation complète."
+    },
+    {
+      "id": "slide_11_benefits",
+      "title": "Bénéfices pour l'Association",
+      "summary": "Avantages opérationnels, administratifs et pour l'utilisateur final."
+    },
+    {
+      "id": "slide_12_roadmap",
+      "title": "Roadmap Future",
+      "summary": "Prochaines étapes possibles : notifications, rapports, export, intégrations et application mobile."
+    },
+    {
+      "id": "slide_13_conclusion",
+      "title": "Conclusion et Appel à l'Action",
+      "summary": "Résumé des améliorations et prochaines étapes avec formation et feedback."
+    },
+    {
+      "id": "slide_14_qa",
+      "title": "Questions & Réponses",
+      "summary": "Slide finale pour les questions et discussions avec les parties prenantes."
+    }
+  ]
+}

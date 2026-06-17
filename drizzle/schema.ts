@@ -1153,3 +1153,43 @@ export const groupMembers = mysqlTable("group_members", {
 
 export type GroupMember = typeof groupMembers.$inferSelect;
 export type InsertGroupMember = typeof groupMembers.$inferInsert;
+
+
+
+/**
+ * Actors table for managing project participants
+ */
+export const actors = mysqlTable("actors", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 20 }),
+  role: varchar("role", { length: 100 }).notNull(),
+  responsibilities: text("responsibilities"),
+  permissions: json("permissions").$type<string[]>().default([]),
+  photoUrl: text("photoUrl"),
+  status: mysqlEnum("status", ["active", "inactive", "on_leave"])
+    .default("active")
+    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Actor = typeof actors.$inferSelect;
+export type InsertActor = typeof actors.$inferInsert;
+
+/**
+ * Actor roles and permissions mapping
+ */
+export const actorRoles = mysqlTable("actor_roles", {
+  id: int("id").autoincrement().primaryKey(),
+  actorId: int("actorId").notNull(),
+  projectId: int("projectId"),
+  role: varchar("role", { length: 100 }).notNull(),
+  permissions: json("permissions").$type<string[]>().default([]),
+  assignedAt: timestamp("assignedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ActorRole = typeof actorRoles.$inferSelect;
+export type InsertActorRole = typeof actorRoles.$inferInsert;

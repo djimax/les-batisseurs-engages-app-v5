@@ -344,3 +344,62 @@
 - [x] Ajouter formatage correct avec locale 'fr-FR' et 2 décimales
 - [x] Corriger l'affichage des montants individuels
 - [x] Sauvegarder checkpoint
+
+
+## Phase 38 - Correction du Bug Budget Total (Alignement Virgules)
+
+### Bug Identifié
+- [ ] Correction du calcul du budget total (alignement des virgules au lieu d'addition)
+- [ ] Vérifier la page Budgets.tsx
+- [ ] Corriger la logique de calcul pour additionner correctement
+- [ ] Tester avec plusieurs budgets
+- [ ] Sauvegarder checkpoint
+
+## Phase 39 - Gestion de Projet
+
+### Schéma et Migration
+- [ ] Créer table projects avec nom, description, statut, dates
+- [ ] Créer table project_tasks avec titre, description, assigné, statut, dates
+- [ ] Créer table project_milestones avec titre, date, statut
+- [ ] Générer et appliquer les migrations SQL
+
+### Backend (tRPC)
+- [ ] Créer routeur projects avec procédures CRUD
+- [ ] Créer routeur tasks avec procédures CRUD
+- [ ] Ajouter les fonctions de base de données
+- [ ] Implémenter la validation
+
+### Frontend
+- [ ] Créer page Gestion de Projet
+- [ ] Ajouter grille de cartes pour les projets
+- [ ] Ajouter interface CRUD pour projets
+- [ ] Ajouter diagramme Gantt pour visualiser la timeline
+- [ ] Ajouter filtres par statut et date
+
+### Tests
+- [ ] Créer tests Vitest pour les routeurs
+- [ ] Tester la validation des entrées
+- [ ] Tester les filtres et la recherche
+
+## Phase 40 - Gestion des Acteurs
+
+### Schéma et Migration
+- [ ] Créer table actors avec nom, rôle, responsabilités, permissions
+- [ ] Créer table actor_roles avec permissions
+- [ ] Générer et appliquer les migrations SQL
+
+### Backend (tRPC)
+- [ ] Créer routeur actors avec procédures CRUD
+- [ ] Ajouter les fonctions de base de données
+- [ ] Implémenter la validation
+
+### Frontend
+- [ ] Créer page Gestion des Acteurs
+- [ ] Ajouter grille de cartes pour les acteurs
+- [ ] Ajouter interface CRUD pour acteurs
+- [ ] Affichage des rôles et responsabilités
+- [ ] Gestion des permissions
+
+### Tests
+- [ ] Créer tests Vitest pour les routeurs
+- [ ] Tester la validation des entrées

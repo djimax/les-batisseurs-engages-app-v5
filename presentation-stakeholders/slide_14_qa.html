@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questions & Réponses</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F4F7F6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Éléments géométriques de fond */
+        .geometric-accent {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .accent-1 {
+            width: 400px;
+            height: 400px;
+            background: #2E7D32;
+            top: -150px;
+            left: -150px;
+        }
+
+        .accent-2 {
+            width: 300px;
+            height: 300px;
+            background: #FFC82E;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        /* Conteneur principal */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            max-width: 900px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Titre principal */
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: #0A3224;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .title-underline {
+            width: 200px;
+            height: 4px;
+            background: #FFC82E;
+            margin: 0 auto 40px;
+        }
+
+        /* Texte d'invitation */
+        .invitation-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            color: #0A3224;
+            margin-bottom: 60px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Section "Nous sommes à votre écoute" */
+        .listening-section {
+            margin-bottom: 60px;
+            padding: 40px;
+            border-top: 3px solid #2E7D32;
+            border-bottom: 3px solid #2E7D32;
+            width: 100%;
+        }
+
+        .listening-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2E7D32;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .listening-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0A3224;
+            line-height: 1.6;
+        }
+
+        /* Section Contact */
+        .contact-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .contact-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0A3224;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #0A3224;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contact-icon {
+            width: 20px;
+            height: 20px;
+            background: #FFC82E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #0A3224;
+        }
+
+        /* Section Merci */
+        .thank-you-section {
+            margin-top: 60px;
+        }
+
+        .thank-you-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2E7D32;
+            margin-bottom: 10px;
+        }
+
+        .thank-you-subtext {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #0A3224;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Éléments géométriques -->
+        <div class="geometric-accent accent-1"></div>
+        <div class="geometric-accent accent-2"></div>
+
+        <!-- Contenu principal -->
+        <div class="main-content">
+            <!-- Titre -->
+            <h1 class="page-title">Questions & Réponses</h1>
+            <div class="title-underline"></div>
+
+            <!-- Texte d'invitation -->
+            <p class="invitation-text">
+                Nous sommes heureux de partager ces améliorations avec vous.<br>
+                Avez-vous des questions ou des commentaires ?
+            </p>
+
+            <!-- Section "Nous sommes à votre écoute" -->
+            <div class="listening-section">
+                <h2 class="listening-title">Nous sommes à votre écoute</h2>
+                <p class="listening-text">
+                    Vos retours et suggestions sont essentiels pour continuer à améliorer la plateforme. N'hésitez pas à nous partager vos idées, préoccupations ou questions.
+                </p>
+            </div>
+
+            <!-- Section Contact -->
+            <div class="contact-section">
+                <h3 class="contact-title">Contactez-nous</h3>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">✉</div>
+                        <span>contact@lesbaisseurs.org</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">☎</div>
+                        <span>+33 (0)1 XX XX XX XX</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Merci -->
+            <div class="thank-you-section">
+                <p class="thank-you-text">Merci de votre attention !</p>
+                <p class="thank-you-subtext">Ensemble, construisons une meilleure gestion d'association</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
