@@ -17,7 +17,16 @@ export const budgetsRouter = router({
           WHERE year = ${year}
           ORDER BY createdAt DESC
         `);
-        return result?.[0] || [];
+        
+        // Nettoyer les montants mal formatés
+        const budgets = (result?.[0] || []).map((b: any) => ({
+          ...b,
+          totalAmount: typeof b.totalAmount === 'string' 
+            ? parseFloat(b.totalAmount.split('.')[0]) || 0
+            : parseFloat(b.totalAmount) || 0
+        }));
+        
+        return budgets;
       } catch (error) {
         console.error("[Budgets] Error listing:", error);
         return [];
@@ -40,7 +49,19 @@ export const budgetsRouter = router({
           SELECT * FROM budget_lines WHERE budgetId = ${input.id} ORDER BY lineNumber
         `);
 
-        return { ...result[0][0], lines: linesResult?.[0] || [] };
+        const budget = result[0][0];
+        return { 
+          ...budget,
+          totalAmount: typeof budget.totalAmount === 'string' 
+            ? parseFloat(budget.totalAmount.split('.')[0]) || 0
+            : parseFloat(budget.totalAmount) || 0,
+          lines: (linesResult?.[0] || []).map((line: any) => ({
+            ...line,
+            amount: typeof line.amount === 'string' 
+              ? parseFloat(line.amount.split('.')[0]) || 0
+              : parseFloat(line.amount) || 0
+          }))
+        };
       } catch (error) {
         console.error("[Budgets] Error getting by ID:", error);
         return null;
