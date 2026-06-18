@@ -422,7 +422,7 @@
 ### Navigation
 - [x] Ajouter la route /projects/timeline dans App.tsx
 - [x] Ajouter le lien "Évolution du Projet" dans le menu Projects
-- [x] Intégrer dans la section "Projects"
+- [x] Intégrer dans la section "Projects" du DashboardLayout
 
 ### Tests
 - [x] Créer tests Vitest pour le diagramme Gantt (11 tests)
@@ -436,4 +436,4 @@
 - [x] Tous les tests Vitest passent (11/11)
 - [x] Serveur de développement fonctionne
 - [x] Page Gantt fonctionnelle
-- [ ] Sauvegarder checkpoint final
+- [x] Sauvegarder checkpoint final (dc05ae76)

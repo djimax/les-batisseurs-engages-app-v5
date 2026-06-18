@@ -52,6 +52,7 @@ import {
   Database,
   Download,
   HardDrive,
+  TrendingUp,
 } from "lucide-react";
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -104,7 +105,10 @@ const menuGroups: MenuGroup[] = [
   {
     label: "Projets",
     icon: Briefcase,
-    items: [{ icon: Briefcase, label: "Projets", path: "/projects" }],
+    items: [
+      { icon: Briefcase, label: "Projets", path: "/projects" },
+      { icon: BarChart3, label: "Évolution du Projet", path: "/projects/timeline" },
+    ],
   },
   {
     label: "Notifications",
