@@ -49,6 +49,7 @@ const CustomizableDashboard = lazy(
 );
 const CotisationSettings = lazy(() => import("@/pages/CotisationSettings"));
 const GroupsAndAntennes = lazy(() => import("@/pages/GroupsAndAntennes"));
+const ProjectTimeline = lazy(() => import("@/pages/ProjectTimeline"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -105,6 +106,7 @@ function Router() {
                 <Route path="/memberships" component={Memberships} />
                 <Route path="/projects" component={Projects} />
                 <Route path="/projects/:id" component={ProjectDetail} />
+                <Route path="/projects/timeline" component={ProjectTimeline} />
                 <Route path="/notifications" component={NotificationCenter} />
                 <Route path="/export-center" component={ExportCenter} />
                 <Route path="/demo-data" component={DemoDataManager} />

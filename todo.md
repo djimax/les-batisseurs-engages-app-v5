@@ -403,3 +403,37 @@
 ### Tests
 - [ ] Créer tests Vitest pour les routeurs
 - [ ] Tester la validation des entrées
+
+
+## Phase 41 - Diagramme de Gantt pour l'Évolution du Projet
+
+### Schéma et Backend
+- [x] Créer la page ProjectTimeline.tsx avec interface Gantt
+- [x] Implémenter le diagramme Gantt avec Canvas
+- [x] Ajouter les filtres par projet et statut
+- [x] Intégrer les données des projets et tâches
+
+### Frontend
+- [x] Afficher les tâches sur une timeline
+- [x] Afficher les jalons (milestones)
+- [x] Ajouter les options de zoom et pan
+- [x] Ajouter les légendes et informations
+
+### Navigation
+- [x] Ajouter la route /projects/timeline dans App.tsx
+- [x] Ajouter le lien "Évolution du Projet" dans le menu Projects
+- [x] Intégrer dans la section "Projects"
+
+### Tests
+- [x] Créer tests Vitest pour le diagramme Gantt (11 tests)
+- [x] Tester le rendu des tâches
+- [x] Tester les filtres
+- [x] Tester les interactions
+- [x] Tous les tests passent (11/11 ✓)
+
+### Validation
+- [x] TypeScript compile sans erreurs
+- [x] Tous les tests Vitest passent (11/11)
+- [x] Serveur de développement fonctionne
+- [x] Page Gantt fonctionnelle
+- [ ] Sauvegarder checkpoint final
