@@ -349,11 +349,11 @@
 ## Phase 38 - Correction du Bug Budget Total (Alignement Virgules)
 
 ### Bug Identifié
-- [ ] Correction du calcul du budget total (alignement des virgules au lieu d'addition)
-- [ ] Vérifier la page Budgets.tsx
-- [ ] Corriger la logique de calcul pour additionner correctement
-- [ ] Tester avec plusieurs budgets
-- [ ] Sauvegarder checkpoint
+- [x] Correction du calcul du budget total (alignement des virgules au lieu d'addition)
+- [x] Vérifier la page Budgets.tsx
+- [x] Corriger la logique de calcul pour additionner correctement
+- [x] Tester avec plusieurs budgets
+- [x] Sauvegarder checkpoint
 
 ## Phase 39 - Gestion de Projet
 
