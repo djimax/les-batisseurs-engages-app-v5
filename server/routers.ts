@@ -23,6 +23,7 @@ import { attachmentsRouter } from "./routers/attachments";
 import { searchRouter } from "./routers/search";
 import { cotisationSettingsRouter } from "./routers/cotisation-settings";
 import { groupsRouter } from "./routers/groups-router";
+import { actorsRouter } from "./routers/actors";
 
 import { z } from "zod";
 import {
@@ -102,6 +103,7 @@ export const appRouter = router({
   search: searchRouter,
   cotisationSettings: cotisationSettingsRouter,
   groups: groupsRouter,
+  actors: actorsRouter,
 
   // ============ CATEGORIES ============
   categories: router({

@@ -18,12 +18,23 @@ export const budgetsRouter = router({
           ORDER BY createdAt DESC
         `);
         
-        // Nettoyer les montants mal formatés
+        // Nettoyer les montants mal formatés (extraire tous les montants et les additionner)
+        const cleanAmount = (value: any): number => {
+          if (typeof value === 'number') return value;
+          if (typeof value === 'string') {
+            // Extraire tous les nombres décimaux (ex: 1000.00, 200.00, etc.)
+            const matches = value.match(/\d+\.\d{2}/g);
+            if (matches && matches.length > 0) {
+              return matches.reduce((sum, m) => sum + parseFloat(m), 0);
+            }
+            return parseFloat(value) || 0;
+          }
+          return 0;
+        };
+        
         const budgets = (result?.[0] || []).map((b: any) => ({
           ...b,
-          totalAmount: typeof b.totalAmount === 'string' 
-            ? parseFloat(b.totalAmount.split('.')[0]) || 0
-            : parseFloat(b.totalAmount) || 0
+          totalAmount: cleanAmount(b.totalAmount)
         }));
         
         return budgets;
@@ -50,16 +61,27 @@ export const budgetsRouter = router({
         `);
 
         const budget = result[0][0];
+        
+        // Fonction pour nettoyer les montants
+        const cleanAmount = (value: any): number => {
+          if (typeof value === 'number') return value;
+          if (typeof value === 'string') {
+            // Extraire tous les nombres décimaux (ex: 1000.00, 200.00, etc.)
+            const matches = value.match(/\d+\.\d{2}/g);
+            if (matches && matches.length > 0) {
+              return matches.reduce((sum, m) => sum + parseFloat(m), 0);
+            }
+            return parseFloat(value) || 0;
+          }
+          return 0;
+        };
+        
         return { 
           ...budget,
-          totalAmount: typeof budget.totalAmount === 'string' 
-            ? parseFloat(budget.totalAmount.split('.')[0]) || 0
-            : parseFloat(budget.totalAmount) || 0,
+          totalAmount: cleanAmount(budget.totalAmount),
           lines: (linesResult?.[0] || []).map((line: any) => ({
             ...line,
-            amount: typeof line.amount === 'string' 
-              ? parseFloat(line.amount.split('.')[0]) || 0
-              : parseFloat(line.amount) || 0
+            amount: cleanAmount(line.amount)
           }))
         };
       } catch (error) {

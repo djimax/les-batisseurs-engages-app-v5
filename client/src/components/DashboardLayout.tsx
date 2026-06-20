@@ -199,6 +199,12 @@ const menuGroups: MenuGroup[] = [
         path: "/admin/cotisation",
         adminOnly: true,
       },
+      {
+        icon: Users,
+        label: "Acteurs",
+        path: "/admin/actors",
+        adminOnly: true,
+      },
       { icon: Activity, label: "Activité", path: "/activity" },
       { icon: History, label: "Historique", path: "/audit-history" },
     ],

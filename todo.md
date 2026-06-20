@@ -384,25 +384,25 @@
 ## Phase 40 - Gestion des Acteurs
 
 ### Schéma et Migration
-- [ ] Créer table actors avec nom, rôle, responsabilités, permissions
-- [ ] Créer table actor_roles avec permissions
-- [ ] Générer et appliquer les migrations SQL
+- [x] Créer table actors avec nom, rôle, responsabilités, permissions
+- [x] Créer table actor_roles avec permissions
+- [x] Générer et appliquer les migrations SQL
 
 ### Backend (tRPC)
-- [ ] Créer routeur actors avec procédures CRUD
-- [ ] Ajouter les fonctions de base de données
-- [ ] Implémenter la validation
+- [x] Créer routeur actors avec procédures CRUD
+- [x] Ajouter les fonctions de base de données
+- [x] Implémenter la validation
 
 ### Frontend
-- [ ] Créer page Gestion des Acteurs
-- [ ] Ajouter grille de cartes pour les acteurs
-- [ ] Ajouter interface CRUD pour acteurs
-- [ ] Affichage des rôles et responsabilités
-- [ ] Gestion des permissions
+- [x] Créer page Gestion des Acteurs
+- [x] Ajouter grille de cartes pour les acteurs
+- [x] Ajouter interface CRUD pour acteurs
+- [x] Affichage des rôles et responsabilités
+- [x] Gestion des permissions
 
 ### Tests
-- [ ] Créer tests Vitest pour les routeurs
-- [ ] Tester la validation des entrées
+- [x] Créer tests Vitest pour les routeurs
+- [x] Tester la validation des entrées
 
 
 ## Phase 41 - Diagramme de Gantt pour l'Évolution du Projet
@@ -437,3 +437,21 @@
 - [x] Serveur de développement fonctionne
 - [x] Page Gantt fonctionnelle
 - [x] Sauvegarder checkpoint final (dc05ae76)
+
+### Navigation et Integration
+- [x] Ajouter la route /admin/actors dans App.tsx
+- [x] Ajouter le lien "Acteurs" dans le menu Administration du DashboardLayout
+- [x] Enregistrer le routeur actors dans appRouter
+
+### Validation
+- [x] TypeScript compile sans erreurs
+- [x] Tests Vitest passent (115 tests)
+- [x] Serveur de developpement fonctionne
+- [x] Page Acteurs accessible via /admin/actors
+- [x] Lien dans le menu d'administration fonctionne
+
+### Prochaines Etapes
+- [ ] Tester les procedures CRUD du routeur actors
+- [ ] Tester les cas d'erreur et les permissions
+- [ ] Creer des rapports sur les acteurs (statistiques, permissions)
+- [ ] Ajouter des notifications pour les changements de role
