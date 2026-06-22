@@ -33,6 +33,7 @@ import { toast } from "sonner";
 
 export default function Projects() {
   const [status, setStatus] = useState<string | undefined>();
+  const [dateFilter, setDateFilter] = useState<'all' | 'upcoming' | 'overdue'>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<any>(null);
 
@@ -47,10 +48,20 @@ export default function Projects() {
   });
 
   const {
-    data: projects = [],
+    data: allProjects = [],
     isLoading,
     error,
   } = trpc.projects.list.useQuery({ status });
+
+  // Filter projects by date
+  const projects = (allProjects as any[]).filter((p: any) => {
+    if (dateFilter === 'all') return true;
+    const endDate = p.endDate ? new Date(p.endDate) : null;
+    const now = new Date();
+    if (dateFilter === 'upcoming') return endDate && endDate > now;
+    if (dateFilter === 'overdue') return endDate && endDate < now;
+    return true;
+  });
   const createMutation = trpc.projects.create.useMutation();
   const updateMutation = trpc.projects.update.useMutation();
   const deleteMutation = trpc.projects.delete.useMutation();
@@ -184,11 +195,16 @@ export default function Projects() {
     }
   };
 
+  const isProjectOverdue = (endDate: string | Date | null | undefined) => {
+    if (!endDate) return false;
+    return new Date(endDate) < new Date();
+  };
+
   const activeProjects = (projects as any[]).filter(
-    (p: any) => p.status === "active"
+    (p: any) => p.status === "active" || p.status === "in-progress"
   ).length;
   const totalBudget = (projects as any[]).reduce(
-    (sum: number, p: any) => sum + (p.budget || 0),
+    (sum: number, p: any) => sum + (parseFloat(p.budget as any) || 0),
     0
   );
 
@@ -373,42 +389,75 @@ export default function Projects() {
       </div>
 
       {/* Filtres */}
-      <div className="flex gap-2">
-        <Button
-          variant={status === undefined ? "default" : "outline"}
-          onClick={() => setStatus(undefined)}
-          size="sm"
-        >
-          Tous
-        </Button>
-        <Button
-          variant={status === "planning" ? "default" : "outline"}
-          onClick={() => setStatus("planning")}
-          size="sm"
-        >
-          Planification
-        </Button>
-        <Button
-          variant={status === "active" ? "default" : "outline"}
-          onClick={() => setStatus("active")}
-          size="sm"
-        >
-          Actifs
-        </Button>
-        <Button
-          variant={status === "on-hold" ? "default" : "outline"}
-          onClick={() => setStatus("on-hold")}
-          size="sm"
-        >
-          En attente
-        </Button>
-        <Button
-          variant={status === "completed" ? "default" : "outline"}
-          onClick={() => setStatus("completed")}
-          size="sm"
-        >
-          Complétés
-        </Button>
+      <div className="space-y-4">
+        <div className="flex gap-2 flex-wrap">
+          <div>
+            <h3 className="text-sm font-medium mb-2">Statut</h3>
+            <div className="flex gap-2">
+              <Button
+                variant={status === undefined ? "default" : "outline"}
+                onClick={() => setStatus(undefined)}
+                size="sm"
+              >
+                Tous
+              </Button>
+              <Button
+                variant={status === "planning" ? "default" : "outline"}
+                onClick={() => setStatus("planning")}
+                size="sm"
+              >
+                Planification
+              </Button>
+              <Button
+                variant={status === "active" ? "default" : "outline"}
+                onClick={() => setStatus("active")}
+                size="sm"
+              >
+                Actifs
+              </Button>
+              <Button
+                variant={status === "on-hold" ? "default" : "outline"}
+                onClick={() => setStatus("on-hold")}
+                size="sm"
+              >
+                En attente
+              </Button>
+              <Button
+                variant={status === "completed" ? "default" : "outline"}
+                onClick={() => setStatus("completed")}
+                size="sm"
+              >
+                Complétés
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-2">Date</h3>
+          <div className="flex gap-2">
+            <Button
+              variant={dateFilter === "all" ? "default" : "outline"}
+              onClick={() => setDateFilter("all")}
+              size="sm"
+            >
+              Tous
+            </Button>
+            <Button
+              variant={dateFilter === "upcoming" ? "default" : "outline"}
+              onClick={() => setDateFilter("upcoming")}
+              size="sm"
+            >
+              À venir
+            </Button>
+            <Button
+              variant={dateFilter === "overdue" ? "default" : "outline"}
+              onClick={() => setDateFilter("overdue")}
+              size="sm"
+            >
+              Dépassés
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Erreurs */}

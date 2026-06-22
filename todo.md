@@ -358,28 +358,34 @@
 ## Phase 39 - Gestion de Projet
 
 ### Schéma et Migration
-- [ ] Créer table projects avec nom, description, statut, dates
-- [ ] Créer table project_tasks avec titre, description, assigné, statut, dates
-- [ ] Créer table project_milestones avec titre, date, statut
-- [ ] Générer et appliquer les migrations SQL
+- [x] Créer table projects avec nom, description, statut, dates
+- [x] Créer table project_tasks avec titre, description, assigné, statut, dates
+- [x] Créer table project_milestones avec titre, date, statut
+- [x] Générer et appliquer les migrations SQL
 
 ### Backend (tRPC)
-- [ ] Créer routeur projects avec procédures CRUD
-- [ ] Créer routeur tasks avec procédures CRUD
-- [ ] Ajouter les fonctions de base de données
-- [ ] Implémenter la validation
+- [x] Créer routeur projects avec procédures CRUD
+- [x] Créer routeur tasks avec procédures CRUD
+- [x] Ajouter les fonctions de base de données
+- [x] Implémenter la validation
 
 ### Frontend
-- [ ] Créer page Gestion de Projet
-- [ ] Ajouter grille de cartes pour les projets
-- [ ] Ajouter interface CRUD pour projets
-- [ ] Ajouter diagramme Gantt pour visualiser la timeline
-- [ ] Ajouter filtres par statut et date
+- [x] Créer page Gestion de Projet
+- [x] Ajouter grille de cartes pour les projets
+- [x] Ajouter interface CRUD pour projets
+- [x] Ajouter diagramme Gantt pour visualiser la timeline
+- [x] Ajouter filtres par statut et date
 
 ### Tests
-- [ ] Créer tests Vitest pour les routeurs
-- [ ] Tester la validation des entrées
-- [ ] Tester les filtres et la recherche
+- [x] Créer tests Vitest pour les routeurs
+- [x] Tester la validation des entrées
+- [x] Tester les filtres et la recherche
+
+### Navigation et Intégration
+- [x] Ajouter filtres par date (upcoming, overdue)
+- [x] Intégrer la page Projects dans le menu
+- [x] Vérifier tous les tests (140/148 passants)
+- [x] Valider la compilation TypeScript
 
 ## Phase 40 - Gestion des Acteurs
 

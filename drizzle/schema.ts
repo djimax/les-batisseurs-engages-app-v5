@@ -1193,3 +1193,25 @@ export const actorRoles = mysqlTable("actor_roles", {
 
 export type ActorRole = typeof actorRoles.$inferSelect;
 export type InsertActorRole = typeof actorRoles.$inferInsert;
+
+
+/**
+ * Project milestones table for tracking project phases
+ */
+export const projectMilestones = mysqlTable("project_milestones", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  dueDate: timestamp("dueDate").notNull(),
+  status: mysqlEnum("status", ["pending", "in-progress", "completed", "delayed"])
+    .default("pending")
+    .notNull(),
+  completedAt: timestamp("completedAt"),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProjectMilestone = typeof projectMilestones.$inferSelect;
+export type InsertProjectMilestone = typeof projectMilestones.$inferInsert;
