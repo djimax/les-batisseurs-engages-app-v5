@@ -245,10 +245,10 @@
 - [x] Lien dans le menu d'administration fonctionne
 
 ### Prochaines Étapes
-- [ ] Intégrer les critères de cotisation dans le calcul automatique du statut
-- [ ] Créer des rapports sur les cotisations (statistiques, listes à relancer)
-- [ ] Ajouter des notifications automatiques pour les retards de cotisation
-- [ ] Créer des factures/quittances automatiques basées sur les critères
+- [x] Intégrer les critères de cotisation dans le calcul automatique du statut
+- [x] Créer des rapports sur les cotisations (statistiques, listes à relancer)
+- [x] Ajouter des notifications automatiques pour les retards de cotisation
+- [x] Créer des factures/quittances automatiques basées sur les critères
 
 ## Phase 35 - Audit et Amélioration des Membres et Adhésions
 
@@ -457,7 +457,7 @@
 - [x] Lien dans le menu d'administration fonctionne
 
 ### Prochaines Etapes
-- [ ] Tester les procedures CRUD du routeur actors
-- [ ] Tester les cas d'erreur et les permissions
-- [ ] Creer des rapports sur les acteurs (statistiques, permissions)
-- [ ] Ajouter des notifications pour les changements de role
+- [x] Tester les procedures CRUD du routeur actors
+- [x] Tester les cas d'erreur et les permissions
+- [x] Creer des rapports sur les acteurs (statistiques, permissions)
+- [x] Ajouter des notifications pour les changements de role
