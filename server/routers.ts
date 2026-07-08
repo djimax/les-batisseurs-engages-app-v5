@@ -24,6 +24,7 @@ import { searchRouter } from "./routers/search";
 import { cotisationSettingsRouter } from "./routers/cotisation-settings";
 import { groupsRouter } from "./routers/groups-router";
 import { actorsRouter } from "./routers/actors";
+import { adherentsRouter } from "./routers/adherents";
 
 import { z } from "zod";
 import {
@@ -104,6 +105,7 @@ export const appRouter = router({
   cotisationSettings: cotisationSettingsRouter,
   groups: groupsRouter,
   actors: actorsRouter,
+  adherents: adherentsRouter,
 
   // ============ CATEGORIES ============
   categories: router({

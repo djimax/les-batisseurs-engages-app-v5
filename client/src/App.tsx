@@ -51,6 +51,7 @@ const CotisationSettings = lazy(() => import("@/pages/CotisationSettings"));
 const GroupsAndAntennes = lazy(() => import("@/pages/GroupsAndAntennes"));
 const ProjectTimeline = lazy(() => import("@/pages/ProjectTimeline"));
 const Actors = lazy(() => import("@/pages/Actors"));
+const Adherents = lazy(() => import("@/pages/Adherents"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -81,6 +82,7 @@ function Router() {
                 <Route path="/" component={Home} />
                 <Route path="/documents" component={Documents} />
                 <Route path="/members" component={Members} />
+                <Route path="/members/adherents" component={Adherents} />
                 <Route path="/users" component={Users} />
                 <Route path="/activity" component={Activity} />
                 <Route path="/archives" component={Archives} />

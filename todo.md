@@ -500,3 +500,34 @@
 - [x] Page InvoiceExport accessible via /invoice-export
 - [x] Lien dans le menu Finances fonctionne
 - [x] Composant InvoiceDownloader fonctionne correctement
+
+
+## Phase 43 - Amélioration Gestion Utilisateurs et Liste des Adhérents
+
+### Gestion des Utilisateurs
+- [x] Analyser la page UserManagement existante
+- [x] Vérifier si la fonctionnalité est utilisée et utile
+- [x] Nettoyer ou améliorer l'interface si nécessaire
+- [x] Ajouter les tests Vitest si manquants
+
+### Liste des Adhérents
+- [x] Créer une table/vue pour les adhérents avec statut de paiement
+- [x] Ajouter filtrage par année (liste annuelle)
+- [x] Ajouter filtrage par statut de paiement (A jour, En retard, Impayé, Exempté)
+- [x] Créer routeur tRPC pour récupérer les adhérents
+- [x] Créer page UI "Liste des Adhérents" distincte de l'annuaire
+- [x] Ajouter export CSV des adhérents
+- [x] Ajouter statistiques (nombre d'adhérents, montant total collecté)
+
+### Distinction Annuaire vs Adhérents
+- [x] Clarifier que l'annuaire inclut tous les contacts
+- [x] Clarifier que la liste des adhérents inclut uniquement ceux à jour de paiement
+- [x] Ajouter des labels/icônes pour distinguer les deux listes
+- [x] Ajouter une colonne "Statut d'adhésion" dans les listes
+
+### Tests et Intégration
+- [x] Créer tests Vitest pour la liste des adhérents
+- [x] Ajouter route /members/adherents dans App.tsx
+- [x] Ajouter lien dans le menu Gestion des Membres
+- [x] Tester le filtrage par année et statut
+- [x] Valider les exports CSV
