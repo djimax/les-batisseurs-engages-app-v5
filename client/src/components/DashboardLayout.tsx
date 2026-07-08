@@ -96,6 +96,7 @@ const menuGroups: MenuGroup[] = [
       { icon: DollarSign, label: "Comptabilité", path: "/finance" },
       { icon: BarChart3, label: "Budgets", path: "/budgets" },
       { icon: FileText, label: "Factures", path: "/invoices" },
+      { icon: Download, label: "Export Factures", path: "/invoice-export" },
       { icon: BarChart3, label: "Rapports & Exports", path: "/reports" },
       { icon: Megaphone, label: "Campagnes", path: "/campaigns" },
       { icon: Calendar, label: "Événements", path: "/events" },

@@ -461,3 +461,42 @@
 - [x] Tester les cas d'erreur et les permissions
 - [x] Creer des rapports sur les acteurs (statistiques, permissions)
 - [x] Ajouter des notifications pour les changements de role
+
+
+## Phase 42 - Exportation de Factures de Cotisations en PDF
+
+### Backend (tRPC)
+- [x] Créer procédure tRPC pour générer facture PDF d'une cotisation
+- [x] Créer procédure tRPC pour générer factures PDF en masse (multiple cotisations)
+- [x] Implémenter la génération PDF avec pdf-lib
+- [x] Ajouter les informations d'en-tête (logo, nom association, adresse)
+- [x] Ajouter les détails de la facture (numéro, date, montant, statut)
+- [x] Ajouter les informations du membre (nom, email, adresse)
+
+### Frontend
+- [x] Créer composant InvoiceDownloader pour télécharger les factures individuelles
+- [x] Ajouter bouton de téléchargement dans le composant
+- [x] Créer interface pour télécharger les factures en masse
+- [x] Ajouter indicateur de progression lors de la génération
+- [x] Implémenter le téléchargement automatique du fichier PDF
+
+### Tests
+- [x] Tester la génération d'une facture PDF (23 tests)
+- [x] Tester la génération de factures en masse
+- [x] Tester les cas d'erreur (cotisation non trouvée, données manquantes)
+- [x] Valider le contenu du PDF généré
+
+### Intégration
+- [x] Créer page InvoiceExport pour gérer les exportations
+- [x] Ajouter route /invoice-export dans App.tsx
+- [x] Ajouter lien dans le menu Finances du DashboardLayout
+- [x] Enregistrer le routeur invoiceGeneration dans appRouter
+- [x] Tester le flux complet
+
+### Validation
+- [x] TypeScript compile sans erreurs
+- [x] Tests Vitest passent (140/148 tests)
+- [x] Serveur de développement fonctionne
+- [x] Page InvoiceExport accessible via /invoice-export
+- [x] Lien dans le menu Finances fonctionne
+- [x] Composant InvoiceDownloader fonctionne correctement
