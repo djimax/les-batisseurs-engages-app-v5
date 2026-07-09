@@ -190,6 +190,7 @@ export default defineConfig({
       "localhost",
       "127.0.0.1",
       "3000-ixz2gh81q5jgovdcbh39z-787d0c24.us2.manus.computer",
+      "3000-ikzk8ybrfjv3w3olf0r47-6823dcd2.us1.manus.computer",
     ],
     fs: {
       strict: true,
@@ -200,7 +201,7 @@ export default defineConfig({
         ? false
         : {
             protocol: "wss",
-            host: process.env.VITE_HMR_HOST || undefined,
+            host: process.env.VITE_HMR_HOST || "3000-ikzk8ybrfjv3w3olf0r47-6823dcd2.us1.manus.computer",
             port: process.env.VITE_HMR_PORT
               ? parseInt(process.env.VITE_HMR_PORT)
               : 443,
