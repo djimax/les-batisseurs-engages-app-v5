@@ -52,6 +52,9 @@ const GroupsAndAntennes = lazy(() => import("@/pages/GroupsAndAntennes"));
 const ProjectTimeline = lazy(() => import("@/pages/ProjectTimeline"));
 const Actors = lazy(() => import("@/pages/Actors"));
 const Adherents = lazy(() => import("@/pages/Adherents"));
+const AdhesionNotifications = lazy(() => import("@/pages/AdhesionNotifications"));
+const AdhesionReports = lazy(() => import("@/pages/AdhesionReports"));
+const AdhesionRenewals = lazy(() => import("@/pages/AdhesionRenewals"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -89,6 +92,9 @@ function Router() {
                 <Route path="/finance" component={Finance} />
                 <Route path="/campaigns" component={Campaigns} />
                 <Route path="/adhesions" component={Adhesions} />
+                <Route path="/adhesion-notifications" component={AdhesionNotifications} />
+                <Route path="/adhesion-reports" component={AdhesionReports} />
+                <Route path="/adhesion-renewals" component={AdhesionRenewals} />
                 <Route path="/events" component={Events} />
                 <Route path="/announcements" component={Announcements} />
                 <Route path="/email-composer" component={EmailComposer} />

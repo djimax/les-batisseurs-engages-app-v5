@@ -53,6 +53,7 @@ import {
   Download,
   HardDrive,
   TrendingUp,
+  RefreshCw,
 } from "lucide-react";
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -97,6 +98,9 @@ const menuGroups: MenuGroup[] = [
       { icon: BarChart3, label: "Budgets", path: "/budgets" },
       { icon: FileText, label: "Factures", path: "/invoices" },
       { icon: Download, label: "Export Factures", path: "/invoice-export" },
+      { icon: Bell, label: "Notifications Adhésion", path: "/adhesion-notifications" },
+      { icon: BarChart3, label: "Rapports Adhésion", path: "/adhesion-reports" },
+      { icon: RefreshCw, label: "Renouvellements Adhésion", path: "/adhesion-renewals" },
       { icon: BarChart3, label: "Rapports & Exports", path: "/reports" },
       { icon: Megaphone, label: "Campagnes", path: "/campaigns" },
       { icon: Calendar, label: "Événements", path: "/events" },

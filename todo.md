@@ -531,3 +531,132 @@
 - [x] Ajouter lien dans le menu Gestion des Membres
 - [x] Tester le filtrage par année et statut
 - [x] Valider les exports CSV
+
+
+## Phase 44 - Notifications Automatiques pour Adhérents en Retard
+
+### Backend (tRPC)
+- [x] Créer procédure tRPC pour récupérer les adhérents en retard
+- [x] Créer procédure tRPC pour envoyer notifications de rappel
+- [x] Créer procédure tRPC pour marquer les notifications comme lues
+- [x] Ajouter fonction pour calculer les jours de retard
+
+### Notifications
+- [x] Créer un job périodique qui détecte les retards
+- [x] Envoyer notifications au propriétaire (admin)
+- [x] Envoyer notifications/rappels aux adhérents en retard
+- [x] Ajouter historique des notifications envoyées
+
+### Frontend
+- [x] Créer page de gestion des notifications d'adhésion
+- [x] Ajouter widget de rappels dans le tableau de bord
+- [x] Afficher les adhérents en retard avec statut urgent
+- [x] Ajouter bouton pour envoyer rappels manuels
+
+### Tests
+- [x] Tester la détection des retards
+- [x] Tester l'envoi de notifications
+- [x] Tester le calcul des jours de retard
+
+## Phase 45 - Rapports d'Adhésion avec Graphiques
+
+### Backend (tRPC)
+- [x] Créer procédure tRPC pour récupérer les statistiques d'adhésion
+- [x] Créer procédure tRPC pour l'évolution mensuelle
+- [x] Créer procédure tRPC pour les taux de paiement
+- [x] Créer procédure tRPC pour les tendances annuelles
+
+### Graphiques
+- [x] Graphique d'évolution du nombre d'adhérents (line chart)
+- [x] Graphique des montants collectés par mois (bar chart)
+- [x] Graphique de répartition des statuts (pie chart)
+- [x] Graphique du taux de paiement (gauge chart)
+
+### Frontend
+- [x] Créer page Rapports d'Adhésion
+- [x] Ajouter filtres par période (mois, trimestre, année)
+- [x] Afficher les statistiques clés (total, à jour, en retard, etc.)
+- [x] Ajouter export des rapports en PDF/CSV
+
+### Tests
+- [x] Tester les calculs de statistiques
+- [x] Tester les graphiques avec données réelles
+
+## Phase 46 - Renouvellement Automatique d'Adhésion
+
+### Backend (tRPC)
+- [ ] Créer procédure tRPC pour créer renouvellement automatique
+- [ ] Créer procédure tRPC pour récupérer les renouvellements
+- [ ] Créer procédure tRPC pour marquer comme renouvelé
+- [ ] Créer procédure tRPC pour annuler un renouvellement
+
+### Job Périodique
+- [ ] Créer job qui détecte les adhésions expirées
+- [ ] Générer automatiquement les nouvelles cotisations
+- [ ] Envoyer rappels avant expiration (15 jours avant)
+- [ ] Marquer les cotisations comme renouvelées
+
+### Frontend
+- [ ] Créer page de gestion des renouvellements
+- [ ] Afficher les adhésions expirées et à renouveler
+- [ ] Ajouter bouton pour renouveler manuellement
+- [ ] Afficher l'historique des renouvellements
+
+### Configuration
+- [ ] Ajouter paramètres pour la période de rappel
+- [ ] Ajouter paramètres pour l'automatisation
+- [ ] Ajouter paramètres pour les montants de renouvellement
+
+### Tests
+- [ ] Tester la détection des expirations
+- [ ] Tester la génération automatique
+- [ ] Tester l'envoi de rappels
+
+## Phase 47 - Optimisations et Corrections
+
+### Performance
+- [ ] Optimiser les requêtes pour les adhérents
+- [ ] Ajouter cache pour les statistiques
+- [ ] Optimiser les graphiques pour grandes données
+
+### UX/UI
+- [ ] Améliorer les indicateurs visuels
+- [ ] Ajouter des animations pour les transitions
+- [ ] Améliorer la responsivité mobile
+
+### Tests et Validation
+- [ ] Ajouter tests Vitest pour toutes les nouvelles fonctionnalités
+- [ ] Valider la compilation TypeScript
+- [ ] Tester les jobs périodiques
+
+### Documentation
+- [ ] Ajouter commentaires dans le code
+- [ ] Documenter les procédures tRPC
+- [ ] Créer guide d'utilisation pour les administrateurs
+
+
+## Phase 46 - Renouvellement Automatique d'Adhésion - COMPLÉTÉE
+
+### Backend (tRPC)
+- [x] Créer procédure tRPC pour récupérer les adhésions expirées
+- [x] Créer procédure tRPC pour créer un renouvellement
+- [x] Créer procédure tRPC pour créer les renouvellements en masse
+- [x] Créer procédure tRPC pour envoyer les rappels de renouvellement
+
+### Renouvellements
+- [x] Créer un job périodique pour les renouvellements automatiques
+- [x] Envoyer notifications avant l'expiration (15 jours)
+- [x] Générer automatiquement les nouvelles adhésions
+- [x] Archiver les anciennes adhésions
+
+### Frontend
+- [x] Créer page de gestion des renouvellements
+- [x] Afficher les adhésions expirant bientôt
+- [x] Ajouter bouton pour renouveler individuellement
+- [x] Ajouter bouton pour renouveler en masse
+- [x] Afficher les statistiques de renouvellement
+
+### Tests
+- [x] Tester la création de renouvellements
+- [x] Tester les rappels de renouvellement
+- [x] Tester les renouvellements en masse

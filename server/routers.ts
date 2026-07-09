@@ -25,6 +25,9 @@ import { cotisationSettingsRouter } from "./routers/cotisation-settings";
 import { groupsRouter } from "./routers/groups-router";
 import { actorsRouter } from "./routers/actors";
 import { adherentsRouter } from "./routers/adherents";
+import { adhesionNotificationsRouter } from "./routers/adhesion-notifications";
+import { adhesionReportsRouter } from "./routers/adhesion-reports";
+import { adhesionRenewalsRouter } from "./routers/adhesion-renewals";
 
 import { z } from "zod";
 import {
@@ -106,6 +109,9 @@ export const appRouter = router({
   groups: groupsRouter,
   actors: actorsRouter,
   adherents: adherentsRouter,
+  adhesionNotifications: adhesionNotificationsRouter,
+  adhesionReports: adhesionReportsRouter,
+  adhesionRenewals: adhesionRenewalsRouter,
 
   // ============ CATEGORIES ============
   categories: router({
