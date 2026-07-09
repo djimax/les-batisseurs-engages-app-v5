@@ -199,6 +199,10 @@ export default defineConfig({
     hmr:
       process.env.NODE_ENV === "production"
         ? false
-        : undefined,
+        : {
+            protocol: "wss",
+            host: "localhost",
+            port: 443,
+          },
   },
 });

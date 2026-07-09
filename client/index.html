@@ -17,12 +17,6 @@
 
   <body>
     <div id="root"></div>
-    <script>
-      // Configure Vite HMR with current domain dynamically
-      window.__VITE_HMR_HOST__ = window.location.hostname;
-      window.__VITE_HMR_PORT__ = window.location.port || 443;
-      window.__VITE_HMR_PROTOCOL__ = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    </script>
     <script type="module" src="/src/main.tsx"></script>
     <script
       defer
