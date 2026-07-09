@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,15 +25,45 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Download, Users, Filter } from "lucide-react";
+import {
+  AlertCircle,
+  Download,
+  Users,
+  Filter,
+  Search,
+  TrendingUp,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  Shield,
+} from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 
-const STATUT_COLORS: Record<string, string> = {
-  "À jour": "bg-green-100 text-green-800",
-  "En retard": "bg-yellow-100 text-yellow-800",
-  Impayé: "bg-red-100 text-red-800",
-  Exempté: "bg-blue-100 text-blue-800",
+const STATUT_COLORS: Record<
+  string,
+  { bg: string; text: string; icon: React.ReactNode }
+> = {
+  "À jour": {
+    bg: "bg-green-50 border-green-200",
+    text: "text-green-700",
+    icon: <CheckCircle className="w-4 h-4" />,
+  },
+  "En retard": {
+    bg: "bg-yellow-50 border-yellow-200",
+    text: "text-yellow-700",
+    icon: <AlertTriangle className="w-4 h-4" />,
+  },
+  Impayé: {
+    bg: "bg-red-50 border-red-200",
+    text: "text-red-700",
+    icon: <XCircle className="w-4 h-4" />,
+  },
+  Exempté: {
+    bg: "bg-blue-50 border-blue-200",
+    text: "text-blue-700",
+    icon: <Shield className="w-4 h-4" />,
+  },
 };
 
 export default function Adherents() {
@@ -42,106 +72,86 @@ export default function Adherents() {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Fetch adherents from tRPC
-  const { data: adherents = [], isLoading, error } = trpc.adherents.getByYear.useQuery({
+  const {
+    data: adherents = [],
+    isLoading,
+    error,
+  } = trpc.adherents.getByYear.useQuery({
     year: parseInt(year),
   });
 
-  // Map the data to match our expected structure
-  const mappedAdherents = useMemo(() => {
-    return (adherents as any[]).map((adherent: any) => ({
-      id: adherent.id,
-      memberId: adherent.memberId,
-      firstName: adherent.firstName,
-      lastName: adherent.lastName,
-      email: adherent.email,
-      phone: adherent.phone,
-      adhesionStatus: adherent.cotisationStatus || "Impayé",
-      adhesionAmount: adherent.cotisationAmount || 0,
-      cotisations: [
-        {
-          dateDebut: adherent.cotisationStartDate,
-          dateFin: adherent.cotisationEndDate,
-          statut: adherent.cotisationStatus,
-        },
-      ],
-    }));
-  }, [adherents]);
-
-  // Apply filters
+  // Filter and search adherents
   const filteredAdherents = useMemo(() => {
-    return mappedAdherents.filter((member: any) => {
-      if (
-        statusFilter &&
-        member.adhesionStatus.toLowerCase() !== statusFilter.toLowerCase()
-      ) {
-        return false;
-      }
-
-      if (searchTerm) {
-        const search = searchTerm.toLowerCase();
-        return (
-          `${member.firstName} ${member.lastName}`
-            .toLowerCase()
-            .includes(search) ||
-          member.email?.toLowerCase().includes(search) ||
-          member.memberId?.toLowerCase().includes(search)
-        );
-      }
-
-      return true;
+    return adherents.filter((adherent: any) => {
+      const matchesStatus =
+        !statusFilter ||
+        adherent.cotisationStatus === statusFilter;
+      const matchesSearch =
+        !searchTerm ||
+        adherent.name
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        adherent.email
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      return matchesStatus && matchesSearch;
     });
-  }, [mappedAdherents, statusFilter, searchTerm]);
+  }, [adherents, statusFilter, searchTerm]);
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const total = mappedAdherents.length;
-    const upToDate = mappedAdherents.filter((m: any) => m.adhesionStatus === "payée")
-      .length;
-    const overdue = mappedAdherents.filter((m: any) => m.adhesionStatus === "en retard")
-      .length;
-    const unpaid = mappedAdherents.filter((m: any) => m.adhesionStatus === "Impayé")
-      .length;
-    const exempt = mappedAdherents.filter((m: any) => m.adhesionStatus === "Exempté")
-      .length;
-    const totalAmount = mappedAdherents.reduce(
-      (sum: number, m: any) => sum + (parseFloat(m.adhesionAmount) || 0),
+    const total = adherents.length;
+    const upToDate = adherents.filter(
+      (a: any) => a.cotisationStatus === "À jour"
+    ).length;
+    const overdue = adherents.filter(
+      (a: any) => a.cotisationStatus === "En retard"
+    ).length;
+    const unpaid = adherents.filter(
+      (a: any) => a.cotisationStatus === "Impayé"
+    ).length;
+    const exempt = adherents.filter(
+      (a: any) => a.cotisationStatus === "Exempté"
+    ).length;
+    const totalAmount = adherents.reduce(
+      (sum: number, a: any) => sum + (a.cotisationAmount || 0),
       0
     );
+    const paidAmount = adherents
+      .filter((a: any) => a.cotisationStatus === "À jour")
+      .reduce((sum: number, a: any) => sum + (a.cotisationAmount || 0), 0);
 
-    return { total, upToDate, overdue, unpaid, exempt, totalAmount };
-  }, [mappedAdherents]);
+    return {
+      total,
+      upToDate,
+      overdue,
+      unpaid,
+      exempt,
+      totalAmount,
+      paidAmount,
+      paymentRate:
+        total > 0
+          ? Math.round((upToDate / total) * 100)
+          : 0,
+    };
+  }, [adherents]);
 
   const handleExportCSV = () => {
-    if (filteredAdherents.length === 0) {
-      toast.error("Aucun adhérent à exporter");
-      return;
-    }
-
     const headers = [
-      "ID Membre",
       "Nom",
-      "Prénom",
       "Email",
       "Téléphone",
-      "Statut Adhésion",
+      "Statut",
       "Montant",
-      "Date Début",
-      "Date Fin",
+      "Date d'adhésion",
     ];
-
-    const rows = filteredAdherents.map((member: any) => [
-      member.memberId || "",
-      member.lastName || "",
-      member.firstName || "",
-      member.email || "",
-      member.phone || "",
-      member.adhesionStatus || "",
-      member.adhesionAmount || "",
-      new Date(member.cotisations?.[0]?.dateDebut).toLocaleDateString(
-        "fr-FR"
-      ) || "",
-      new Date(member.cotisations?.[0]?.dateFin).toLocaleDateString("fr-FR") ||
-        "",
+    const rows = filteredAdherents.map((a: any) => [
+      a.name,
+      a.email,
+      a.phone || "-",
+      a.cotisationStatus,
+      `${a.cotisationAmount || 0}€`,
+      new Date(a.createdAt).toLocaleDateString("fr-FR"),
     ]);
 
     const csv = [
@@ -149,111 +159,112 @@ export default function Adherents() {
       ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
     ].join("\n");
 
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `adherents-${year}-${new Date().toISOString().split("T")[0]}.csv`
-    );
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    toast.success(`${filteredAdherents.length} adhérent(s) exporté(s)`);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `adherents-${year}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    toast.success("Fichier CSV téléchargé avec succès");
   };
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+  if (error) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Erreur lors du chargement des adhérents
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold">Liste des Adhérents</h1>
-          <p className="text-muted-foreground">
-            Adhérents à jour de paiement pour l'année {year}
+          <h1 className="text-3xl font-bold text-gray-900">
+            Liste des Adhérents
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Gestion et suivi des adhésions annuelles
           </p>
         </div>
-        <Button onClick={handleExportCSV} className="gap-2">
-          <Download className="h-4 w-4" />
+        <Button
+          onClick={handleExportCSV}
+          variant="outline"
+          className="gap-2"
+        >
+          <Download className="w-4 h-4" />
           Exporter CSV
         </Button>
       </div>
 
-      {/* Statistics */}
-      <div className="grid gap-4 md:grid-cols-5">
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Adhérents
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground">Année {year}</p>
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold">{stats.total}</div>
+              <Users className="w-8 h-8 text-blue-500 opacity-20" />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              À Jour
+            <CardTitle className="text-sm font-medium text-gray-600">
+              À jour
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.upToDate}
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold text-green-600">
+                {stats.upToDate}
+              </div>
+              <CheckCircle className="w-8 h-8 text-green-500 opacity-20" />
             </div>
-            <p className="text-xs text-muted-foreground">Paiement effectué</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-gray-600">
               En Retard
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
-              {stats.overdue}
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold text-yellow-600">
+                {stats.overdue}
+              </div>
+              <AlertTriangle className="w-8 h-8 text-yellow-500 opacity-20" />
             </div>
-            <p className="text-xs text-muted-foreground">À relancer</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Impayé
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Taux de Paiement
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {stats.unpaid}
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold text-purple-600">
+                {stats.paymentRate}%
+              </div>
+              <TrendingUp className="w-8 h-8 text-purple-500 opacity-20" />
             </div>
-            <p className="text-xs text-muted-foreground">Non payé</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Montant Total
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.totalAmount.toLocaleString("fr-FR", {
-                style: "currency",
-                currency: "EUR",
-              })}
-            </div>
-            <p className="text-xs text-muted-foreground">Collecté</p>
           </CardContent>
         </Card>
       </div>
@@ -262,20 +273,23 @@ export default function Adherents() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+            <Filter className="w-5 h-5" />
             Filtres
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Year Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Année</label>
+              <label className="text-sm font-medium text-gray-700">
+                Année
+              </label>
               <Select value={year} onValueChange={setYear}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {years.map((y) => (
+                  {[2024, 2025, 2026].map((y) => (
                     <SelectItem key={y} value={y.toString()}>
                       {y}
                     </SelectItem>
@@ -284,119 +298,114 @@ export default function Adherents() {
               </Select>
             </div>
 
+            {/* Status Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Statut d'Adhésion</label>
+              <label className="text-sm font-medium text-gray-700">
+                Statut
+              </label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tous les statuts" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Tous les statuts</SelectItem>
-                  <SelectItem value="payée">À Jour (Payée)</SelectItem>
-                  <SelectItem value="en retard">En Retard</SelectItem>
-                  <SelectItem value="impayé">Impayé</SelectItem>
-                  <SelectItem value="exempté">Exempté</SelectItem>
+                  <SelectItem value="À jour">À jour</SelectItem>
+                  <SelectItem value="En retard">En retard</SelectItem>
+                  <SelectItem value="Impayé">Impayé</SelectItem>
+                  <SelectItem value="Exempté">Exempté</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Search */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Rechercher</label>
-              <Input
-                placeholder="Nom, email ou ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
+              <label className="text-sm font-medium text-gray-700">
+                Recherche
+              </label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Nom ou email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Error Alert */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Erreur lors du chargement des adhérents
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Adherents Table */}
+      {/* Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Adhérents</CardTitle>
+          <CardTitle>
+            Adhérents ({filteredAdherents.length}/{adherents.length})
+          </CardTitle>
           <CardDescription>
-            {filteredAdherents.length} adhérent(s) trouvé(s)
+            Liste complète des adhérents pour l'année {year}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Chargement...
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin">
+                <Users className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-gray-500 mt-2">Chargement...</p>
             </div>
           ) : filteredAdherents.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Aucun adhérent trouvé pour les critères sélectionnés
+            <div className="text-center py-8">
+              <Users className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500">Aucun adhérent trouvé</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
                     <TableHead>Nom</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Téléphone</TableHead>
                     <TableHead>Statut</TableHead>
                     <TableHead>Montant</TableHead>
-                    <TableHead>Période</TableHead>
+                    <TableHead>Date d'adhésion</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAdherents.map((member: any) => (
-                    <TableRow key={member.id}>
+                  {filteredAdherents.map((adherent: any) => (
+                    <TableRow
+                      key={adherent.id}
+                      className="hover:bg-gray-50"
+                    >
                       <TableCell className="font-medium">
-                        {member.memberId}
+                        {adherent.name}
                       </TableCell>
-                      <TableCell>
-                        {member.firstName} {member.lastName}
+                      <TableCell className="text-gray-600">
+                        {adherent.email}
                       </TableCell>
-                      <TableCell>{member.email || "-"}</TableCell>
-                      <TableCell>{member.phone || "-"}</TableCell>
+                      <TableCell className="text-gray-600">
+                        {adherent.phone || "-"}
+                      </TableCell>
                       <TableCell>
                         <Badge
-                          className={
-                            member.adhesionStatus === "payée"
-                              ? "bg-green-100 text-green-800"
-                              : member.adhesionStatus === "en retard"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : member.adhesionStatus === "Impayé"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-blue-100 text-blue-800"
-                          }
+                          className={`gap-1 ${
+                            STATUT_COLORS[adherent.cotisationStatus]
+                              ?.bg || "bg-gray-100"
+                          }`}
+                          variant="outline"
                         >
-                          {member.adhesionStatus}
+                          {STATUT_COLORS[adherent.cotisationStatus]?.icon}
+                          {adherent.cotisationStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        {parseFloat(member.adhesionAmount).toLocaleString(
-                          "fr-FR",
-                          {
-                            style: "currency",
-                            currency: "EUR",
-                          }
-                        )}
+                      <TableCell className="font-medium">
+                        {adherent.cotisationAmount || 0}€
                       </TableCell>
-                      <TableCell>
-                        {member.cotisations?.[0]
-                          ? `${new Date(
-                              member.cotisations[0].dateDebut
-                            ).toLocaleDateString("fr-FR")} - ${new Date(
-                              member.cotisations[0].dateFin
-                            ).toLocaleDateString("fr-FR")}`
-                          : "-"}
+                      <TableCell className="text-gray-600">
+                        {new Date(adherent.createdAt).toLocaleDateString(
+                          "fr-FR"
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -407,30 +416,26 @@ export default function Adherents() {
         </CardContent>
       </Card>
 
-      {/* Info Card */}
-      <Card className="bg-blue-50 border-blue-200">
+      {/* Summary */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50">
         <CardHeader>
-          <CardTitle className="text-blue-900">ℹ️ À propos de cette liste</CardTitle>
+          <CardTitle className="text-lg">Résumé Financier</CardTitle>
         </CardHeader>
-        <CardContent className="text-blue-900 space-y-2 text-sm">
-          <p>
-            • Cette liste affiche uniquement les adhérents à jour de paiement
-            pour l'année sélectionnée
-          </p>
-          <p>
-            • Un adhérent doit avoir effectué son paiement d'adhésion pour
-            apparaître dans cette liste
-          </p>
-          <p>
-            • La liste est annuelle et se réinitialise chaque année
-          </p>
-          <p>
-            • Vous pouvez filtrer par statut d'adhésion et rechercher par nom
-            ou email
-          </p>
-          <p>
-            • Utilisez l'export CSV pour générer un rapport des adhérents
-          </p>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-gray-600">Montant Total Attendu</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {stats.totalAmount.toLocaleString("fr-FR")}€
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Montant Collecté</p>
+              <p className="text-2xl font-bold text-green-600">
+                {stats.paidAmount.toLocaleString("fr-FR")}€
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
