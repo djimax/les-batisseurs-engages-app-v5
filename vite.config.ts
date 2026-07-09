@@ -199,12 +199,6 @@ export default defineConfig({
     hmr:
       process.env.NODE_ENV === "production"
         ? false
-        : {
-            protocol: "wss",
-            host: process.env.VITE_HMR_HOST || "3000-ikzk8ybrfjv3w3olf0r47-6823dcd2.us1.manus.computer",
-            port: process.env.VITE_HMR_PORT
-              ? parseInt(process.env.VITE_HMR_PORT)
-              : 443,
-          },
+        : undefined,
   },
 });
