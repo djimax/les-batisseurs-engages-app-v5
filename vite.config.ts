@@ -196,13 +196,6 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    hmr:
-      process.env.NODE_ENV === "production"
-        ? false
-        : {
-            protocol: "wss",
-            host: "localhost",
-            port: 443,
-          },
+    hmr: false,
   },
 });
