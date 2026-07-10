@@ -660,3 +660,37 @@
 - [x] Tester la création de renouvellements
 - [x] Tester les rappels de renouvellement
 - [x] Tester les renouvellements en masse
+
+
+## Phase 47 - Boutons d'Action pour les Adhérents
+
+### Modales et Formulaires
+- [ ] Créer modale de consultation des détails du profil
+- [ ] Créer modale de modification du profil adhérent
+- [ ] Ajouter formulaire pour éditer les informations
+- [ ] Ajouter validation des champs
+
+### Backend (tRPC)
+- [ ] Créer procédure tRPC pour mettre à jour un adhérent
+- [ ] Créer procédure tRPC pour supprimer un adhérent
+- [ ] Ajouter vérification des permissions
+- [ ] Ajouter logs des modifications
+
+### Frontend
+- [ ] Ajouter bouton "Consulter" pour voir les détails
+- [ ] Ajouter bouton "Modifier" pour éditer le profil
+- [ ] Ajouter bouton "Supprimer" avec confirmation
+- [ ] Ajouter icônes pour les actions
+- [ ] Ajouter indicateurs visuels pour les actions
+
+### Tests
+- [ ] Tester la modification d'un adhérent
+- [ ] Tester la suppression d'un adhérent
+- [ ] Tester la validation des formulaires
+- [ ] Tester les permissions d'accès
+
+### Intégration
+- [ ] Intégrer les boutons dans la liste des adhérents
+- [ ] Ajouter toast de confirmation
+- [ ] Ajouter gestion des erreurs
+- [ ] Tester le flux complet

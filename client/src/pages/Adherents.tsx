@@ -370,6 +370,7 @@ export default function Adherents() {
                     <TableHead>Statut</TableHead>
                     <TableHead>Montant</TableHead>
                     <TableHead>Date d'adhésion</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -406,6 +407,35 @@ export default function Adherents() {
                         {new Date(adherent.createdAt).toLocaleDateString(
                           "fr-FR"
                         )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-1 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => console.log('View:', adherent.id)}
+                            title="Consulter les détails"
+                          >
+                            Voir
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => console.log('Edit:', adherent.id)}
+                            title="Modifier le profil"
+                          >
+                            Éditer
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => console.log('Delete:', adherent.id)}
+                            title="Supprimer"
+                          >
+                            Supprimer
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
