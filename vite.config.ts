@@ -196,6 +196,10 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    middlewareMode: true,
+    hmr: {
+      protocol: "wss",
+      host: "localhost",
+      port: 443,
+    },
   },
 });
